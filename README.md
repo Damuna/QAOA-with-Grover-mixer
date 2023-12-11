@@ -2,7 +2,7 @@
 
 ## TODO:
 
--Debora:
--Paul:
--Lennart:
--Soren:
+- Debora:
+- Paul:
+- Lennart:
+- Soren:
