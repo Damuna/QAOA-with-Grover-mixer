@@ -12,3 +12,4 @@
 - Optimizers and combine
 - go from 0 capacity to full and see what it is better
 - comparison mixers
+- remove windows || make it work
