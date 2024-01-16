@@ -4,7 +4,7 @@
 
 - Debora: Learn Cmake; find optimazires that use Cmake instead of makefile (maybe)
 - Paul: learn Cmake; tranfer qaoa python in c; check instances for gate count (qtg vs rasmus)
-- Lennart: redo the makefile as Cmake
+- Lennart: Put cmbcount in src folder, editing the makefile accordingly
 - Soren: redo the makefile as Cmake
 
 ## FUTURE TODOS
