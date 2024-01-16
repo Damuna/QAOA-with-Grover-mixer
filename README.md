@@ -2,18 +2,13 @@
 
 ## TODO:
 
-- Debora:
-- Paul: tranfer qaoa python in c
-- Lennart:
-- Soren: 
+- Debora: Learn Cmake; find optimazires that use Cmake instead of makefile (maybe)
+- Paul: learn Cmake; tranfer qaoa python in c; check instances for gate count (qtg vs rasmus)
+- Lennart: redo the makefile as Cmake
+- Soren: redo the makefile as Cmake
 
 ## FUTURE TODOS
 
-- Optimizers and combine
-- go from 0 capacity to full and see what it is better (change gate count)
-- comparison mixers
-
-- add optimizers as git submodules
-- find optimazires that use Cmake instead of makefile (maybe)
-- redo the makefile as Cmake
-- check instances for gate count (qtg vs rasmus)
+- comparison mixers 
+- add optimizers as git submodules (next time together)
+  
