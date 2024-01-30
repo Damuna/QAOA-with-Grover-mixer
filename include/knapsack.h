@@ -14,8 +14,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <math.h>
-#include <gmp.h>
-#include <gsl/gsl_rng.h>
+#include "intarray.h"
 #include "syslinks.h"
 
 /* 
@@ -79,8 +78,8 @@ typedef struct knapsack {
 /*
  * Struct:              path_t
  * ---------------------------
- * Description:         This struct represents a path with its remaining cost
- *                      and total profit.
+ * Description:         This struct represents a path (a complete assignment of the items)
+                        with its remaining cost and total profit.
  * Contents:
  *      remain_cost:    Remaining cost of the path.
  *      tot_profit:     Total profit of the path.
@@ -89,7 +88,7 @@ typedef struct knapsack {
 typedef struct path {
     num_t remain_cost;
     num_t tot_profit;
-    mpz_t vector;
+    array_t vector;
 } path_t;
 
 typedef enum sort {
@@ -446,7 +445,7 @@ void apply_int_greedy(knapsack_t*);
  *                  should be translated into a bit string.
  *      parameter2: Bit string which should carry the current item assignment.
  */
-void bit_rep(const knapsack_t*, mpz_t);
+void bit_rep(const knapsack_t*, array_t);
 
 /*
  * Function:    path_rep

@@ -4,11 +4,7 @@
  * =============================================================================
  */
 
-#if defined(_WIN32) || defined(_WIN64)
-    #include "..\include\stategen.h"
-#else
-    #include "../include/stategen.h"
-#endif
+#include "stategen.h"
 
 /* 
  * =============================================================================
@@ -47,13 +43,13 @@
 double
 //remove single and default
 branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
-            mpz_t cur_sol) {
+            array_t cur_sol) {
 
     if (left) {
-        return (1. + (1 - mpz_tstbit(cur_sol, i)) * bias) \
+        return (1. + (1 - sw_tstbit(cur_sol, i)) * bias) \
                         / (bias + 2);
     } else {
-        return (1. + mpz_tstbit(cur_sol, i) * bias) \
+        return (1. + sw_tstbit(cur_sol, i) * bias) \
                         / (bias + 2);
         }
 
@@ -67,7 +63,7 @@ branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
 
 node_t*
 qtg(const knapsack_t* k, num_t exact, size_t bias, \
-    mpz_t cur_sol, size_t* num_states) {
+    array_t cur_sol, size_t* num_states) {
     
 	*num_states = 1; /* start from the root */
     size_t a = 0; /* start from leftmost node */
@@ -75,7 +71,7 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
     node_t* parent = malloc(sizeof(node_t));
     parent->path.remain_cost = k->capacity;
     parent->path.tot_profit = 0;
-    mpz_init(parent->path.vector);
+    sw_init(parent->path.vector);
     parent->prob = 1.;
     
     for (bit_t i = 0; i < k->size; a = 0, ++i) { /* start from leftmost node */
@@ -92,8 +88,8 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
                 /* item cannot be included, thus no branching */
                 child[a].path.remain_cost = parent[j].path.remain_cost;
                 child[a].path.tot_profit = parent[j].path.tot_profit;
-                mpz_init(child[a].path.vector);
-                mpz_set(child[a].path.vector, parent[j].path.vector);
+                sw_init(child[a].path.vector);
+                sw_set(child[a].path.vector, parent[j].path.vector);
                 child[a].prob = parent[j].prob;
                 // printf("----------------\n");
                 // printf("Node info:\n");
@@ -111,8 +107,8 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             /* remaining cost, total profit, and vector do not change */
             child[a].path.remain_cost = parent[j].path.remain_cost;
             child[a].path.tot_profit = parent[j].path.tot_profit;
-            mpz_init(child[a].path.vector);
-            mpz_set(child[a].path.vector, parent[j].path.vector);
+            sw_init(child[a].path.vector);
+            sw_set(child[a].path.vector, parent[j].path.vector);
             /* update probability, then increase child index */
             child[a].prob = parent[j].prob * branch_prob(k, i, bias, \
                                                 TRUE, cur_sol);
@@ -133,9 +129,9 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             child[a].path.tot_profit = k->items[i].profit \
                                        + parent[j].path.tot_profit;
             /* include item: set the corresponding bit to 1 */
-            mpz_init(child[a].path.vector);
-            mpz_set(child[a].path.vector, parent[j].path.vector);
-            mpz_setbit(child[a].path.vector, i);
+            sw_init(child[a].path.vector);
+            sw_set(child[a].path.vector, parent[j].path.vector);
+            sw_setbit(child[a].path.vector, i);
             
             /* update probability, then increase child index */
             child[a].prob = parent[j].prob * branch_prob(k, i, \
@@ -160,7 +156,7 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
         // printf("DONE WITH LAYER\n");
         // printf("---------------------------------\n");
     }
-    /* final layer is comprised of all feasible paths above threshold */
+    /* final layer comprises all feasible paths above threshold */
     // printf("Number of states after QTG: %zu\n", *num_states);
     return parent;
 }

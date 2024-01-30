@@ -1,5 +1,5 @@
-#ifndef QTG_H
-#define QTG_H
+#ifndef QTGCOUNT_H
+#define QTGCOUNT_H
 
 /* 
  * =============================================================================

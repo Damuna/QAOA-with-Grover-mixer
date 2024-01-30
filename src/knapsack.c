@@ -4,11 +4,7 @@
  * =============================================================================
  */
 
-#if defined(_WIN32) || defined(_WIN64)
-    #include "..\include\knapsack.h"
-#else
-    #include "../include/knapsack.h"
-#endif
+#include "knapsack.h"
 
 /* 
  * =============================================================================
@@ -137,7 +133,7 @@ create_item(num_t cost, num_t profit) {
 
 void
 free_path(path_t* path) {
-    mpz_clear(path->vector);
+    sw_clear(path->vector);
     free(path);
 }
 
@@ -474,12 +470,12 @@ apply_int_greedy(knapsack_t* k) {
  */
 
 void
-bit_rep(const knapsack_t* k, mpz_t bit_string) {
+bit_rep(const knapsack_t* k, array_t bit_string) {
     for(bit_t i = 0; i < k->size; ++i) {
         if (k->items[i].included) {
-        mpz_setbit(bit_string, i);
+        sw_setbit(bit_string, i);
         } else {
-            mpz_clrbit(bit_string, i);
+            sw_clrbit(bit_string, i);
         }
     }
 }
@@ -489,7 +485,7 @@ path_rep(const knapsack_t* k) {
     path_t* path = malloc(sizeof(path_t));
     path->remain_cost = k->remain_cost;
     path->tot_profit = k->tot_profit;
-    mpz_init(path->vector);
+    sw_init(path->vector, k->size);
     bit_rep(k, path->vector);
     return path;
 }

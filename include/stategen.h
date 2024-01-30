@@ -7,7 +7,7 @@
  * =============================================================================
  */
 
-#include "combowrp.h"
+#include "knapsack.h"
 
 /* 
  * =============================================================================
@@ -32,35 +32,14 @@ extern "C" {
  * Contents:
  *      path:   Partial path associated with the node. Items of unexplored
  *              layers are conventionally not set.
- *      ub:     Upper bound on the optimal total profit atainable in the
- *              subtree originating from this node.
  *      prob:   Probability of traversing this node.
  */
+//ub to be removed
 typedef struct node {
     path_t path;
-    num_t ub;
     double prob;
 } node_t;
 
-typedef enum branch {
-    COMPARE,
-    SINGLE,
-} branch_t;
-
-/* 
- * =============================================================================
- *                            enum names
- * =============================================================================
- */
-
-/*
- * Function:    get_branch_name
- * ----------------------------
- * Description: This function returns a branching method's name as a string.
- * Parameter:   Branching method.
- * Returns:     Branching method's name as a string.
- */
-const char* get_branch_name(branch_t);
 
 /* 
  * =============================================================================
@@ -87,11 +66,10 @@ void free_nodes(node_t*, size_t);
  *      parameter2: Current item/layer at which the branching happens.
  *      parameter3: Bias towards certain branch.
  *      parameter4: Whether left or right subtree is considered.
- *      parameter5: Method that should be used for branching.
- *      parameter6: Bit string representation of current optimal path.
+ *      parameter5: Bit string representation of current optimal path.
  * Returns:         Branching method's name as a string.
  */
-double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, branch_t, mpz_t);
+double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, array_t);
 
 /* 
  * =============================================================================
@@ -123,17 +101,16 @@ double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, branch_t, mpz_t);
  *                  still assigning them the correct probabilities.
  * Parameters:
  *      parameter1: Pointer to knapsack whose decision tree should be traversed.
- *      parameter2: Threshold for the path consideration.
- *      parameter3: Exact solution of the given knapsack instance.
- *      parameter4: Bias towards certain branch.
- *      parameter5: Method that should be used for branching.
- *      parameter6: Bit string representation of current optimal path.
- *      parameter7: Pointer to states counter; will be updated.
+ *      parameter2: Exact solution of the given knapsack instance.
+ *      parameter3: Bias towards certain branch.
+ *      parameter4: Method that should be used for branching.
+ *      parameter5: Bit string representation of current optimal path.
+ *      parameter6: Pointer to states counter; will be updated.
  * Returns:         Array of paths, together with their sampling probabilities,
  *                  whose total profit lie above the specified threshold.  
  * Side Effect:     Allocates dynamically; pointer should eventually be freed. 
  */
-node_t* qtg(const knapsack_t*, num_t, num_t, size_t, branch_t, mpz_t, size_t*);
+node_t* qtg(const knapsack_t*, num_t, size_t, array_t, size_t*);
 
 #ifdef __cplusplus
 }

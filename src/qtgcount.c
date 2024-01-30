@@ -4,11 +4,7 @@
  * =============================================================================
  */
 
-#if defined(_WIN32) || defined(_WIN64)
-    #include "..\include\qtgcount.h"
-#else
-    #include "../include/qtgcount.h"
-#endif
+#include "qtgcount.h"
 
 /* 
  * =============================================================================
