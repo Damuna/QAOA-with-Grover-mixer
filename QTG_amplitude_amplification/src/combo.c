@@ -49,12 +49,13 @@
 /* header file included */
 #if defined(_WIN32) || defined(_WIN64)
     #include "..\include\combo.h"
+    #include <windows.h>
 #else
     #include "../include/combo.h"
+    #include <time.h>
 #endif
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
@@ -95,7 +96,7 @@
 				 type declarations
    ====================================================================== */
 
-typedef int           boolean; /* logical variable         */
+typedef int           bool; /* logical variable         */
 typedef int           ntype;   /* number of states/items   */
 typedef long          itype;   /* item profits and weights */
 typedef long          stype;   /* sum of profit or weight  */
@@ -160,7 +161,7 @@ typedef struct { /* all info for solving separated problem */
   /* array of items (fullsol = TRUE), or as last changes in dynamic     */
   /* programming enumeration (fullsol = FALSE) See description of partset */
 
-  boolean  fullsol;       /* which representation of solution */
+  bool  fullsol;       /* which representation of solution */
   item     *fsol;         /* first item in opt solution (fullsol=FALSE) */
   item     *lsol;         /* last item in opt solution (fullsol=FALSE) */
   item     *ffull;        /* start of item array (fullsol=TRUE) */
@@ -177,8 +178,8 @@ typedef struct { /* all info for solving separated problem */
   interval *intv1, *intv2;
   interval *intv1b, *intv2b;
 
-  boolean relx;
-  boolean master;
+  bool relx;
+  bool master;
   int coresize;
 } allinfo;
 
@@ -205,7 +206,7 @@ long dynheur;
    ====================================================================== */
 
 stype combo(item *f, item *l, stype c, stype lb, stype ub,
-            boolean def, boolean relx);
+            bool def, bool relx);
 
 
 /* ======================================================================
@@ -241,7 +242,32 @@ static void error(char *str, ...)
 #define _POSIX_SOURCE         /* to read <unistd.h> on digital UNIX */
 #define _INCLUDE_POSIX_SOURCE /* to read <unistd.h> on HP-UX */
 #include <unistd.h>           /* define the constant _SC_CLK_TCK */
-#include <sys/times.h>        /* timing routines */
+
+#if defined(_WIN32) || !defined(_WIN64)
+
+void give_time(long *time) {
+  FILETIME createTime, exitTime, kernelTime, userTime;
+
+  if (GetProcessTimes(GetCurrentProcess(), &createTime, &exitTime, &kernelTime, &userTime)) {
+      ULARGE_INTEGER kernelTimeValue, userTimeValue;
+
+      kernelTimeValue.HighPart = kernelTime.dwHighDateTime;
+      kernelTimeValue.LowPart = kernelTime.dwLowDateTime;
+
+      userTimeValue.HighPart = userTime.dwHighDateTime;
+      userTimeValue.LowPart = userTime.dwLowDateTime;
+
+      // Convert the CPU time to milliseconds
+      *time = (long)((kernelTimeValue.QuadPart + userTimeValue.QuadPart) / 10000);
+  } else {
+      // Handle error
+      *time = -1;
+  }
+}
+
+#else
+
+#include "<sys/time.h>" /* timing routines */
 
 void give_time(long *time)
 { /* return the number of milliseconds used */
@@ -251,6 +277,8 @@ void give_time(long *time)
   t1 = (double) (timeend.tms_utime) / sysconf(_SC_CLK_TCK);
   *time = t1 * 1000;
 }
+
+#endif      
 
 
 /* ======================================================================
@@ -586,7 +614,7 @@ static void sursort(item *f, item *l, itype sur, stype c,
                                   haschance
    ====================================================================== */
 
-static boolean haschance(allinfo *a, item *i, int side)
+static bool haschance(allinfo *a, item *i, int side)
 {
   register itype p, w;
   register state *j, *m;
@@ -740,7 +768,7 @@ static void solvesur(allinfo *a, item *f, item *l, stype minsur, stype maxsur,
   register stype ps, csur;
   register ntype no;
   stype sur, u, z1;
-  boolean feasible;
+  bool feasible;
  
   /* find optimal surrogate multiplier, and update ub */
   surbin(f, l, minsur, maxsur, a->c, a->dantzig, card, &sur, &u);
@@ -915,7 +943,7 @@ static state *findvect(stype ws, state *f, state *l)
 				  expandcore
    ====================================================================== */
 
-static void expandcore(allinfo *a, boolean *atstart, boolean *atend)
+static void expandcore(allinfo *a, bool *atstart, bool *atend)
 {
   item *f, *l;
 
@@ -961,7 +989,7 @@ static void reduceset(allinfo *a)
   register stype c, z;
   register prod p, w;
   state *v, *r1, *rm;
-  boolean atstart, atend;
+  bool atstart, atend;
 
   if (a->d.size == 0) return;
 
@@ -1219,7 +1247,7 @@ static void findbreak(allinfo *a)
    ====================================================================== */
 
 stype combo(item *f, item *l, stype c, stype lb, stype ub,
-            boolean def, boolean relx)
+            bool def, bool relx)
 /* f,l : first, last item                                               */
 /* c   : capacity of knapsack                                           */
 /* lb  : lower bound. Solution vector is only updated if better z found */
@@ -1230,7 +1258,7 @@ stype combo(item *f, item *l, stype c, stype lb, stype ub,
 {
   allinfo a;
   interval *inttab;
-  boolean heur, rudi;
+  bool heur, rudi;
 
   if ((ub != 0) && (lb == ub)) return lb;
 

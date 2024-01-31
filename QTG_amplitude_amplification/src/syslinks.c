@@ -9,6 +9,7 @@
 #include <windows.h>
 #include <direct.h>
 #include <intrin.h>
+#include <psapi.h>
 
 /* 
  * =============================================================================

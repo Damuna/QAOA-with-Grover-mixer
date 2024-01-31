@@ -23,7 +23,7 @@ extern "C" {
 				 type declarations
    ====================================================================== */
 
-typedef int           boolean; /* logical variable         */
+typedef int           bool;    /* logical variable         */
 typedef int           ntype;   /* number of states/items   */
 typedef long          itype;   /* item profits and weights */
 typedef long          stype;   /* sum of profit or weight  */
@@ -32,7 +32,7 @@ typedef long          stype;   /* sum of profit or weight  */
 typedef struct {
   itype   p;              /* profit                  */
   itype   w;              /* weight                  */
-  boolean x;              /* solution variable       */
+  bool x;              /* solution variable       */
 } item;
 
 /* ======================================================================
@@ -40,7 +40,7 @@ typedef struct {
    ====================================================================== */
 
 stype combo(item *f, item *l, stype c, stype lb, stype ub,
-                   boolean def, boolean relx);
+                   bool def, bool relx);
 /* f,l : first, last item                                               */
 /* c   : capacity of knapsack                                           */
 /* lb  : lower bound. Solution vector is only updated if better z found */
