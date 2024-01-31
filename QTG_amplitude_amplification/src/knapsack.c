@@ -137,7 +137,7 @@ create_item(num_t cost, num_t profit) {
 
 void
 free_path(path_t* path) {
-    mpz_clear(path->vector);
+    mpz_clear(path->choice_profit.vector);
     free(path);
 }
 
@@ -488,9 +488,9 @@ path_t*
 path_rep(const knapsack_t* k) {
     path_t* path = malloc(sizeof(path_t));
     path->remain_cost = k->remain_cost;
-    path->tot_profit = k->tot_profit;
-    mpz_init(path->vector);
-    bit_rep(k, path->vector);
+    path->choice_profit.tot_profit = k->tot_profit;
+    mpz_init(path->choice_profit.vector);
+    bit_rep(k, path->choice_profit.vector);
     return path;
 }
 

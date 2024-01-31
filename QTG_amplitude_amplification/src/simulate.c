@@ -79,10 +79,10 @@ ampl_amp(const node_t nodes[], size_t num_states, size_t calls, \
     } else {
         /* a state (path) with improved profit was measured */
         path_t* result = malloc(sizeof(path_t));
-        result->tot_profit = nodes[measurement].path.tot_profit;
+        result->choice_profit.tot_profit = nodes[measurement].path.choice_profit.tot_profit;
         result->remain_cost = nodes[measurement].path.remain_cost;
-        mpz_init(result->vector);
-        mpz_set(result->vector, nodes[measurement].path.vector);
+        mpz_init(result->choice_profit.vector);
+        mpz_set(result->choice_profit.vector, nodes[measurement].path.choice_profit.vector);
         return result;
     }
 }
@@ -182,8 +182,8 @@ q_max_search(knapsack_t* k, size_t bias, branch_t method, size_t maxiter, \
          * The application of the QTG is simulated. Only states (paths) with 
          * total profit above the threshold are stored in cur_nodes.
          */
-        cur_nodes = qtg(k, cur_sol->tot_profit, exact, bias, method, \
-                        cur_sol->vector, &num_states);
+        cur_nodes = qtg(k, cur_sol->choice_profit.tot_profit, exact, bias, method, \
+                        cur_sol->choice_profit.vector, &num_states);
         /*
          * QSearch is executed on the nodes created by the QTG. If this yields a
          * better solution, cur_sol (carrying the current threshold) is updated.
@@ -207,13 +207,13 @@ q_max_search(knapsack_t* k, size_t bias, branch_t method, size_t maxiter, \
                                   TOFFOLI, TRUE);
         /* adding the cycles for implementing the phase oracle */
         res.cycle_count += iter * MIN(cycle_count_comp(profit_qubits, \
-                               cur_sol->tot_profit + 1, TOFFOLI, TRUE, FALSE), \
+                               cur_sol->choice_profit.tot_profit + 1, TOFFOLI, TRUE, FALSE), \
                                cycle_count_comp(profit_qubits, \
-                               cur_sol->tot_profit + 1, TOFFOLI, FALSE, FALSE));
+                               cur_sol->choice_profit.tot_profit + 1, TOFFOLI, FALSE, FALSE));
         res.cycle_count_decomp += iter * MIN(cycle_count_comp(profit_qubits, \
-                                      cur_sol->tot_profit + 1, TOFFOLI, TRUE, \
+                                      cur_sol->choice_profit.tot_profit + 1, TOFFOLI, TRUE, \
                                       TRUE), cycle_count_comp(profit_qubits, \
-                                      cur_sol->tot_profit + 1, TOFFOLI, FALSE, \
+                                      cur_sol->choice_profit.tot_profit + 1, TOFFOLI, FALSE, \
                                       TRUE));
         /* updating the gate count according to the same rules */
         res.gate_count += (rounds + 2 * iter) * qtg_gates;
@@ -222,13 +222,13 @@ q_max_search(knapsack_t* k, size_t bias, branch_t method, size_t maxiter, \
         res.gate_count_decomp += iter * gate_count_mc(k->size - 1, TOFFOLI, \
                                  TRUE);
         res.gate_count += iter * MIN(gate_count_comp(profit_qubits, \
-                              cur_sol->tot_profit, TOFFOLI, TRUE, TRUE),
+                              cur_sol->choice_profit.tot_profit, TOFFOLI, TRUE, TRUE),
                               gate_count_comp(profit_qubits, \
-                              cur_sol->tot_profit, TOFFOLI, FALSE, TRUE));
+                              cur_sol->choice_profit.tot_profit, TOFFOLI, FALSE, TRUE));
         res.gate_count_decomp += iter * MIN(gate_count_comp(profit_qubits, \
-                                     cur_sol->tot_profit, TOFFOLI, TRUE, \
+                                     cur_sol->choice_profit.tot_profit, TOFFOLI, TRUE, \
                                      TRUE), gate_count_comp(profit_qubits, \
-                                     cur_sol->tot_profit, TOFFOLI, FALSE, \
+                                     cur_sol->choice_profit.tot_profit, TOFFOLI, FALSE, \
                                      TRUE));
 
         if (cur_path != NULL) {              
@@ -247,7 +247,7 @@ q_max_search(knapsack_t* k, size_t bias, branch_t method, size_t maxiter, \
                     (uint64_t)res.cycle_count, (uint64_t)res.gate_count, \
                     (uint64_t)res.cycle_count_decomp, \
                     (uint64_t)res.gate_count_decomp, \
-                    (cur_sol->tot_profit == exact) ? 1 : 0);
+                    (cur_sol->choice_profit.tot_profit == exact) ? 1 : 0);
             fclose(stream);
             return cur_sol;
         }
