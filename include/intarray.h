@@ -37,7 +37,7 @@ typedef struct {
         (A).part[WHICHPART] &= (~(1ULL << WHICHBIT)); \
     } while (0)
 
-#define sw_copy(A, B) \
+#define sw_set(A, B) \
     do { \
         sw_init((A), (B).bits); \
         for (size_t LOOPINDEX = 0; LOOPINDEX < (B).bits; ++LOOPINDEX) { \

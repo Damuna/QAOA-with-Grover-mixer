@@ -28,7 +28,7 @@
  void
  free_nodes(node_t nodes[], size_t num_nodes) {
     for (size_t i = 0; i < num_nodes; ++i) {
-        mpz_clear(nodes[i].path.vector);
+        sw_clear(nodes[i].path.vector);
     }
     free(nodes);
  }
@@ -71,7 +71,7 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
     node_t* parent = malloc(sizeof(node_t));
     parent->path.remain_cost = k->capacity;
     parent->path.tot_profit = 0;
-    sw_init(parent->path.vector);
+    sw_init(parent->path.vector, k->size);
     parent->prob = 1.;
     
     for (bit_t i = 0; i < k->size; a = 0, ++i) { /* start from leftmost node */
@@ -88,7 +88,7 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
                 /* item cannot be included, thus no branching */
                 child[a].path.remain_cost = parent[j].path.remain_cost;
                 child[a].path.tot_profit = parent[j].path.tot_profit;
-                sw_init(child[a].path.vector);
+                sw_init(child[a].path.vector, k->size);
                 sw_set(child[a].path.vector, parent[j].path.vector);
                 child[a].prob = parent[j].prob;
                 // printf("----------------\n");
@@ -107,7 +107,7 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             /* remaining cost, total profit, and vector do not change */
             child[a].path.remain_cost = parent[j].path.remain_cost;
             child[a].path.tot_profit = parent[j].path.tot_profit;
-            sw_init(child[a].path.vector);
+            sw_init(child[a].path.vector, k->size);
             sw_set(child[a].path.vector, parent[j].path.vector);
             /* update probability, then increase child index */
             child[a].prob = parent[j].prob * branch_prob(k, i, bias, \
@@ -129,7 +129,7 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             child[a].path.tot_profit = k->items[i].profit \
                                        + parent[j].path.tot_profit;
             /* include item: set the corresponding bit to 1 */
-            sw_init(child[a].path.vector);
+            sw_init(child[a].path.vector, k->size);
             sw_set(child[a].path.vector, parent[j].path.vector);
             sw_setbit(child[a].path.vector, i);
             
