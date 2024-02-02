@@ -28,7 +28,7 @@
  void
  free_nodes(node_t nodes[], size_t num_nodes) {
     for (size_t i = 0; i < num_nodes; ++i) {
-        sw_clear(nodes[i].path.vector);
+        sw_clear(nodes[i].path.choice_profit.vector);
     }
     free(nodes);
  }
@@ -62,7 +62,7 @@ branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
  */
 
 node_t*
-qtg(const knapsack_t* k, num_t exact, size_t bias, \
+qtg(const knapsack_t* k, size_t bias, \
     array_t cur_sol, size_t* num_states) {
     
 	*num_states = 1; /* start from the root */
@@ -70,8 +70,8 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
     /* initialize root node as single-element node_t array */
     node_t* parent = malloc(sizeof(node_t));
     parent->path.remain_cost = k->capacity;
-    parent->path.tot_profit = 0;
-    sw_init(parent->path.vector, k->size);
+    parent->path.choice_profit.tot_profit = 0;
+    sw_init(parent->path.choice_profit.vector, k->size);
     parent->prob = 1.;
     
     for (bit_t i = 0; i < k->size; a = 0, ++i) { /* start from leftmost node */
@@ -87,9 +87,9 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             if (parent[j].path.remain_cost < k->items[i].cost) {
                 /* item cannot be included, thus no branching */
                 child[a].path.remain_cost = parent[j].path.remain_cost;
-                child[a].path.tot_profit = parent[j].path.tot_profit;
-                sw_init(child[a].path.vector, k->size);
-                sw_set(child[a].path.vector, parent[j].path.vector);
+                child[a].path.choice_profit.tot_profit = parent[j].path.choice_profit.tot_profit;
+                sw_init(child[a].path.choice_profit.vector, k->size);
+                sw_set(child[a].path.choice_profit.vector, parent[j].path.choice_profit.vector);
                 child[a].prob = parent[j].prob;
                 // printf("----------------\n");
                 // printf("Node info:\n");
@@ -106,9 +106,9 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             //LEFT BRANCH
             /* remaining cost, total profit, and vector do not change */
             child[a].path.remain_cost = parent[j].path.remain_cost;
-            child[a].path.tot_profit = parent[j].path.tot_profit;
-            sw_init(child[a].path.vector, k->size);
-            sw_set(child[a].path.vector, parent[j].path.vector);
+            child[a].path.choice_profit.tot_profit = parent[j].path.choice_profit.tot_profit;
+            sw_init(child[a].path.choice_profit.vector, k->size);
+            sw_set(child[a].path.choice_profit.vector, parent[j].path.choice_profit.vector);
             /* update probability, then increase child index */
             child[a].prob = parent[j].prob * branch_prob(k, i, bias, \
                                                 TRUE, cur_sol);
@@ -126,12 +126,12 @@ qtg(const knapsack_t* k, num_t exact, size_t bias, \
             child[a].path.remain_cost = parent[j].path.remain_cost \
                                         - k->items[i].cost;
             /* update total profit */
-            child[a].path.tot_profit = k->items[i].profit \
-                                       + parent[j].path.tot_profit;
+            child[a].path.choice_profit.tot_profit = k->items[i].profit \
+                                       + parent[j].path.choice_profit.tot_profit;
             /* include item: set the corresponding bit to 1 */
-            sw_init(child[a].path.vector, k->size);
-            sw_set(child[a].path.vector, parent[j].path.vector);
-            sw_setbit(child[a].path.vector, i);
+            sw_init(child[a].path.choice_profit.vector, k->size);
+            sw_set(child[a].path.choice_profit.vector, parent[j].path.choice_profit.vector);
+            sw_setbit(child[a].path.choice_profit.vector, i);
             
             /* update probability, then increase child index */
             child[a].prob = parent[j].prob * branch_prob(k, i, \
