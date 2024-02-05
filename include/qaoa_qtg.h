@@ -9,8 +9,8 @@
 
 #include "stategen.h"
 #include <complex.h>
-#include <time.h>
 #include <nlopt.h>
+#include <time.h>
 
 /*
  * =============================================================================
@@ -281,7 +281,7 @@ double angles_to_value(double*);
  * Side Effect:     Frees the memory allocated in the QTG after transforming it to the more memory-efficient shape.
  *                  Frees the memory allocated earlier for the more memory-efficient QTG output.
  */
-qaoa_result_t qaoa_qtg(knapsack_t*, num_t, size_t, size_t);
+qaoa_result_t qaoa_qtg(knapsack_t*, num_t, size_t, size_t, enum OptimizationType);
 
 
 

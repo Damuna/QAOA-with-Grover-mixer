@@ -1,0 +1,134 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"extern/nlopt/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 179,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 253,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 305,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 389,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 407,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib/pkgconfig",
+			"paths" : 
+			[
+				"cmake-build-debug/extern/nlopt/nlopt.pc"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				"extern/nlopt/src/api/nlopt.h",
+				"cmake-build-debug/extern/nlopt/nlopt.hpp"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"extern/nlopt/libnlopt.so.0.11.1",
+				"extern/nlopt/libnlopt.so.0"
+			],
+			"targetId" : "nlopt::@5e26cef8e9aabe5821de",
+			"targetIndex" : 2,
+			"targetInstallNamelink" : "skip",
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"extern/nlopt/libnlopt.so"
+			],
+			"targetId" : "nlopt::@5e26cef8e9aabe5821de",
+			"targetIndex" : 2,
+			"targetInstallNamelink" : "only",
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Development",
+			"destination" : "lib/cmake/nlopt",
+			"exportName" : "NLoptLibraryDepends",
+			"exportTargets" : 
+			[
+				{
+					"id" : "nlopt::@5e26cef8e9aabe5821de",
+					"index" : 2
+				}
+			],
+			"paths" : 
+			[
+				"extern/nlopt/CMakeFiles/Export/f1922ff44cc4dc88f95ca1075600a5b3/NLoptLibraryDepends.cmake"
+			],
+			"type" : "export"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Development",
+			"destination" : "lib/cmake/nlopt",
+			"paths" : 
+			[
+				"cmake-build-debug/extern/nlopt/NLoptConfig.cmake",
+				"cmake-build-debug/extern/nlopt/NLoptConfigVersion.cmake"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "extern/nlopt",
+		"source" : "extern/nlopt"
+	}
+}

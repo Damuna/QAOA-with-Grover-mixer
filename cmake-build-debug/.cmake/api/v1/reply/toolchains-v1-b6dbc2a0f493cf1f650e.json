@@ -42,6 +42,14 @@
 				"c",
 				"m"
 			]
+		},
+		{
+			"compiler" : 
+			{
+				"implicit" : {},
+				"path" : "/bin/c++"
+			},
+			"language" : "CXX"
 		}
 	],
 	"version" : 

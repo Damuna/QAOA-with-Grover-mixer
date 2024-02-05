@@ -26,19 +26,19 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 24,
+				"line" : 26,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 28,
+				"line" : 30,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 27,
+				"line" : 29,
 				"parent" : 0
 			}
 		]
@@ -52,11 +52,26 @@
 					"fragment" : "-g -fdiagnostics-color=always"
 				}
 			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "NLOPT_DLL"
+				}
+			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 3,
 					"path" : "/home/damuna/Documents/QAOA-with-Grover-mixer/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/src/api"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/extern/nlopt"
 				}
 			],
 			"language" : "C",
@@ -78,6 +93,13 @@
 			]
 		}
 	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "nlopt::@5e26cef8e9aabe5821de"
+		}
+	],
 	"id" : "main::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
@@ -90,6 +112,15 @@
 			{
 				"fragment" : "",
 				"role" : "flags"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/extern/nlopt",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "extern/nlopt/libnlopt.so.0.11.1",
+				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,

@@ -191,7 +191,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
 
     switch (optimizationType) {
         case BFGS:
-            lbfgs()
+            //
             break;
         case NELDER_MEAD:
             break;
