@@ -4,7 +4,6 @@
  * =============================================================================
  */
 
-#include <time.h>
 
 #include "qaoa_qtg.h"
 
@@ -163,7 +162,7 @@ angles_to_value(double *angles) {
  */
 
 qaoa_result_t
-qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples) {
+qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum OptimizationType optimizationType) {
 
     path_t* int_greedy_sol;
     node_t* qtg_nodes;
@@ -190,6 +189,15 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples) {
 
     // TODO Optimize angles via function angles_to_value here -> Negative optimization result is final qaoa result
 
+    switch (optimizationType) {
+        case BFGS:
+            lbfgs()
+            break;
+        case NELDER_MEAD:
+            break;
+        case POWELL:
+            break;
+    }
     // TODO Insert optimal angles into quasiadiabatic_evolution to obtain the final state based on optimal angles
     // TODO Call sample_for_probabilities with the final angle state to get a probability dictionary (mapping: profit <-> prob)
     // TODO -> Ask Lennart, Sören about better way instead of re-running the circuit-emulating function

@@ -21,7 +21,8 @@ endif()
 set(SRC ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 
-add_executable(main main.c ${SRC}/knapsack.c ${SRC}/stategen.c ${SRC}/syslinks.c)
+add_executable(main main.c ${SRC}/knapsack.c ${SRC}/stategen.c ${SRC}/syslinks.c
+        src/qaoa_qtg.c)
 
 target_include_directories(main PRIVATE ${INCLUDE})
 target_link_libraries(main m)

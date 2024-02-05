@@ -9,6 +9,8 @@
 
 #include "stategen.h"
 #include <complex.h>
+#include <time.h>
+#include <nlopt.h>
 
 /*
  * =============================================================================
@@ -88,6 +90,18 @@ typedef struct qaoa_result {
     approxratio_probability_t *approxratio_prob;
 } qaoa_result_t;
 
+/*
+ * enum:                OptimizationType
+ * ------------------------------------
+ * Description:         Choose the optimization that you want to use in qaoa
+ *
+ * Contents:            Three types of optimization considered
+ */
+enum OptimizationType {
+    BFGS,
+    NELDER_MEAD,
+    POWELL,
+};
 
 /*
  * =============================================================================
