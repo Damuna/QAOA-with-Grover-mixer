@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.27)
 project(QAOA-QTG C)
 
 set(CMAKE_C_STANDARD 17)
-
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     # Update submodules as needed
@@ -23,8 +22,7 @@ set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/nlopt)
 
-add_executable(main main.c ${SRC}/knapsack.c ${SRC}/stategen.c ${SRC}/syslinks.c
-        src/qaoa_qtg.c)
+add_executable(main main.c ${SRC}/knapsack.c ${SRC}/stategen.c ${SRC}/syslinks.c src/qaoa_qtg.c)
 
 target_include_directories(main PRIVATE ${INCLUDE})
 target_link_libraries(main PRIVATE nlopt m)
