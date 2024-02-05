@@ -22,6 +22,8 @@ set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/extern/nlopt)
 
+install(TARGETS nlopt)
+
 add_executable(main main.c ${SRC}/knapsack.c ${SRC}/stategen.c ${SRC}/syslinks.c src/qaoa_qtg.c)
 
 target_include_directories(main PRIVATE ${INCLUDE})
