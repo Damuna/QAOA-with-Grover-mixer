@@ -154,6 +154,18 @@ angles_to_value(double *angles) {
     return - exp_value;
 }
 
+double objective(unsigned n, const double *angles, double *grad, void *my_func_data) {
+    n = num_states;
+    metastate_amplitude_t *angle_state = quasiadiabatic_evolution(angles);
+    double exp_value = expectation_value(angle_state);
+    if (angle_state != NULL) {
+        free_metastates_amplitude(angle_state, num_states);
+    }
+    // grad is NULL bcs both Nelder Mead and Powell are derivative-free algorithms
+    return - exp_value;
+}
+
+
 
 /*
  * =============================================================================
@@ -194,6 +206,30 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
             //
             break;
         case NELDER_MEAD:
+            nlopt_opt opt;
+            opt = nlopt_create(NLOPT_LN_NELDERMEAD, num_states);
+
+            // Set your optimization parameters
+            nlopt_set_xtol_rel(opt, 1e-6);
+            void *f_data = NULL;
+            // Set the objective function
+            nlopt_set_min_objective(opt, objective,f_data);
+
+            // Set initial guess
+            double x[/* dimensionality */] = { /* initial values */ };
+
+            // Run the optimization
+            nlopt_result result = nlopt_optimize(opt, x, NULL);
+
+            // Check the result and print the optimized values
+            if (result < 0) {
+                printf("NLOpt failed with code %d\n", result);
+            } else {
+                printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL));
+            }
+
+            // Clean up
+            nlopt_destroy(opt);
             break;
         case POWELL:
             break;
