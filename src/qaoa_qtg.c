@@ -71,8 +71,19 @@ mixing_unitary(metastate_amplitude_t *angle_state, double beta) {
 
 metastate_amplitude_t*
 quasiadiabatic_evolution(double *angles) {
-    double *gamma_values = angles;
-    double *beta_values = angles + 1; // TODO: Check with print statement whether this works as expected
+    //Put the odd values of angles as gammas and the even ones as betas
+    double gamma_values[dpth];
+    size_t gamma_count = 0;
+    double beta_values[dpth];
+    size_t beta_count = 0;
+
+    for (size_t i = 0; i < 2*dpth; ++i) {
+        if ((i + 1) % 2) {  // if (i + 1) % 2 is nonzero, i + 1 is odd
+            gamma_values[gamma_count++] = angles[i];
+        } else {
+            beta_values[beta_count++] = angles[i];
+        }
+    }
 
     metastate_amplitude_t* angle_state = malloc(num_states * sizeof(metastate_amplitude_t));
     for (size_t idx = 0; idx < num_states; ++idx) {
@@ -165,7 +176,32 @@ double objective(unsigned n, const double *angles, double *grad, void *my_func_d
     return - exp_value;
 }
 
+double * nelder_mead(){
+    nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, num_states);
 
+    // Set your optimization parameters
+    nlopt_set_xtol_rel(opt, 1e-6);
+    void *f_data = NULL;
+    // Set the objective function
+    nlopt_set_min_objective(opt, objective,f_data);
+
+    // Set initial guess
+    double x[/* dimensionality */] = { /* initial values */ };
+
+    // Run the optimization
+    nlopt_result result = nlopt_optimize(opt, x, NULL);
+
+    // Check the result and print the optimized values
+    if (result < 0) {
+        printf("NLOpt failed with code %d\n", result);
+    } else {
+        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL));
+    }
+
+    // Clean up
+    nlopt_destroy(opt);
+    return x;
+}
 
 /*
  * =============================================================================
@@ -206,29 +242,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
             //
             break;
         case NELDER_MEAD:
-            nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, num_states);
 
-            // Set your optimization parameters
-            nlopt_set_xtol_rel(opt, 1e-6);
-            void *f_data = NULL;
-            // Set the objective function
-            nlopt_set_min_objective(opt, objective,f_data);
-
-            // Set initial guess
-            double x[/* dimensionality */] = { /* initial values */ };
-
-            // Run the optimization
-            nlopt_result result = nlopt_optimize(opt, x, NULL);
-
-            // Check the result and print the optimized values
-            if (result < 0) {
-                printf("NLOpt failed with code %d\n", result);
-            } else {
-                printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL));
-            }
-
-            // Clean up
-            nlopt_destroy(opt);
             break;
         case POWELL:
             break;
