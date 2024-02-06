@@ -165,6 +165,13 @@ angles_to_value(double *angles) {
     return - exp_value;
 }
 
+/*
+ * =============================================================================
+ *                            Optimization Functions
+ * =============================================================================
+ */
+
+
 double objective(unsigned n, const double *angles, double *grad, void *my_func_data) {
     n = num_states;
     metastate_amplitude_t *angle_state = quasiadiabatic_evolution(angles);
@@ -178,6 +185,36 @@ double objective(unsigned n, const double *angles, double *grad, void *my_func_d
 
 double * nelder_mead(){
     nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, 2 * dpth);
+
+    // Set your optimization parameters
+    nlopt_set_xtol_rel(opt, 1e-6);
+    void *f_data = NULL;
+    // Set the objective function
+    nlopt_set_min_objective(opt, objective, f_data);
+
+    // Set initial guess
+    // Set all gammas to 0 and betas to sum up to pi/2
+    double x[2 * dpth] ;
+    for (size_t i = 0; i < dpth; i++)
+        x[i] = (i + 1) % 2 ? 0 : M_PI / (2 * dpth);
+
+    // Run the optimization
+    nlopt_result result = nlopt_optimize(opt, x, NULL);
+
+    // Check the result and print the optimized values
+    if (result < 0) {
+        printf("NLOpt failed with code %d\n", result);
+    } else {
+        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL));
+    }
+
+    // Clean up
+    nlopt_destroy(opt);
+    return x;
+}
+
+double * powell(){
+    nlopt_opt opt = nlopt_create(NLOPT_LN_BOBYQA, 2 * dpth);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
@@ -249,6 +286,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
             opt_results = nelder_mead();
             break;
         case POWELL:
+            opt_results = powell();
             break;
     }
     // TODO Insert optimal angles into quasiadiabatic_evolution to obtain the final state based on optimal angles
