@@ -206,8 +206,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
             //
             break;
         case NELDER_MEAD:
-            nlopt_opt opt;
-            opt = nlopt_create(NLOPT_LN_NELDERMEAD, num_states);
+            nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, num_states);
 
             // Set your optimization parameters
             nlopt_set_xtol_rel(opt, 1e-6);
