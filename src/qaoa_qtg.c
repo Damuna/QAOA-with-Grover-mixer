@@ -71,29 +71,18 @@ mixing_unitary(metastate_amplitude_t *angle_state, double beta) {
 
 metastate_amplitude_t*
 quasiadiabatic_evolution(double *angles) {
-    //Put the odd values of angles as gammas and the even ones as betas
 
-    double gamma_values[dpth];
-    size_t gamma_count = 0;
-    double beta_values[dpth];
-    size_t beta_count = 0;
-
-    for (size_t i = 0; i < 2*dpth; ++i) {
-        if ((i + 1) % 2) {  // if (i + 1) % 2 is nonzero, i + 1 is odd
-            gamma_values[gamma_count++] = angles[i];
-        } else {
-            beta_values[beta_count++] = angles[i];
-        }
-    }
     metastate_amplitude_t* angle_state = malloc(num_states * sizeof(metastate_amplitude_t));
     for (size_t idx = 0; idx < num_states; ++idx) {
         angle_state[idx].choice_profit = qtg_output[idx].choice_profit;
         angle_state[idx].amplitude = qtg_output[idx].probability + 0.0 * I;
     }
-
+    //gamma: odd position in angles
+    //beta: even position in angles
+    
     for (int j = 0; j < dpth; ++j) {
-        phase_separation_unitary(angle_state, gamma_values[j]);
-        mixing_unitary(angle_state, beta_values[j]);
+        phase_separation_unitary(angle_state, angles[2 * j + 1]);
+        mixing_unitary(angle_state, angles[2 * j]);
     }
 
     return angle_state;
@@ -173,7 +162,6 @@ angles_to_value(double *angles) {
 
 
 double objective(unsigned n, const double *angles, double *grad, void *my_func_data) {
-    n = 2 * dpth;
     metastate_amplitude_t *angle_state = quasiadiabatic_evolution(angles);
     double exp_value = expectation_value(angle_state);
     if (angle_state != NULL) {
