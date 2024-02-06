@@ -2,8 +2,8 @@
 
 ## TODO:
 
-- Debora: Make a main file
-- Paul: Remove struct that holds probabilities as real values instead of complex amplitudes (no conversion needed), save exact probability vs approximation ratio to an external file for plotting in python
+- Debora: beta to zero, gamma (odd) to random
+- Paul: Remove struct that holds probabilities as real values instead of complex amplitudes (no conversion needed), save exact probability vs approximation ratio to an external file for plotting in python, minor changes to file
 - Lennart: 
 - Soren: add instances
 
