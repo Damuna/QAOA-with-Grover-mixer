@@ -162,19 +162,29 @@ double objective(unsigned n, const double *angles, double *grad, void *my_func_d
 }
 
 double * nelder_mead(){
+    double randomValue;
+    double x[2 * dpth] ;
+    void *f_data = NULL;
     nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, 2 * dpth);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
-    void *f_data = NULL;
+
     // Set the objective function
     nlopt_set_min_objective(opt, objective, f_data);
 
     // Set initial guess
-    // Set all gammas to 0 and betas to sum up to pi/2
-    double x[2 * dpth] ;
+    // Set all gammas to random and betas to 0
+
     for (size_t i = 0; i < dpth; i++)
-        x[i] = (i + 1) % 2 ? 0 : M_PI / (2 * dpth);
+        if((i + 1) % 2){
+            srand48(time(NULL));
+            randomValue = drand48() * 2.0 * M_PI;
+            x[i] = randomValue;
+            }
+        else{
+            x[i] = 0;
+        }
 
     // Run the optimization
     nlopt_result result = nlopt_optimize(opt, x, NULL);
@@ -192,19 +202,30 @@ double * nelder_mead(){
 }
 
 double * powell(){
+    double randomValue;
+    double x[2 * dpth] ;
+    void *f_data = NULL;
+
     nlopt_opt opt = nlopt_create(NLOPT_LN_BOBYQA, 2 * dpth);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
-    void *f_data = NULL;
+
     // Set the objective function
     nlopt_set_min_objective(opt, objective, f_data);
 
     // Set initial guess
-    // Set all gammas to 0 and betas to sum up to pi/2
-    double x[2 * dpth] ;
+    // Set all gammas to random and betas to 0
+
     for (size_t i = 0; i < dpth; i++)
-        x[i] = (i + 1) % 2 ? 0 : M_PI / (2 * dpth);
+        if((i + 1) % 2){
+            srand48(time(NULL));
+            randomValue = drand48() * 2.0 * M_PI;
+            x[i] = randomValue;
+        }
+        else{
+            x[i] = 0;
+        }
 
     // Run the optimization
     nlopt_result result = nlopt_optimize(opt, x, NULL);
