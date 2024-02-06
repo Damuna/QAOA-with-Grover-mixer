@@ -2,7 +2,7 @@
 
 ## TODO:
 
-- Debora: beta to zero, gamma (odd) to random
+- Debora: beta to zero, gamma (odd) to random, declare to header the functions
 - Paul: Remove struct that holds probabilities as real values instead of complex amplitudes (no conversion needed), save exact probability vs approximation ratio to an external file for plotting in python, minor changes to file
 - Lennart: 
 - Soren: add instances (parameters: name of classical optimizer, circuit depth and number of samples)
