@@ -79,7 +79,7 @@ quasiadiabatic_evolution(double *angles) {
     }
     //gamma: odd position in angles
     //beta: even position in angles
-    
+
     for (int j = 0; j < dpth; ++j) {
         phase_separation_unitary(angle_state, angles[2 * j + 1]);
         mixing_unitary(angle_state, angles[2 * j]);
@@ -142,16 +142,6 @@ expectation_value(metastate_amplitude_t *angle_state) {
         free_metastates_probability(probs_dict, num_states);
     }
     return expectation_value;
-}
-
-double
-angles_to_value(double *angles) {
-    metastate_amplitude_t *angle_state = quasiadiabatic_evolution(angles);
-    double exp_value = expectation_value(angle_state);
-    if (angle_state != NULL) {
-        free_metastates_amplitude(angle_state, num_states);
-    }
-    return - exp_value;
 }
 
 /*
