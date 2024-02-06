@@ -72,6 +72,7 @@ mixing_unitary(metastate_amplitude_t *angle_state, double beta) {
 metastate_amplitude_t*
 quasiadiabatic_evolution(double *angles) {
     //Put the odd values of angles as gammas and the even ones as betas
+
     double gamma_values[dpth];
     size_t gamma_count = 0;
     double beta_values[dpth];
@@ -84,7 +85,6 @@ quasiadiabatic_evolution(double *angles) {
             beta_values[beta_count++] = angles[i];
         }
     }
-
     metastate_amplitude_t* angle_state = malloc(num_states * sizeof(metastate_amplitude_t));
     for (size_t idx = 0; idx < num_states; ++idx) {
         angle_state[idx].choice_profit = qtg_output[idx].choice_profit;
@@ -177,16 +177,19 @@ double objective(unsigned n, const double *angles, double *grad, void *my_func_d
 }
 
 double * nelder_mead(){
-    nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, num_states);
+    nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, 2 * dpth);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
     void *f_data = NULL;
     // Set the objective function
-    nlopt_set_min_objective(opt, objective,f_data);
+    nlopt_set_min_objective(opt, objective, f_data);
 
     // Set initial guess
-    double x[/* dimensionality */] = { /* initial values */ };
+    // Set all gammas to 0 and betas to sum up to pi/2
+    double x[2 * dpth] ;
+    for (size_t i = 0; i < dpth; i++)
+        x[i] = (i + 1) % 2 ? 0 : M_PI / (2 * dpth);
 
     // Run the optimization
     nlopt_result result = nlopt_optimize(opt, x, NULL);
@@ -214,6 +217,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
 
     path_t* int_greedy_sol;
     node_t* qtg_nodes;
+    double * results;
 
     dpth = depth;
     num_smpls = num_samples;
@@ -242,7 +246,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
             //
             break;
         case NELDER_MEAD:
-
+            results = nelder_mead();
             break;
         case POWELL:
             break;
