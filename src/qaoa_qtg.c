@@ -217,7 +217,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
 
     path_t* int_greedy_sol;
     node_t* qtg_nodes;
-    double * results;
+    double * opt_results;
 
     dpth = depth;
     num_smpls = num_samples;
@@ -246,7 +246,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
             //
             break;
         case NELDER_MEAD:
-            results = nelder_mead();
+            opt_results = nelder_mead();
             break;
         case POWELL:
             break;
