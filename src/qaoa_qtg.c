@@ -173,7 +173,7 @@ angles_to_value(double *angles) {
 
 
 double objective(unsigned n, const double *angles, double *grad, void *my_func_data) {
-    n = num_states;
+    n = 2 * dpth;
     metastate_amplitude_t *angle_state = quasiadiabatic_evolution(angles);
     double exp_value = expectation_value(angle_state);
     if (angle_state != NULL) {
