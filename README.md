@@ -5,7 +5,7 @@
 - Debora: Make a main file
 - Paul: Remove struct that holds probabilities as real values instead of complex amplitudes (no conversion needed)
 - Lennart: 
-- Soren: 
+- Soren: add instances
 
 ## FUTURE TODOS
 
