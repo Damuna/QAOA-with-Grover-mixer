@@ -7,6 +7,7 @@
  * =============================================================================
  */
 
+#include "combowrp.h"
 #include "stategen.h"
 #include <complex.h>
 #include <nlopt.h>
@@ -41,25 +42,11 @@ typedef double complex      cmplx;
  *      choice_profit:  The meta information of a computational basis state consisting of variable assignment and profit
  *      amplitude:      Complex amplitude associated with this computational basis state.
  */
-typedef struct metastate_amplitude {
+typedef struct metastate {
     choice_profit_t choice_profit;
     cmplx amplitude;
-} metastate_amplitude_t;
-
-
-/*
- * Struct:              metastate_probability_t
- * ---------------------------
- * Description:         This struct equips a computational basis state (identified via its corresponding bitstring and
- *                      its profit) with a probability.
- * Contents:
- *      choice_profit:  The meta information of a computational basis state consisting of variable assignment and profit
-*       probability:    Probability associated with this computational basis state.
- */
-typedef struct metastate_probability {
-    choice_profit_t choice_profit;
     double probability;
-} metastate_probability_t;
+} metastate_t;
 
 
 /*
@@ -111,23 +98,13 @@ enum OptimizationType {
 
 
 /*
- * Function:    free_metastates_probability
+ * Function:    free_metastates
  * ----------------------
  * Description: This function frees a dynamically allocated list of struct metastate_probability_t together with the
  *              vector contained two levels below.
  * Parameter:   Pointer to the metastate_probability_t struct to be freed.
  */
-void free_metastates_probability(metastate_probability_t*, size_t);
-
-
-/*
- * Function:    free_metastates_probability
- * ----------------------
- * Description: This function frees a dynamically allocated list of struct metastate_amplitude_t together with the
- *              vector contained two levels below.
- * Parameter:   Pointer to the metastate_amplitude_t struct to be freed.
- */
-void free_metastates_amplitude(metastate_amplitude_t*, size_t);
+void free_metastates(metastate_t*, size_t);
 
 
 
@@ -148,7 +125,7 @@ void free_metastates_amplitude(metastate_amplitude_t*, size_t);
  *      parameter1: Pointer to the current state before the application; will be updated.
  *      parameter2: Value of the angle gamma that parametrizes the unitary.
  */
-void phase_separation_unitary(metastate_amplitude_t*, double);
+void phase_separation_unitary(metastate_t*, double);
 
 
 /*
@@ -162,7 +139,7 @@ void phase_separation_unitary(metastate_amplitude_t*, double);
  *      parameter1: Pointer to the current state before the application; will be updated.
  *      parameter2: Value of the angle beta that parametrizes the unitary.
  */
-void mixing_unitary(metastate_amplitude_t*, double);
+void mixing_unitary(metastate_t*, double);
 
 
 /*
@@ -179,7 +156,7 @@ void mixing_unitary(metastate_amplitude_t*, double);
  * Returns:         The state with updated amplitudes after the alternating application.
  * Side Effect:     Allocates dynamically; pointer should eventually be freed.
  */
-metastate_amplitude_t* quasiadiabatic_evolution(double*);
+metastate_t* quasiadiabatic_evolution(const double*);
 
 
 /*
@@ -198,24 +175,7 @@ metastate_amplitude_t* quasiadiabatic_evolution(double*);
  *      parameter1: Pointer to the state to measure.
  * Returns:         The measured basis state identified via its index the original state or -1 in case of error.
  */
-int measurement(metastate_amplitude_t*);
-
-
-/*
- * Function:        sample_for_probabilities
- * --------------------
- * Description:     This function first transfers the metadata of each computational basis state (i.e. bitstring and
- *                  associated profit) to the less memory requiring format that suffices to store probabilities.
- *                  Afterward, it measures the given state multiple times and updates - based on the measurement
- *                  outcome - the probability of each basis state (identified via its index) accordingly. The number of
- *                  samples is determined by the global variable num_smpls.
- * Parameters:
- *      parameter1: Pointer to the state to sample from.
- * Returns:         A dictionary in which each computational basis state (identified via its bitstring and profit) is
- *                  assigned a probability to get measured.
- * Side Effect:     Allocates memory dynamically for the probability dictionary; pointer should eventually be freed.
- */
-metastate_probability_t* sample_for_probabilities(metastate_amplitude_t*);
+int measurement(metastate_t*);
 
 
 /*
@@ -229,7 +189,7 @@ metastate_probability_t* sample_for_probabilities(metastate_amplitude_t*);
  * Returns:         The sum of all terms making the expectation value.
  * Side Effect:     Frees the memory allocated for the probability dict in sample_for_probabilities.
  */
-double expectation_value(metastate_amplitude_t*);
+double expectation_value(metastate_t*);
 
 
 /*
@@ -275,13 +235,13 @@ double angles_to_value(double*);
  *      parameter2: The depth of the QAOA.
  *      parameter3: The bias for the QTG.
  *      parameter4: The number of samples determining the number of measurements of the angle state in each iteration.
- * Returns:         The solution value returned by the classical optimization routine together with a dictionary in
- *                  which approximation ratios are mapped to probabilities.
+ * Returns:         The negative solution value obtained from inserting the optimized angles returned by the classical
+*                   optimization routine.
  * Side Effect:     Allocates memory dynamically for the more memory-efficient QTG output.
  * Side Effect:     Frees the memory allocated in the QTG after transforming it to the more memory-efficient shape.
  *                  Frees the memory allocated earlier for the more memory-efficient QTG output.
  */
-qaoa_result_t qaoa_qtg(knapsack_t*, num_t, size_t, size_t, enum OptimizationType);
+double qaoa_qtg(knapsack_t*, num_t, size_t, size_t, enum OptimizationType);
 
 
 

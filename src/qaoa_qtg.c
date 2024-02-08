@@ -9,36 +9,63 @@
 
 /*
  * =============================================================================
- *                            Global variables
+*                           Macros & global variables
  * =============================================================================
  */
+
+#define TRUE        1
+#define FALSE       0
 
 num_t dpth;
 size_t num_smpls;
 size_t num_states;
-metastate_probability_t* qtg_output;
+node_t* qtg_nodes;
 
 
 /*
  * =============================================================================
- *                            Free newly defined types
+ *                              Free metastates
  * =============================================================================
  */
 
 void
-free_metastates_probability(metastate_probability_t metastates_probability[], size_t num_metastates) {
+free_metastates(metastate_t metastates[], size_t num_metastates) {
     for (size_t idx = 0; idx < num_metastates; ++idx) {
-        sw_clear(metastates_probability[idx].choice_profit.vector);
+        sw_clear(metastates[idx].choice_profit.vector);
     }
-    free(metastates_probability);
+    free(metastates);
+}
+
+
+/*
+ * =============================================================================
+*                                      Utils
+ * =============================================================================
+ */
+
+double
+randomValueBetween0And1OnWindowsOrLinux() {
+#if defined(_WIN32) || defined(_WIN64)
+    srand(time(NULL));
+    return rand() / RAND_MAX;
+#else
+    srand48(time(NULL));
+        return drand48();
+#endif
 }
 
 void
-free_metastates_amplitude(metastate_amplitude_t metastates_amplitude[], size_t num_metastates) {
-    for (size_t idx = 0; idx < num_metastates; ++idx) {
-        sw_clear(metastates_amplitude[idx].choice_profit.vector);
+writePlotDataToFile(metastate_t *angle_state, num_t optimal_solution_value) {
+    FILE* stream;
+
+    create_dir(""); // TODO Create meaningful directories according to generated instances
+    stream = fopen("testfile", "w"); // TODO Create meaningful filenames according to generated instances
+
+    for (size_t idx = 0; idx < num_states; ++idx) {
+        double approx_ratio = (double)angle_state[idx].choice_profit.tot_profit / optimal_solution_value;
+        fprintf(stream, "%f %f\n", approx_ratio, angle_state[idx].probability);
     }
-    free(metastates_amplitude);
+    fclose(stream);
 }
 
 
@@ -49,7 +76,7 @@ free_metastates_amplitude(metastate_amplitude_t metastates_amplitude[], size_t n
  */
 
 void
-phase_separation_unitary(metastate_amplitude_t *angle_state, double gamma) {
+phase_separation_unitary(metastate_t *angle_state, double gamma) {
     for (size_t idx = 0; idx < num_states; ++idx) {
         angle_state[idx].amplitude *= cexp(-I * gamma * angle_state[idx].choice_profit.tot_profit);
     }
@@ -57,32 +84,30 @@ phase_separation_unitary(metastate_amplitude_t *angle_state, double gamma) {
 
 
 void
-mixing_unitary(metastate_amplitude_t *angle_state, double beta) {
+mixing_unitary(metastate_t *angle_state, double beta) {
     cmplx scalar_product = 0.0;
     for (size_t idx = 0; idx < num_states; ++idx) {
-        scalar_product += qtg_output[idx].probability * angle_state[idx].amplitude;
+        scalar_product += qtg_nodes[idx].prob * angle_state[idx].amplitude;
     }
 
     for (int idx = 0; idx < num_states; ++idx) {
-        angle_state[idx].amplitude += (cexp(-I * beta) - 1.0) * scalar_product * qtg_output[idx].probability;
+        angle_state[idx].amplitude += (cexp(-I * beta) - 1.0) * scalar_product * qtg_nodes[idx].prob;
     }
 }
 
 
-metastate_amplitude_t*
-quasiadiabatic_evolution(double *angles) {
+metastate_t*
+quasiadiabatic_evolution(const double *angles) {
 
-    metastate_amplitude_t* angle_state = malloc(num_states * sizeof(metastate_amplitude_t));
+    metastate_t* angle_state = malloc(num_states * sizeof(metastate_t));
     for (size_t idx = 0; idx < num_states; ++idx) {
-        angle_state[idx].choice_profit = qtg_output[idx].choice_profit;
-        angle_state[idx].amplitude = qtg_output[idx].probability + 0.0 * I;
+        angle_state[idx].choice_profit = qtg_nodes[idx].path.choice_profit;
+        angle_state[idx].amplitude = qtg_nodes[idx].prob + I * 0.0;
     }
-    //gamma: odd position in angles
-    //beta: even position in angles
 
     for (int j = 0; j < dpth; ++j) {
-        phase_separation_unitary(angle_state, angles[2 * j + 1]);
-        mixing_unitary(angle_state, angles[2 * j]);
+        phase_separation_unitary(angle_state, angles[2 * j]); // gamma values are even positions in angles since starting at index 0
+        mixing_unitary(angle_state, angles[2 * j + 1]); // beta values are odd positions in angles since starting at index 0
     }
 
     return angle_state;
@@ -96,10 +121,8 @@ quasiadiabatic_evolution(double *angles) {
  */
 
 int
-measurement(metastate_amplitude_t *angle_state) {
-    // Seed the random generator and generate a random value in the range [0,1)
-    srand((unsigned int)time(NULL));
-    double random_number = (double)rand() / RAND_MAX;
+measurement(metastate_t *angle_state) {
+    double random_number = randomValueBetween0And1OnWindowsOrLinux();
 
     // Use the inverse transform sampling to draw a basis state index
     double cumulative_probability = 0.0;
@@ -111,36 +134,25 @@ measurement(metastate_amplitude_t *angle_state) {
         }
     }
 
-    return -1; // Should not happen, used for error handling
-}
-
-metastate_probability_t*
-sample_for_probabilities(metastate_amplitude_t *angle_state) {
-    metastate_probability_t* probs_dict = malloc(num_states * sizeof(metastate_probability_t));
-    for (int idx = 0; idx < num_states; ++idx) {
-        probs_dict[idx].choice_profit = angle_state->choice_profit;
-    }
-
-    for (size_t sample = 0; sample < num_smpls; ++sample) {
-        int measured_basis_state = measurement(angle_state);
-        if (measured_basis_state != -1) {
-            probs_dict[measured_basis_state].probability += 1.0 / num_smpls;
-        }
-    }
-
-    return probs_dict;
+    return -1; // Should not happen, indicates an error
 }
 
 double
-expectation_value(metastate_amplitude_t *angle_state) {
-    metastate_probability_t* probs_dict = sample_for_probabilities(angle_state);
+expectation_value(metastate_t *angle_state) {
+    // Sample from the probability distribution induced by angle_state to get probabilities for the feasible states
+    for (size_t sample = 0; sample < num_smpls; ++sample) {
+        int measured_basis_state = measurement(angle_state);
+        if (measured_basis_state != -1) {
+            angle_state[measured_basis_state].probability += 1.0 / num_smpls;
+        }
+    }
+
+    // Calculate expectation value according to obtained probabilities
     double expectation_value = 0.0;
     for (int idx = 0; idx < num_states; ++idx) {
-        expectation_value += probs_dict[idx].choice_profit.tot_profit * probs_dict[idx].probability;
+        expectation_value += angle_state[idx].choice_profit.tot_profit * angle_state[idx].probability;
     }
-    if (probs_dict != NULL) {
-        free_metastates_probability(probs_dict, num_states);
-    }
+
     return expectation_value;
 }
 
@@ -152,10 +164,10 @@ expectation_value(metastate_amplitude_t *angle_state) {
 
 
 double objective(unsigned n, const double *angles, double *grad, void *my_func_data) {
-    metastate_amplitude_t *angle_state = quasiadiabatic_evolution(angles);
+    metastate_t *angle_state = quasiadiabatic_evolution(angles);
     double exp_value = expectation_value(angle_state);
     if (angle_state != NULL) {
-        free_metastates_amplitude(angle_state, num_states);
+        free_metastates(angle_state, num_states);
     }
     // grad is NULL bcs both Nelder Mead and Powell are derivative-free algorithms
     return - exp_value;
@@ -178,8 +190,7 @@ double * nelder_mead(){
 
     for (size_t i = 0; i < dpth; i++)
         if((i + 1) % 2){
-            srand48(time(NULL));
-            randomValue = drand48() * 2.0 * M_PI;
+            randomValue = randomValueBetween0And1OnWindowsOrLinux() * 2.0 * M_PI;
             x[i] = randomValue;
             }
         else{
@@ -193,7 +204,7 @@ double * nelder_mead(){
     if (result < 0) {
         printf("NLOpt failed with code %d\n", result);
     } else {
-        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL));
+        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
     }
 
     // Clean up
@@ -219,8 +230,7 @@ double * powell(){
 
     for (size_t i = 0; i < dpth; i++)
         if((i + 1) % 2){
-            srand48(time(NULL));
-            randomValue = drand48() * 2.0 * M_PI;
+            randomValue = randomValueBetween0And1OnWindowsOrLinux() * 2.0 * M_PI;
             x[i] = randomValue;
         }
         else{
@@ -242,65 +252,62 @@ double * powell(){
     return x;
 }
 
+
 /*
  * =============================================================================
  *                            Combination to full QAOA
  * =============================================================================
  */
 
-qaoa_result_t
+double
 qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum OptimizationType optimizationType) {
 
-    path_t* int_greedy_sol;
-    node_t* qtg_nodes;
-    double * opt_results;
+    double* opt_angles;
 
     dpth = depth;
     num_smpls = num_samples;
 
     sort_knapsack(k, RATIO);
     apply_int_greedy(k);
-    int_greedy_sol = path_rep(k);
+    path_t* int_greedy_sol = path_rep(k);
     remove_all_items(k);
 
     qtg_nodes = qtg(k, bias, int_greedy_sol->choice_profit.vector, &num_states);
 
-    qtg_output = malloc(num_states * sizeof(metastate_probability_t));
-    for (int idx = 0; idx < num_states; ++idx) {
-        qtg_output[idx].choice_profit = qtg_nodes[idx].path.choice_profit;
-        qtg_output[idx].probability = qtg_nodes[idx].prob;
-    }
-
-    if (qtg_nodes != NULL) {
-        free_nodes(qtg_nodes, num_states);
-    }
-
-    // TODO Optimize angles via function angles_to_value here -> Negative optimization result is final qaoa result
+    free_path(int_greedy_sol);
 
     switch (optimizationType) {
         case BFGS:
             //
             break;
         case NELDER_MEAD:
-            opt_results = nelder_mead();
+            opt_angles = nelder_mead();
             break;
         case POWELL:
-            opt_results = powell();
+            opt_angles = powell();
             break;
     }
-    // TODO Insert optimal angles into quasiadiabatic_evolution to obtain the final state based on optimal angles
-    // TODO Call sample_for_probabilities with the final angle state to get a probability dictionary (mapping: profit <-> prob)
-    // TODO -> Ask Lennart, Sören about better way instead of re-running the circuit-emulating function
 
-    if (qtg_output != NULL) {
-        free_metastates_probability(qtg_output, num_states);
+    metastate_t* opt_angle_state = quasiadiabatic_evolution(opt_angles);
+
+    if (qtg_nodes != NULL) {
+        free_nodes(qtg_nodes, num_states);
+    }
+
+    num_t optimal_sol_val = combo_wrap(k, 0, k->capacity, FALSE, FALSE, TRUE, FALSE);
+    writePlotDataToFile(opt_angle_state, optimal_sol_val);
+
+    double sol_val = - expectation_value(opt_angle_state);
+
+    if (opt_angle_state != NULL) {
+        free_metastates(opt_angle_state, num_states);
     }
 
     // TODO Gate count
 
-    // TODO Execute combo to transform probabilities obtained in last quasiadiabatic_evolution call to approximation ratios
-    // TODO Collect and combine probability dictionary entries with the same approximation ratios
-    //  -> This could also be done earlier in sample_for_probabilities (for equal profits)
+    // TODO Collect and combine probability dictionary entries with the same approximation ratios -> Do this in python to avoid the need of looping twice through the array?
 
-    // TODO Wrap these in the shape of qaoa_result_t and return the result
+    // TODO Wrap these in the shape of qaoa_result_t and return the result -> If writing the probabilities to an external file, we could return only the solution value itself
+
+    return sol_val;
 }
