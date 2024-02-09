@@ -1,15 +1,15 @@
 /*
  * =============================================================================
- *                            includes
+ *                                  includes
  * =============================================================================
  */
 
-
 #include "qaoa_qtg.h"
+
 
 /*
  * =============================================================================
-*                           Macros & global variables
+ *                         Macros & global variables
  * =============================================================================
  */
 
@@ -24,12 +24,12 @@ node_t* qtg_nodes;
 
 /*
  * =============================================================================
- *                              Free metastates
+ *                                   Utils
  * =============================================================================
  */
 
 void
-free_metastates(metastate_t metastates[], size_t num_metastates) {
+free_metastates(metastate_t* metastates, size_t num_metastates) {
     for (size_t idx = 0; idx < num_metastates; ++idx) {
         sw_clear(metastates[idx].choice_profit.vector);
     }
@@ -37,14 +37,8 @@ free_metastates(metastate_t metastates[], size_t num_metastates) {
 }
 
 
-/*
- * =============================================================================
-*                                      Utils
- * =============================================================================
- */
-
 double
-randomValueBetween0And1OnWindowsOrLinux() {
+random_value_on_windows_or_linux() {
 #if defined(_WIN32) || defined(_WIN64)
     srand(time(NULL));
     return rand() / RAND_MAX;
@@ -54,8 +48,9 @@ randomValueBetween0And1OnWindowsOrLinux() {
 #endif
 }
 
+
 void
-writePlotDataToFile(metastate_t *angle_state, num_t optimal_solution_value) {
+write_plot_data_to_file(metastate_t *angle_state, num_t optimal_solution_value) {
     FILE* stream;
 
     create_dir(""); // TODO Create meaningful directories according to generated instances
@@ -63,7 +58,8 @@ writePlotDataToFile(metastate_t *angle_state, num_t optimal_solution_value) {
 
     for (size_t idx = 0; idx < num_states; ++idx) {
         double approx_ratio = (double)angle_state[idx].choice_profit.tot_profit / optimal_solution_value;
-        fprintf(stream, "%f %f\n", approx_ratio, angle_state[idx].probability);
+        double prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
+        fprintf(stream, "%f %f\n", approx_ratio, prob);
     }
     fclose(stream);
 }
@@ -116,54 +112,36 @@ quasiadiabatic_evolution(const double *angles) {
 
 /*
  * =============================================================================
- *                          Measurement & Expectation Value
+ *                            Evaluation & Optimization
  * =============================================================================
  */
-
-int
-measurement(metastate_t *angle_state) {
-    double random_number = randomValueBetween0And1OnWindowsOrLinux();
-
-    // Use the inverse transform sampling to draw a basis state index
-    double cumulative_probability = 0.0;
-    for (int idx = 0; idx < num_states; ++idx) {
-        cumulative_probability += cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
-
-        if (cumulative_probability > random_number) {
-            return idx;
-        }
-    }
-
-    return -1; // Should not happen, indicates an error
-}
 
 double
 expectation_value(metastate_t *angle_state) {
-    // Sample from the probability distribution induced by angle_state to get probabilities for the feasible states
+    double exp_val = 0.0;
+
     for (size_t sample = 0; sample < num_smpls; ++sample) {
-        int measured_basis_state = measurement(angle_state);
-        if (measured_basis_state != -1) {
-            angle_state[measured_basis_state].probability += 1.0 / num_smpls;
+        double rand_num = random_value_on_windows_or_linux();
+
+        // Draw from the probability distribution (= measure) via the inverse transform sampling
+        double cum_prob = 0.0;
+        for (size_t idx = 0; idx < num_states; ++idx) {
+            cum_prob += cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
+
+            if (cum_prob > rand_num) {
+                // Update the expectation value by the relative objective function value (profit) of the measured state
+                exp_val += (double)angle_state[idx].choice_profit.tot_profit / num_smpls;
+                break;
+            }
         }
     }
 
-    // Calculate expectation value according to obtained probabilities
-    double expectation_value = 0.0;
-    for (int idx = 0; idx < num_states; ++idx) {
-        expectation_value += angle_state[idx].choice_profit.tot_profit * angle_state[idx].probability;
-    }
-
-    return expectation_value;
+    return exp_val;
 }
 
-/*
- * =============================================================================
- *                            Optimization Functions
- * =============================================================================
- */
 
-
-double objective(unsigned n, const double *angles, double *grad, void *my_func_data) {
+double
+angles_to_value(unsigned n, const double *angles, double *grad, void *my_func_data) {
     metastate_t *angle_state = quasiadiabatic_evolution(angles);
     double exp_value = expectation_value(angle_state);
     if (angle_state != NULL) {
@@ -173,7 +151,9 @@ double objective(unsigned n, const double *angles, double *grad, void *my_func_d
     return - exp_value;
 }
 
-double * nelder_mead(){
+
+double*
+nelder_mead(){
     double randomValue;
     double x[2 * dpth] ;
     void *f_data = NULL;
@@ -183,14 +163,14 @@ double * nelder_mead(){
     nlopt_set_xtol_rel(opt, 1e-6);
 
     // Set the objective function
-    nlopt_set_min_objective(opt, objective, f_data);
+    nlopt_set_min_objective(opt, angles_to_value, f_data);
 
     // Set initial guess
     // Set all gammas to random and betas to 0
 
     for (size_t i = 0; i < dpth; i++)
         if((i + 1) % 2){
-            randomValue = randomValueBetween0And1OnWindowsOrLinux() * 2.0 * M_PI;
+            randomValue = random_value_on_windows_or_linux() * 2.0 * M_PI;
             x[i] = randomValue;
             }
         else{
@@ -204,7 +184,7 @@ double * nelder_mead(){
     if (result < 0) {
         printf("NLOpt failed with code %d\n", result);
     } else {
-        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
+        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], angles_to_value(num_states, x, NULL, NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
     }
 
     // Clean up
@@ -212,7 +192,9 @@ double * nelder_mead(){
     return x;
 }
 
-double * powell(){
+
+double*
+powell(){
     double randomValue;
     double x[2 * dpth] ;
     void *f_data = NULL;
@@ -223,14 +205,14 @@ double * powell(){
     nlopt_set_xtol_rel(opt, 1e-6);
 
     // Set the objective function
-    nlopt_set_min_objective(opt, objective, f_data);
+    nlopt_set_min_objective(opt, angles_to_value, f_data);
 
     // Set initial guess
     // Set all gammas to random and betas to 0
 
     for (size_t i = 0; i < dpth; i++)
         if((i + 1) % 2){
-            randomValue = randomValueBetween0And1OnWindowsOrLinux() * 2.0 * M_PI;
+            randomValue = random_value_on_windows_or_linux() * 2.0 * M_PI;
             x[i] = randomValue;
         }
         else{
@@ -244,7 +226,7 @@ double * powell(){
     if (result < 0) {
         printf("NLOpt failed with code %d\n", result);
     } else {
-        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], objective(num_states, x, NULL, NULL));
+        printf("Found minimum at f(%g, %g) = %g\n", x[0], x[1], angles_to_value(num_states, x, NULL, NULL));
     }
 
     // Clean up
@@ -295,7 +277,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, enum Optim
     }
 
     num_t optimal_sol_val = combo_wrap(k, 0, k->capacity, FALSE, FALSE, TRUE, FALSE);
-    writePlotDataToFile(opt_angle_state, optimal_sol_val);
+    write_plot_data_to_file(opt_angle_state, optimal_sol_val);
 
     double sol_val = - expectation_value(opt_angle_state);
 

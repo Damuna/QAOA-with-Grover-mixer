@@ -45,7 +45,6 @@ typedef double complex      cmplx;
 typedef struct metastate {
     choice_profit_t choice_profit;
     cmplx amplitude;
-    double probability;
 } metastate_t;
 
 
@@ -90,22 +89,47 @@ enum OptimizationType {
     POWELL,
 };
 
+
 /*
  * =============================================================================
- *                            Free newly defined types
+ *                                     Utils
  * =============================================================================
  */
 
-
 /*
- * Function:    free_metastates
+ * Function:            free_metastates
  * ----------------------
- * Description: This function frees a dynamically allocated list of struct metastate_probability_t together with the
- *              vector contained two levels below.
- * Parameter:   Pointer to the metastate_probability_t struct to be freed.
+ * Description:         This function frees a dynamically allocated list of struct metastate_t together with the vector
+ *                      contained two levels below.
+ * Parameters:
+ *      metastates:     Pointer to the metastate_t struct to be freed.
+ *      num_metastates: The length of the array stored at the pointer's address.
  */
 void free_metastates(metastate_t*, size_t);
 
+
+/*
+ * Function:    random_value_on_windows_or_linux
+ * ----------------------
+ * Description: This function generates a random number in the interval [0,1) after seeding the random generator via the
+ *              time. This is done via built-in functions according to the used operating system.
+ * Returns:     The generated random number.
+ */
+double random_value_on_windows_or_linux();
+
+
+/*
+ * Function:                        write_plot_data_to_file
+ * ----------------------
+ * Description:                     This function is used to extract pairs of approximation ratio and associated
+ *                                  probability from the final QAOA state and write them to an external file. The
+ *                                  approximation ratios are calculated via the specified optimal solution value and the
+ *                                  probabilities are obtained from the amplitudes of the feasible solutions.
+ * Parameters:
+ *      angle_state:                Pointer to the angle state whose data is to be exported.
+ *      optimal_solution_value:     Optimal solution of the knapsack instance at hand.
+ */
+void write_plot_data_to_file(metastate_t*, num_t);
 
 
 /*
@@ -114,30 +138,29 @@ void free_metastates(metastate_t*, size_t);
  * =============================================================================
  */
 
-
 /*
- * Function:        phase_separation_unitary
+ * Function:            phase_separation_unitary
  * --------------------
- * Description:     Classical emulation of the application of the phase separation unitary. Its underlying formula is
- *                  based on theoretical considerations. It owes its simplicity to the objective Hamiltonian being
- *                  diagonal in the computational basis by design.
+ * Description:         Classical emulation of the application of the phase separation unitary. Its underlying formula
+ *                      is based on theoretical considerations. It owes its simplicity to the objective Hamiltonian
+ *                      being diagonal in the computational basis by design.
  * Parameters:
- *      parameter1: Pointer to the current state before the application; will be updated.
- *      parameter2: Value of the angle gamma that parametrizes the unitary.
+ *      angle_state:    Pointer to the current state before the application; will be updated.
+ *      gamma:          Value of the angle gamma that parametrizes the unitary.
  */
 void phase_separation_unitary(metastate_t*, double);
 
 
 /*
- * Function:        mixing_unitary
+ * Function:            mixing_unitary
  * --------------------
- * Description:     Classical emulation of the application of the mixing unitary. Its underlying formula is based on
- *                  theoretical considerations. First, it calculates the scalar product of the state returned by the
- *                  initial QTG application and the current state. The result is used in an expression that comes out
- *                  when cleverly re-writing the action of the mixing unitary.
+ * Description:         Classical emulation of the application of the mixing unitary. Its underlying formula is based on
+ *                      theoretical considerations. First, it calculates the scalar product of the state returned by the
+ *                      initial QTG application and the current state. The result is used in an expression that comes
+ *                      out when cleverly re-writing the action of the mixing unitary.
  * Parameters:
- *      parameter1: Pointer to the current state before the application; will be updated.
- *      parameter2: Value of the angle beta that parametrizes the unitary.
+ *      angle_state:    Pointer to the current state before the application; will be updated.
+ *      beta:           Value of the angle beta that parametrizes the unitary.
  */
 void mixing_unitary(metastate_t*, double);
 
@@ -152,7 +175,7 @@ void mixing_unitary(metastate_t*, double);
  *                  are mapped to complex numbers with vanishing imaginary part. Finally, the phase separation and the
  *                  mixing unitaries are applied alternately where the number of iterations is determined by the depth.
  * Parameters:
- *      parameter1: Pointer to list of angles with length equaling twice the depth.
+ *      angles:     Pointer to list of angles with length equaling twice the depth.
  * Returns:         The state with updated amplitudes after the alternating application.
  * Side Effect:     Allocates dynamically; pointer should eventually be freed.
  */
@@ -161,49 +184,38 @@ metastate_t* quasiadiabatic_evolution(const double*);
 
 /*
  * =============================================================================
- *                          Measurement & Expectation Value
+ *                          Evaluation & Optimization
  * =============================================================================
  */
 
-
 /*
- * Function:        measurement
+ * Function:            expectation_value
  * --------------------
- * Description:     Measures a given state in the sense that it draws from its associated probability distribution via
- *                  the inverse transform sampling.
+ * Description:         Computes the expectation value of the objective Hamiltonian in a given state. To this end, the
+ *                      function samples from the state and iteratively sums up the relative objective function value of
+ *                      the measured feasible solutions (i.e. their associated profit divided by the number of samples).
  * Parameters:
- *      parameter1: Pointer to the state to measure.
- * Returns:         The measured basis state identified via its index the original state or -1 in case of error.
- */
-int measurement(metastate_t*);
-
-
-/*
- * Function:        expectation_value
- * --------------------
- * Description:     Computes the expectation value of the objective Hamiltonian in a given state. To this end, the
- *                  function first samples from the state and sums up the product of obtained probability and profit
- *                  for each computational basis state.
- * Parameters:
- *      parameter1: Pointer to the state to sample from.
- * Returns:         The sum of all terms making the expectation value.
- * Side Effect:     Frees the memory allocated for the probability dict in sample_for_probabilities.
+ *      angle_state:    Pointer to the state to compute the expectation value for.
+ * Returns:             The sum of all terms making the expectation value.
  */
 double expectation_value(metastate_t*);
 
 
 /*
- * Function:        angles_to_value
+ * Function:            angles_to_value
  * --------------------
- * Description:     This function computes the expectation value for a given set of angles. To do so, it calls
- *                  quasiadiabatic_evolution as well as expectation_value. This is the function that shall be optimized
- *                  (minimized) by the chosen classical routine.
+ * Description:         This function computes the expectation value for a given set of angles. To do so, it calls
+ *                      quasiadiabatic_evolution as well as expectation_value. This is the function that shall be
+ *                      optimized (minimized) by the chosen classical routine. To this end, it needs the present format.
  * Parameters:
- *      parameter1: Pointer to list of angles with length equaling twice the depth.
- * Returns:         The negative expectation value corresponding to the specified angles.
- * Side Effect:     Frees the memory allocated for the angle state in quasiadiabatic_evolution.
+ *      n:              The number of parameters to optimize (not used).
+ *      angles:         Pointer to list of angles with length equaling twice the depth.
+ *      grad:           Gradient (not used).
+ *      my_func_data:   Function data, e.g. parameters that shall not be optimized over (not used).
+ * Returns:             The negative expectation value corresponding to the specified angles.
+ * Side Effect:         Frees the memory allocated for the angle state in quasiadiabatic_evolution.
  */
-double angles_to_value(double*);
+double angles_to_value(unsigned, const double*, double*, void*);
 
 
 
@@ -213,33 +225,34 @@ double angles_to_value(double*);
  * =============================================================================
  */
 
-
 /*
- * Function:        qaoa_qtg
+ * Function:                qaoa_qtg
  * --------------------
- * Description:     This is the main function to execute the QTG-induced QAOA, wrapping up all other functions defined
- *                  here. First, it updates the global variables holding the depth and the number of samples. Then, it
- *                  sorts the input knapsack by the relative profit of each item (i.e. the profit divided by the weight)
- *                  and computes an integer greedy solution for the given knapsack instance. The resulting lower bound
- *                  is used in the following initial application of the QTG for biasing. The output is transformed to
- *                  a different shape as the remaining cost is no longer necessary to be stored. With this, the chosen
- *                  classical optimizing routine minimizes the function angles_to_value with randomly chosen initial
- *                  conditions for the angles whose length equals twice the depth. The negative optimization result is
- *                  the solution of the QAOA. For creating expressive graphics, the quasi-adiabatic evolution must be
- *                  run a last time with the optimal angle values as input. Ultimately, it is sampled again from the
- *                  resulting angle state. In order to transform the not instance-agnostic profits in the probability
- *                  dictionary to approximation ratios, combo is executed once to compute the optimal solution of the
- *                  given knapsack instance. Also, the cycles required to execute the Grover mixing unitary are counted.
+ * Description:             This is the main function to execute the QTG-induced QAOA, wrapping up all other functions
+ *                          defined here. First, it updates the global variables holding the depth and the number of
+ *                          samples. Then, it sorts the input knapsack by the relative profit of each item (i.e. the
+ *                          profit divided by the weight) and computes an integer greedy solution for the given knapsack
+ *                          instance. The resulting lower bound is used in the following initial application of the QTG
+ *                          for biasing. Then, the chosen classical optimizing routine minimizes the function
+ *                          angles_to_value. The negative optimization result is the solution of the QAOA. For creating
+ *                          expressive graphics, the quasi-adiabatic evolution must be run a last time with the optimal
+ *                          angle values as input. In order to transform the not instance-agnostic profits in the
+ *                          probability dictionary to approximation ratios, combo is executed once to compute the
+ *                          optimal solution of the given knapsack instance. Both the final angle state and the exact
+ *                          solution are passed to the function write_plot_data_to_file which exports the needed data to
+ *                          an external file. Ultimately, the cycles required to execute the mixing unitary are counted.
  * Parameters:
- *      parameter1: Pointer to the knapsack on which the QAOA is to be applied.
- *      parameter2: The depth of the QAOA.
- *      parameter3: The bias for the QTG.
- *      parameter4: The number of samples determining the number of measurements of the angle state in each iteration.
- * Returns:         The negative solution value obtained from inserting the optimized angles returned by the classical
-*                   optimization routine.
- * Side Effect:     Allocates memory dynamically for the more memory-efficient QTG output.
- * Side Effect:     Frees the memory allocated in the QTG after transforming it to the more memory-efficient shape.
- *                  Frees the memory allocated earlier for the more memory-efficient QTG output.
+ *      k:                  Pointer to the knapsack on which the QAOA is to be applied.
+ *      depth:              The depth of the QAOA.
+ *      bias:               The bias for the QTG.
+ *      num_samples:        The number of samples determining the number of measurements in each iteration.
+ *      optimizationType:   The classical optimizer that shall be used for the optimization.
+ * Returns:                 The negative solution value obtained from inserting the optimized angles returned by the
+ *                          classical optimization routine.
+ * Side Effect:             Frees the memory allocated in path_rep for the integer greedy solution.
+ *                          Frees the memory allocated in qtg for its output nodes.
+ *                          Frees the memory allocated in quasiadiabatic_evolution for the final QAOA state obtained
+ *                          from inserting the optimized angles.
  */
 double qaoa_qtg(knapsack_t*, num_t, size_t, size_t, enum OptimizationType);
 
