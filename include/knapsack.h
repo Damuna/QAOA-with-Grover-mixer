@@ -75,11 +75,6 @@ typedef struct knapsack {
     char* name;
 } knapsack_t;
 
-typedef struct choice_profit {
-    array_t vector;
-    num_t tot_profit;
-} choice_profit_t;
-
 /*
  * Struct:              path_t
  * ---------------------------
@@ -92,7 +87,8 @@ typedef struct choice_profit {
  */
 typedef struct path {
     num_t remain_cost;
-    choice_profit_t choice_profit;
+    array_t vector;
+    num_t tot_profit;
 } path_t;
 
 typedef enum sort {

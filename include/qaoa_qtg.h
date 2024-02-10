@@ -34,18 +34,17 @@ typedef double complex      cmplx;
 
 
 /*
- * Struct:              metastate_amplitude_t
+ * Struct:              solution_amplitude_t
  * ---------------------------
- * Description:         This struct equips a computational basis state (identified via its corresponding bitstring and
- *                      its profit) with a complex amplitude.
+ * Description:     This struct equips a feasible solution, identified via its profit, with a complex amplitude.
  * Contents:
- *      choice_profit:  The meta information of a computational basis state consisting of variable assignment and profit
- *      amplitude:      Complex amplitude associated with this computational basis state.
+ *      profit:     Profit (objective function value) of the computational basis state / feasible solution.
+ *      amplitude:  Complex amplitude associated with this computational basis state / feasible solution.
  */
-typedef struct metastate {
-    choice_profit_t choice_profit;
+typedef struct feassol_ampl {
+    num_t profit;
     cmplx amplitude;
-} metastate_t;
+} feassol_ampl_t;
 
 
 /*
@@ -83,11 +82,11 @@ typedef struct qaoa_result {
  *
  * Contents:            Three types of optimization considered
  */
-enum OptimizationType {
+typedef enum optimization_type {
     BFGS,
     NELDER_MEAD,
     POWELL,
-};
+} optimization_type_t;
 
 
 /*
@@ -95,18 +94,6 @@ enum OptimizationType {
  *                                     Utils
  * =============================================================================
  */
-
-/*
- * Function:            free_metastates
- * ----------------------
- * Description:         This function frees a dynamically allocated list of struct metastate_t together with the vector
- *                      contained two levels below.
- * Parameters:
- *      metastates:     Pointer to the metastate_t struct to be freed.
- *      num_metastates: The length of the array stored at the pointer's address.
- */
-void free_metastates(metastate_t*, size_t);
-
 
 /*
  * Function:    random_value_on_windows_or_linux
@@ -129,7 +116,7 @@ double random_value_on_windows_or_linux();
  *      angle_state:                Pointer to the angle state whose data is to be exported.
  *      optimal_solution_value:     Optimal solution of the knapsack instance at hand.
  */
-void write_plot_data_to_file(metastate_t*, num_t);
+void write_plot_data_to_file(feassol_ampl_t*, num_t);
 
 
 /*
@@ -148,7 +135,7 @@ void write_plot_data_to_file(metastate_t*, num_t);
  *      angle_state:    Pointer to the current state before the application; will be updated.
  *      gamma:          Value of the angle gamma that parametrizes the unitary.
  */
-void phase_separation_unitary(metastate_t*, double);
+void phase_separation_unitary(feassol_ampl_t*, double);
 
 
 /*
@@ -162,7 +149,7 @@ void phase_separation_unitary(metastate_t*, double);
  *      angle_state:    Pointer to the current state before the application; will be updated.
  *      beta:           Value of the angle beta that parametrizes the unitary.
  */
-void mixing_unitary(metastate_t*, double);
+void mixing_unitary(feassol_ampl_t*, double);
 
 
 /*
@@ -179,7 +166,7 @@ void mixing_unitary(metastate_t*, double);
  * Returns:         The state with updated amplitudes after the alternating application.
  * Side Effect:     Allocates dynamically; pointer should eventually be freed.
  */
-metastate_t* quasiadiabatic_evolution(const double*);
+feassol_ampl_t* quasiadiabatic_evolution(const double*);
 
 
 /*
@@ -198,7 +185,7 @@ metastate_t* quasiadiabatic_evolution(const double*);
  *      angle_state:    Pointer to the state to compute the expectation value for.
  * Returns:             The sum of all terms making the expectation value.
  */
-double expectation_value(metastate_t*);
+double expectation_value(feassol_ampl_t*);
 
 
 /*
@@ -254,7 +241,7 @@ double angles_to_value(unsigned, const double*, double*, void*);
  *                          Frees the memory allocated in quasiadiabatic_evolution for the final QAOA state obtained
  *                          from inserting the optimized angles.
  */
-double qaoa_qtg(knapsack_t*, num_t, size_t, size_t, enum OptimizationType);
+double qaoa_qtg(knapsack_t*, num_t, size_t, size_t, optimization_type_t);
 
 
 
