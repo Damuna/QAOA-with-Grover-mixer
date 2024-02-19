@@ -143,47 +143,27 @@ angles_to_value(unsigned n, const double *angles, double *grad, void *my_func_da
 }
 
 
-double*
-nelder_mead(){
-    double angles[2 * dpth] ;
-    nlopt_opt opt = nlopt_create(NLOPT_LN_NELDERMEAD, 2 * dpth);
-
-    // Set your optimization parameters
-    nlopt_set_xtol_rel(opt, 1e-6);
-
-    // Set the objective function
-    nlopt_set_min_objective(opt, angles_to_value, NULL);
-
-    // Set initial guess
-    // Set all gammas to random and betas to 0
-    for (size_t j = 0; j < dpth; j++)
-        if((j + 1) % 2){
-            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
-            }
-        else{
-            angles[j] = 0;
-        }
-
-    // Run the optimization
-    nlopt_result result = nlopt_optimize(opt, angles, NULL);
-
-    // Check the result and print the optimized values
-    if (result < 0) {
-        printf("NLOpt failed with code %d\n", result);
-    } else {
-        printf("Found minimum at f(%g, %g) = %g\n", angles[0], angles[1], angles_to_value(num_states, angles, NULL, NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
+nlopt_algorithm map_enum_to_nlopt_algorithm(optimization_type_t opt_type) {
+    switch (opt_type) {
+        case BFGS:
+            return 0;
+        case NELDER_MEAD:
+            return NLOPT_LN_NELDERMEAD;
+        case POWELL:
+            return NLOPT_LN_BOBYQA; // or another suitable algorithm for POWELL
+        default:
+            // Handle invalid enum value
+            return NLOPT_LN_BOBYQA; // Default to BOBYQA or any other suitable default
     }
-
-    // Clean up
-    nlopt_destroy(opt);
-    return angles;
 }
 
 
 double*
-powell(){
-    double angles[2 * dpth] ;
-    nlopt_opt opt = nlopt_create(NLOPT_LN_BOBYQA, 2 * dpth);
+nlopt_optimizer(optimization_type_t optimization_type){
+    double *angles = malloc(2 * dpth) ;
+
+    nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
+    nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * dpth);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
@@ -240,17 +220,7 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, optimizati
 
     free_path(int_greedy_sol);
 
-    switch (optimization_type) {
-        case BFGS:
-            //
-            break;
-        case NELDER_MEAD:
-            opt_angles = nelder_mead();
-            break;
-        case POWELL:
-            opt_angles = powell();
-            break;
-    }
+    opt_angles = nlopt_optimizer(optimization_type);
 
     feassol_ampl_t* opt_angle_state = quasiadiabatic_evolution(opt_angles);
 
