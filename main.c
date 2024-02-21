@@ -7,7 +7,6 @@ int main(int argc, const char** argv) {
     printf("Hello Work.\n");
 
     knapsack_t *k;
-    path_t *sol;
 
     return 0;
 }
