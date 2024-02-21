@@ -2,10 +2,10 @@
 
 ## TODO:
 
-- Debora: 
-- Paul: save exact probability vs approximation ratio to an external file for plotting in python, minor changes to file
-- Lennart: 
-- Soren: add more instances
+- Debora: generate toy examples upper limit for qubits, look how optimizers behave from approx ratio
+- Paul: save exact probability vs approximation ratio to an external file for plotting in python, minor changes to file, gate count
+- Lennart: plotting
+- Soren: add more instances, anti aggression course, 
 
 ## FUTURE TODOS
 
