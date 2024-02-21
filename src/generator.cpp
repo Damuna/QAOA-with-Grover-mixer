@@ -45,8 +45,13 @@ int main()
 
     char filename[1023];
     char folder[1023];
+#if defined(_WIN32) || defined(_WIN32)
+    sprintf(filename, "..\\instances\\n_%lld_c_%lld_g_%lld_f_%g_eps_%g_s_%lld\\test.in", n, cap, classes, frac, eps, small);
+    sprintf(folder, "mkdir ..\\instances\\n_%lld_c_%lld_g_%lld_f_%g_eps_%g_s_%lld 2>nul", n, cap, classes, frac, eps, small);
+#else
     sprintf(filename, "../instances/n_%lld_c_%lld_g_%lld_f_%g_eps_%g_s_%lld/test.in", n, cap, classes, frac, eps, small);
     sprintf(folder, "mkdir -p ../instances/n_%lld_c_%lld_g_%lld_f_%g_eps_%g_s_%lld", n, cap, classes, frac, eps, small);
+#endif
     system(folder);
     file = fopen(filename, "w");
     std::random_device device;
