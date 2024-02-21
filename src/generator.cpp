@@ -13,26 +13,29 @@ int main()
 {
 #define int long long
 
-    cerr << "n=" << endl;
+//    cerr << "n=" << endl;
     int n;
     cin >> n;
-    cerr << "capacity=" << endl;
+//    cerr << "capacity=" << endl;
     long long cap;
     cin >> cap;
-    cerr << "classes=" << endl; // >= 2
+//    cerr << "classes=" << endl; // >= 2
     int classes;
     cin >> classes;
     classes--;
-    cerr << "fraction=" << endl; // 0<=frac<=1, in practice frac should be quite a lot smaller than 1
+//    cerr << "fraction=" << endl; // 0<=frac<=1, in practice frac should be quite a lot smaller than 1
     double frac;
     cin >> frac;
-    cerr << "eps=" << endl;
+//    cerr << "eps=" << endl;
     double eps;
     cin >> eps;
-    cerr << "small=" << endl;
+//    cerr << "small=" << endl;
     long long small;
     cin >> small;
 
+    char filename[1023];
+    sprintf(filename, "n_%d_c_%d_g_%d_");
+    FILE *file = fopen("", "r");
     std::random_device device;
     std::mt19937 generator(device());
     std::uniform_int_distribution<int> distribution(1,small);
