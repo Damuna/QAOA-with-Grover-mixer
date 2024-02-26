@@ -80,7 +80,7 @@ const char* get_mc_name(mc_t);
 
 /* 
  * =============================================================================
- *                            number of bits
+ *                                  utils
  * =============================================================================
  */
 
@@ -93,11 +93,14 @@ const char* get_mc_name(mc_t);
  */
 bit_t num_bits(num_t);
 
-/* 
- * =============================================================================
- *                            least signifcant one
- * =============================================================================
+/*
+ * Function: 	num_set_bits
+ * ---------------------
+ * Description:	This function returns the number of set bits of the given input, i.e. those with value 1.
+ * Parameter:	Number whose amount of set bits should be evaluated.
+ * Returns:		Number of set bits of the given input.
  */
+bit_t num_set_bits(num_t);
 
 /*
  * Function: 	lso
@@ -137,20 +140,6 @@ bit_t path_reg_size(const knapsack_t*);
 bit_t cost_reg_size(const knapsack_t*);
 
 /*
- * Function: 		profit_reg_size
- * --------------------------------
- * Description:		This function calculates the size of the profit register
- *                  used for the QTG on a knapsack instance. Its size is given
- *                  by the number of bits necessary to express an upper bound
- *                  on the total profit.
- * Parameters:
- *		parameter1:	Pointer to knapsack that should be considered.
- *		parameter2: Method used for upper bounding the total profit.
- * Returns:			Size (number of qubits) of the profit register.
- */
-bit_t profit_reg_size(const knapsack_t*, ub_t);
-
-/*
  * Function: 		anc_count_qft
  * ------------------------------
  * Description:		This function counts the ancilla qubits of the given QFT
@@ -187,42 +176,6 @@ count_t cycle_count_qft(bit_t, qft_t, bool_t);
  * Returns:			Number of gates of the QFT implementation.
  */
 count_t gate_count_qft(bit_t, qft_t, bool_t);
-
-/*
- * Function: 		anc_count_add
- * ------------------------------
- * Description:		This function counts the ancilla qubits for an adder
- *                  implementation on a QFT-ed register. 
- * Parameters:
- *		parameter1:	Size of the QFT-ed register the adder is performed on.
- *		parameter2: Number that should be added to the register's state.
- * Returns:			Number of ancilla qubits of the adder implementation.
- */
-bit_t anc_count_add(bit_t, num_t);
-
-/*
- * Function: 		cycle_count_adder
- * ----------------------------------
- * Description:		This function counts the cycles of an adder implementation
- *                  on a QFT-ed register. 
- * Parameters:
- *		parameter1:	Size of the QFT-ed register the adder is performed on.
- *		parameter2: Number that should be added to the register's state.
- * Returns:			Number of cycles of the adder implementation.
- */
-count_t cycle_count_add(bit_t, num_t);
-
-/*
- * Function: 		gate_count_add
- * -------------------------------
- * Description:		This function counts the gates of an adder implementation on
- *                  a QFT-ed register. 
- * Parameters:
- *		parameter1:	Size of the QFT-ed register the adder is performed on.
- *		parameter2: Number that should be added to the register's state.
- * Returns:			Number of gates of the adder implementation.
- */
-count_t gate_count_add(bit_t, num_t);
 
 /*
  * Function: 		anc_count_mc
@@ -314,13 +267,10 @@ count_t gate_count_comp(bit_t, num_t, mc_t, bool_t, bool_t);
  *                  have to be specified. The main registers as well as any
  *                  ancilla register contribute to the total number.
  * Parameters:
- *		parameter1:	Pointer to knapsack that should be considered.
- *		parameter2:	Method used for upper bounding the total profit.
- *		parameter3:	Implementation method for the QFT.
- *		parameter4:	Decomposition method for any multi-controls.
+ *		parameter:	Pointer to knapsack that should be considered.
  * Returns:			Number of qubits of one application of the QTG.
  */
-bit_t qubit_count_qtg(const knapsack_t*, ub_t, qft_t, mc_t);
+bit_t qubit_count_qtg(const knapsack_t*);
 
 /*
  * Function: 		cycle_count_qtg
@@ -331,13 +281,12 @@ bit_t qubit_count_qtg(const knapsack_t*, ub_t, qft_t, mc_t);
  *                  distinct registers are parallelized whenever possible.
  * Parameters:
  *      parameter1: Pointer to knapsack that should be considered.
- *      parameter2: Method used for upper bounding the total profit.
- *      parameter3: Implementation method for the QFT.
- *      parameter4: Decomposition method for any multi-controls.
- *      parameter5: Whether toffoli gates should be decomposed or not.
+ *      parameter2: Implementation method for the QFT.
+ *      parameter3: Decomposition method for any multi-controls.
+ *      parameter4: Whether toffoli gates should be decomposed or not.
  * Returns:			Number of cycles of one application of the QTG.
  */
-count_t cycle_count_qtg(const knapsack_t*, ub_t, qft_t, mc_t, bool_t);
+count_t cycle_count_qtg(const knapsack_t*, qft_t, mc_t, bool_t);
 
 /*
  * Function: 		gate_count_qtg
@@ -347,13 +296,57 @@ count_t cycle_count_qtg(const knapsack_t*, ub_t, qft_t, mc_t, bool_t);
  *                  subroutines also have to be specified.
  * Parameters:
  *      parameter1: Pointer to knapsack that should be considered.
- *      parameter2: Method used for upper bounding the total profit.
- *      parameter3: Implementation method for the QFT.
- *      parameter4: Decomposition method for any multi-controls.
- *      parameter5: Whether toffoli gates should be decomposed or not.
+ *      parameter2: Implementation method for the QFT.
+ *      parameter3: Decomposition method for any multi-controls.
+ *      parameter4: Whether toffoli gates should be decomposed or not.
  * Returns:			Number of gates of one application of the QTG.
  */
-count_t gate_count_qtg(const knapsack_t*, ub_t, qft_t, mc_t, bool_t);
+count_t gate_count_qtg(const knapsack_t*, qft_t, mc_t, bool_t);
+
+/*
+ * Function: 		qubit_count_qtg_mixer
+ * --------------------------------
+ * Description:		This function counts the qubits used for an application of
+ *                  the Grover mixer induced by the QTG. The main registers as
+ *                  well as any ancilla register contribute to the total number.
+ * Parameters:
+ *		k:	        Pointer to knapsack that should be considered.
+ * Returns:			Number of qubits of one application of the QTG mixer.
+ */
+bit_t qubit_count_qtg_mixer(const knapsack_t*);
+
+/*
+ * Function: 		cycle_count_qtg_mixer
+ * --------------------------------
+ * Description:		This function counts the number of cycles used for an
+ *                  application of the Grover mixer induced by the QTG. The
+ *                  implementation of the QTG's subroutines also have to be
+ *                  specified. Subroutines on distinct registers are parallelized
+ *                  whenever possible.
+ * Parameters:
+ *      k:          Pointer to knapsack that should be considered.
+ *      method_qft: Implementation method for the QFT.
+ *      method_mc:  Decomposition method for any multi-controls.
+ *      tof_decomp: Whether toffoli gates should be decomposed or not.
+ * Returns:			Number of cycles of one application of the QTG mixer.
+ */
+count_t cycle_count_qtg_mixer(const knapsack_t*, qft_t, mc_t, bool_t);
+
+/*
+ * Function: 		gate_count_qtg_mixer
+ * -------------------------------
+ * Description:		This function counts the number of gates used for an
+ *                  application of the Grover mixer induced by the QTG. The
+ *                  implementation of the QTG's subroutines also have to be
+ *                  specified.
+ * Parameters:
+ *      k:          Pointer to knapsack that should be considered.
+ *      method_qft: Implementation method for the QFT.
+ *      method_mc:  Decomposition method for any multi-controls.
+ *      tof_decomp: Whether toffoli gates should be decomposed or not.
+ * Returns:			Number of gates of one application of the QTG mixer.
+ */
+count_t gate_count_qtg_mixer(const knapsack_t*, qft_t, mc_t, bool_t);
 
 /*
  * Function:        print-qtg_counts
@@ -363,12 +356,11 @@ count_t gate_count_qtg(const knapsack_t*, ub_t, qft_t, mc_t, bool_t);
  *                  methods.
  * Parameters:
  *      parameter1: Pointer to knapsack that should be considered.
- *      parameter2: Method used for upper bounding the total profit.
- *      parameter3: Implementation method for the QFT.
- *      parameter4: Decomposition method for any multi-controls.
- *      parameter5: Whether toffoli gates should be decomposed or not.
+ *      parameter2: Implementation method for the QFT.
+ *      parameter3: Decomposition method for any multi-controls.
+ *      parameter4: Whether toffoli gates should be decomposed or not.
  */
-void print_qtg_counts(const knapsack_t*, ub_t, qft_t, mc_t, bool_t);
+void print_qtg_counts(const knapsack_t*, qft_t, mc_t, bool_t);
 
 #ifdef __cplusplus
 }

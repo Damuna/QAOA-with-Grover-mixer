@@ -41,18 +41,24 @@ random_value_on_windows_or_linux() {
 
 
 void
-write_plot_data_to_file(feassol_ampl_t *angle_state, num_t optimal_solution_value) {
-    FILE* stream;
+write_plot_data_to_file(feassol_ampl_t *angle_state, double solution_value, num_t optimal_solution_value) {
+    FILE* file;
 
     create_dir(""); // TODO Create meaningful directories according to generated instances
-    stream = fopen("testfile", "w"); // TODO Create meaningful filenames according to generated instances
+    file = fopen("testfile", "w"); // TODO Create meaningful filenames according to generated instances
+
+    fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
+    fprintf(file, "%ld\n", optimal_solution_value); // Save optimal solution value for documentation
+    double tot_approx_ratio = solution_value / optimal_solution_value;
+    fprintf(file, "%f\n", tot_approx_ratio); // Save final approximation ratio for documentation
 
     for (size_t idx = 0; idx < num_states; ++idx) {
         double approx_ratio = (double)angle_state[idx].profit / optimal_solution_value;
         double prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
-        fprintf(stream, "%f %f\n", approx_ratio, prob);
+        fprintf(file, "%f %f\n", approx_ratio, prob);
     }
-    fclose(stream);
+
+    fclose(file);
 }
 
 
@@ -228,20 +234,21 @@ qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, optimizati
         free_nodes(qtg_nodes, num_states);
     }
 
-    num_t optimal_sol_val = combo_wrap(k, 0, k->capacity, FALSE, FALSE, TRUE, FALSE);
-    write_plot_data_to_file(opt_angle_state, optimal_sol_val);
-
     double sol_val = - expectation_value(opt_angle_state);
+    num_t optimal_sol_val = combo_wrap(k, 0, k->capacity, FALSE, FALSE, TRUE, FALSE);
+    write_plot_data_to_file(opt_angle_state, sol_val, optimal_sol_val);
 
     if (opt_angle_state != NULL) {
         free(opt_angle_state);
     }
 
-    // TODO Gate count
-
-    // TODO Collect and combine probability dictionary entries with the same approximation ratios -> Do this in python to avoid the need of looping twice through the array?
-
-    // TODO Wrap these in the shape of qaoa_result_t and return the result -> If writing the probabilities to an external file, we could return only the solution value itself
+    resource_t res = {
+        .qubit_count = qubit_count_qtg_mixer(k),
+        .cycle_count = cycle_count_qtg_mixer(k, COPPERSMITH, TOFFOLI, FALSE),
+        .gate_count = gate_count_qtg_mixer(k, COPPERSMITH, TOFFOLI, FALSE),
+        .cycle_count_decomp = cycle_count_qtg_mixer(k, COPPERSMITH, TOFFOLI, TRUE),
+        .gate_count_decomp = gate_count_qtg_mixer(k, COPPERSMITH, TOFFOLI, TRUE)
+    };
 
     return sol_val;
 }

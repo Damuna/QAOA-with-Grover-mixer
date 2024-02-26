@@ -9,6 +9,7 @@
 
 #include "combowrp.h"
 #include "stategen.h"
+#include "qtgcount.h"
 #include <complex.h>
 #include <nlopt.h>
 #include <time.h>
@@ -114,9 +115,10 @@ double random_value_on_windows_or_linux();
  *                                  probabilities are obtained from the amplitudes of the feasible solutions.
  * Parameters:
  *      angle_state:                Pointer to the angle state whose data is to be exported.
+ *      solution_value:             Final solution value returned by the QAOA.
  *      optimal_solution_value:     Optimal solution of the knapsack instance at hand.
  */
-void write_plot_data_to_file(feassol_ampl_t*, num_t);
+void write_plot_data_to_file(feassol_ampl_t*, double, num_t);
 
 
 /*
