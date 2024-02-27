@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.27)
-project(QAOA-QTG C)
+project(QAOA-QTG C CXX)
 
 set(CMAKE_C_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
 
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
@@ -21,8 +24,19 @@ endif()
 set(SRC ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 
-add_executable(main main.c ${SRC}/knapsack.c ${SRC}/stategen.c ${SRC}/syslinks.c)
+add_subdirectory(extern/nlopt)
 
+add_executable(main main.c
+        ${SRC}/knapsack.c
+        ${SRC}/stategen.c
+        ${SRC}/syslinks.c
+        ${SRC}/qaoa_qtg.c
+        ${SRC}/combowrp.c
+        ${SRC}/combo.c)
+
+add_executable(generate ${SRC}/generator.cpp)
+
+target_link_libraries(main PRIVATE nlopt m)
 target_include_directories(main PRIVATE ${INCLUDE})
-target_link_libraries(main m)
+
 

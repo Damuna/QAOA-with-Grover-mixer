@@ -69,14 +69,7 @@ combo_wrap(const knapsack_t *k, bit_t first_item, num_t capacity, bool_t def, \
             snprintf(filename_ndef, sizeof(filename_ndef), \
              "%scombo_counts_def=true.csv", pathname);
         }
-        uint64_t start = rdtsc();
         opt_sol = combo(f, l, k_copy.capacity, 0, 0, def, relx);
-        uint64_t end = rdtsc();
-        if (save == 1) {
-            FILE *file_def = fopen(filename_ndef, "a");
-            fprintf(file_def, "%llu\n", end - start);
-            fclose(file_def);
-        }
     } else {
         opt_sol = 0;
     }
@@ -126,52 +119,4 @@ combo_data(const knapsack_t *k, bit_t first_item, num_t capacity, bool_t def, \
         fclose(file);
     }
     return opt_sol;
-}
-
-/* 
- * =============================================================================
- *                            measure Combo
- * =============================================================================
- */
-
-void
-measure_combo(const knapsack_t *k) {
-    uint64_t mem_count[4];
-    uint64_t cycle_count[4];
-    char *executable = "cmbcount";
-    size_t argc = 4; /* number of arguments */
-    char *argv[argc]; /* initialize argument array */
-    argv[0] = k->name; /* set name of instance */
-    argv[1] = "0";
-    argv[2] = "0"; /* relx will always be false */
-    argv[3] = "0";
-    for (bool_t def = 0; def <= 1; ++def) {
-        argv[1] = (def) ? "1" : "0";
-        for (bool_t exe_combo = 0; exe_combo <= 1; ++exe_combo) {
-            argv[3] = (exe_combo) ? "1" : "0";
-            rdmd(executable, argc, argv, mem_count + 2 * def + exe_combo, \
-                 cycle_count + 2 * def + exe_combo);
-        }
-    }
-    char pathname[256];
-    char filename_def[256];
-    char filename_ndef[256];
-    snprintf(pathname, sizeof(pathname), "instances%c%s%ccombo%c", path_sep(), \
-             k->name, path_sep(), path_sep());
-    create_dir(pathname);
-    snprintf(filename_ndef, sizeof(filename_ndef), \
-             "%scombo_counts_def=false.csv", pathname);
-    FILE *file_ndef = fopen(filename_ndef, "a");
-    fprintf(file_ndef, "%"PRIu64" ", *(mem_count + 1) - *mem_count);
-    fclose(file_ndef);
-
-    snprintf(filename_def, sizeof(filename_def), \
-             "%scombo_counts_def=true.csv", pathname);
-    FILE *file_def = fopen(filename_def, "a");
-    fprintf(file_def, "%"PRIu64" ", *(mem_count + 3) - \
-            *(mem_count + 2));
-    fclose(file_def);
-
-    combo_wrap(k, 0, k->capacity, 0, 0, 1, 1);
-    combo_wrap(k, 0, k->capacity, 1, 0, 1, 1);
 }

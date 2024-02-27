@@ -87,8 +87,8 @@ typedef struct knapsack {
  */
 typedef struct path {
     num_t remain_cost;
-    num_t tot_profit;
     array_t vector;
+    num_t tot_profit;
 } path_t;
 
 typedef enum sort {
@@ -112,7 +112,7 @@ typedef enum category {
     HARD,
 } category_t;
 
-/* 
+/*
  * =============================================================================
  *                            enum names
  * =============================================================================
@@ -155,7 +155,7 @@ const char* get_ub_name(ub_t);
  */
 const char* get_category_name(category_t);
 
-/* 
+/*
  * =============================================================================
  *                            number of digits
  * =============================================================================
@@ -170,7 +170,7 @@ const char* get_category_name(category_t);
  */
 bit_t num_digits(num_t);
 
-/* 
+/*
  * =============================================================================
  *                            create/free
  * =============================================================================
@@ -254,9 +254,9 @@ void jooken_filename(bit_t, num_t, bit_t, double, double, num_t, char[], \
  *                  parameters specified in the given file. The format is
  *                  adapted to Pisinger's benchmarks for the 0-1-Knapsack
  *                  problem.
- * Parameter:       File name. 
+ * Parameter:       File name.
  * Returns:         Pointer to the allocated knapsack.
- * Side Effects:   
+ * Side Effects:
  *      - Allocates dynamically; pointer should eventually be freed.
  *      - Also allocates items and include statements dynamically; their
  *        pointers should also eventually be freed.
@@ -313,7 +313,7 @@ void assign_item_values(knapsack_t*, num_t[], num_t[]);
  */
 void free_knapsack(knapsack_t*);
 
-/* 
+/*
  * =============================================================================
  *                            item manipulation
  * =============================================================================
@@ -429,7 +429,7 @@ void sort_knapsack(knapsack_t*, sort_t);
  */
 void apply_int_greedy(knapsack_t*);
 
-/* 
+/*
  * =============================================================================
  *                            knapsack information
  * =============================================================================

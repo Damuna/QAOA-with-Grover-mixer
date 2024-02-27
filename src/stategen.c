@@ -62,7 +62,7 @@ branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
  */
 
 node_t*
-qtg(const knapsack_t* k, num_t exact, size_t bias, \
+qtg(const knapsack_t* k, size_t bias, \
     array_t cur_sol, size_t* num_states) {
     
 	*num_states = 1; /* start from the root */

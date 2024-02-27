@@ -190,7 +190,7 @@ long coresize;
 long optsur;
 long relaxations;
 long relfeasible;
-long reltime;
+//long reltime;
 long pitested;
 long pireduced;
 long dynheur;
@@ -236,17 +236,17 @@ static void error(char *str, ...)
 
 #define _POSIX_SOURCE         /* to read <unistd.h> on digital UNIX */
 #define _INCLUDE_POSIX_SOURCE /* to read <unistd.h> on HP-UX */
-#include <unistd.h>           /* define the constant _SC_CLK_TCK */
-#include <sys/times.h>        /* timing routines */
-
-void give_time(long *time)
-{ /* return the number of milliseconds used */
-  struct tms timeend;
-  double t1;
-  times(&timeend);
-  t1 = (double) (timeend.tms_utime) / sysconf(_SC_CLK_TCK);
-  *time = t1 * 1000;
-}
+//#include <unistd.h>           /* define the constant _SC_CLK_TCK */
+//#include <sys/times.h>        /* timing routines */
+//
+//void give_time(long *time)
+//{ /* return the number of milliseconds used */
+//  struct tms timeend;
+//  double t1;
+//  times(&timeend);
+//  t1 = (double) (timeend.tms_utime) / sysconf(_SC_CLK_TCK);
+//  *time = t1 * 1000;
+//}
 
 
 /* ======================================================================
@@ -787,7 +787,7 @@ static void surrelax(allinfo *a)
   long t1, t2;
 
   /* copy table */
-  give_time(&t1);
+//  give_time(&t1);
   relaxations++;
   n = DIFF(a->fitem, a->litem);
   f = palloc(n, sizeof(item));
@@ -835,7 +835,7 @@ static void surrelax(allinfo *a)
   }
   if (u < a->ub) a->ub = u;
   pfree(f);
-  give_time(&t2); reltime = t2 - t1;
+//  give_time(&t2); reltime = t2 - t1;
 }
 
 

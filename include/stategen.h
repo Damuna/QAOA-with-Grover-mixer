@@ -101,16 +101,14 @@ double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, array_t);
  *                  still assigning them the correct probabilities.
  * Parameters:
  *      parameter1: Pointer to knapsack whose decision tree should be traversed.
- *      parameter2: Exact solution of the given knapsack instance.
- *      parameter3: Bias towards certain branch.
- *      parameter4: Method that should be used for branching.
- *      parameter5: Bit string representation of current optimal path.
- *      parameter6: Pointer to states counter; will be updated.
+ *      parameter2: Bias towards certain branch.
+ *      parameter3: Bit string representation of current solution used for biasing.
+ *      parameter4: Pointer to states counter; will be updated.
  * Returns:         Array of paths, together with their sampling probabilities,
  *                  whose total profit lie above the specified threshold.  
  * Side Effect:     Allocates dynamically; pointer should eventually be freed. 
  */
-node_t* qtg(const knapsack_t*, num_t, size_t, array_t, size_t*);
+node_t* qtg(const knapsack_t*, size_t, array_t, size_t*);
 
 #ifdef __cplusplus
 }
