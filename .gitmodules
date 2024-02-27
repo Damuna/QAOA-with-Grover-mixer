@@ -1,6 +1,6 @@
 [submodule "extern/nlopt"]
 	path = extern/nlopt
 	url = https://github.com/stevengj/nlopt.git
-[submodule "extern/liblbfgs"]
-	path = extern/liblbfgs
+[submodule "extern/bfgs"]
+	path = extern/bfgs
 	url = https://github.com/chokkan/liblbfgs.git

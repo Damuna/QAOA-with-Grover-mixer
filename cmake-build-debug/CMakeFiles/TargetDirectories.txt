@@ -1,0 +1,3 @@
+/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/main.dir
+/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
