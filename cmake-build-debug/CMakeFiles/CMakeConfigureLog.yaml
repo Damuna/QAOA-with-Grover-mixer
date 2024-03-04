@@ -251,3 +251,680 @@ events:
       
       
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:100 (check_include_file)"
+    checks:
+      - "Looking for getopt.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LXL9cg"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LXL9cg"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_GETOPT_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LXL9cg'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_bf10e
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_bf10e.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LXL9cg/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_bf10e.dir/CheckIncludeFile.c.o -o cmTC_bf10e   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:101 (check_include_file)"
+    checks:
+      - "Looking for unistd.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UQW1u8"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UQW1u8"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_UNISTD_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UQW1u8'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_88ef0
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_88ef0.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UQW1u8/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_88ef0.dir/CheckIncludeFile.c.o -o cmTC_88ef0   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:102 (check_include_file)"
+    checks:
+      - "Looking for stdint.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-frABPs"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-frABPs"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_STDINT_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-frABPs'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_eb836
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_eb836.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-frABPs/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_eb836.dir/CheckIncludeFile.c.o -o cmTC_eb836   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:103 (check_include_file)"
+    checks:
+      - "Looking for time.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-axlScP"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-axlScP"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_TIME_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-axlScP'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_5c1cb
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_5c1cb.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-axlScP/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_5c1cb.dir/CheckIncludeFile.c.o -o cmTC_5c1cb   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:104 (check_include_file)"
+    checks:
+      - "Looking for sys/time.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-N0UDq2"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-N0UDq2"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_SYS_TIME_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-N0UDq2'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_3cb2f
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_3cb2f.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-N0UDq2/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_3cb2f.dir/CheckIncludeFile.c.o -o cmTC_3cb2f   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:108 (check_function_exists)"
+    checks:
+      - "Looking for getpid"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-m2mtGB"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-m2mtGB"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_GETPID"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-m2mtGB'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_c4b02
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=getpid -std=gnu17 -o CMakeFiles/cmTC_c4b02.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-m2mtGB/CheckFunctionExists.c
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=getpid  CMakeFiles/cmTC_c4b02.dir/CheckFunctionExists.c.o -o cmTC_c4b02   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:109 (check_function_exists)"
+    checks:
+      - "Looking for syscall"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-nqhqm9"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-nqhqm9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_GETTID_SYSCALL"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-nqhqm9'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_349d6
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=syscall -std=gnu17 -o CMakeFiles/cmTC_349d6.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-nqhqm9/CheckFunctionExists.c
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=syscall  CMakeFiles/cmTC_349d6.dir/CheckFunctionExists.c.o -o cmTC_349d6   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:110 (check_function_exists)"
+    checks:
+      - "Looking for isinf"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-OTqlBF"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-OTqlBF"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_ISINF"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-OTqlBF'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_1668b
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=isinf -std=gnu17 -o CMakeFiles/cmTC_1668b.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-OTqlBF/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function ‘isinf’; expected ‘int()’ [-Wbuiltin-declaration-mismatch]
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-OTqlBF/CheckFunctionExists.c:7:3: note: in expansion of macro ‘CHECK_FUNCTION_EXISTS’
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-OTqlBF/CheckFunctionExists.c:1:1: note: ‘isinf’ is declared in header ‘<math.h>’
+          +++ |+#include <math.h>
+            1 | #ifdef CHECK_FUNCTION_EXISTS
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=isinf  CMakeFiles/cmTC_1668b.dir/CheckFunctionExists.c.o -o cmTC_1668b   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:111 (check_function_exists)"
+    checks:
+      - "Looking for isnan"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-mNw4Uz"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-mNw4Uz"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_ISNAN"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-mNw4Uz'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_56b9d
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=isnan -std=gnu17 -o CMakeFiles/cmTC_56b9d.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-mNw4Uz/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function ‘isnan’; expected ‘int()’ [-Wbuiltin-declaration-mismatch]
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-mNw4Uz/CheckFunctionExists.c:7:3: note: in expansion of macro ‘CHECK_FUNCTION_EXISTS’
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-mNw4Uz/CheckFunctionExists.c:1:1: note: ‘isnan’ is declared in header ‘<math.h>’
+          +++ |+#include <math.h>
+            1 | #ifdef CHECK_FUNCTION_EXISTS
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=isnan  CMakeFiles/cmTC_56b9d.dir/CheckFunctionExists.c.o -o cmTC_56b9d   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:112 (check_function_exists)"
+    checks:
+      - "Looking for gettimeofday"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-YcfEOr"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-YcfEOr"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_GETTIMEOFDAY"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-YcfEOr'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_b81e1
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=gettimeofday -std=gnu17 -o CMakeFiles/cmTC_b81e1.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-YcfEOr/CheckFunctionExists.c
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=gettimeofday  CMakeFiles/cmTC_b81e1.dir/CheckFunctionExists.c.o -o cmTC_b81e1   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:113 (check_function_exists)"
+    checks:
+      - "Looking for qsort_r"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-brdUmc"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-brdUmc"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_QSORT_R"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-brdUmc'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_d7907
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=qsort_r -std=gnu17 -o CMakeFiles/cmTC_d7907.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-brdUmc/CheckFunctionExists.c
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=qsort_r  CMakeFiles/cmTC_d7907.dir/CheckFunctionExists.c.o -o cmTC_d7907   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:114 (check_function_exists)"
+    checks:
+      - "Looking for time"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-x4sfTG"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-x4sfTG"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_TIME"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-x4sfTG'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_e9e63
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=time -std=gnu17 -o CMakeFiles/cmTC_e9e63.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-x4sfTG/CheckFunctionExists.c
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=time  CMakeFiles/cmTC_e9e63.dir/CheckFunctionExists.c.o -o cmTC_e9e63   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:115 (check_function_exists)"
+    checks:
+      - "Looking for copysign"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-cEcJNL"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-cEcJNL"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_COPYSIGN"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-cEcJNL'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_19241
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=copysign -std=gnu17 -o CMakeFiles/cmTC_19241.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-cEcJNL/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function ‘copysign’; expected ‘double(double,  double)’ [-Wbuiltin-declaration-mismatch]
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-cEcJNL/CheckFunctionExists.c:7:3: note: in expansion of macro ‘CHECK_FUNCTION_EXISTS’
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-cEcJNL/CheckFunctionExists.c:1:1: note: ‘copysign’ is declared in header ‘<math.h>’
+          +++ |+#include <math.h>
+            1 | #ifdef CHECK_FUNCTION_EXISTS
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=copysign  CMakeFiles/cmTC_19241.dir/CheckFunctionExists.c.o -o cmTC_19241   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:116 (check_function_exists)"
+    checks:
+      - "Looking for getopt"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-dZkrjL"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-dZkrjL"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_GETOPT"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-dZkrjL'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_84751
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=getopt -std=gnu17 -o CMakeFiles/cmTC_84751.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-dZkrjL/CheckFunctionExists.c
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=getopt  CMakeFiles/cmTC_84751.dir/CheckFunctionExists.c.o -o cmTC_84751   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:250 (check_include_file)"
+      - "extern/nlopt/CMakeLists.txt:117 (check_type_size)"
+    checks:
+      - "Looking for sys/types.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-jICFcE"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-jICFcE"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_SYS_TYPES_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-jICFcE'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_a134b
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_a134b.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-jICFcE/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_a134b.dir/CheckIncludeFile.c.o -o cmTC_a134b   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:252 (check_include_file)"
+      - "extern/nlopt/CMakeLists.txt:117 (check_type_size)"
+    checks:
+      - "Looking for stddef.h"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-HEFosb"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-HEFosb"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_STDDEF_H"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-HEFosb'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_e3b8c
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_e3b8c.dir/CheckIncludeFile.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-HEFosb/CheckIncludeFile.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_e3b8c.dir/CheckIncludeFile.c.o -o cmTC_e3b8c   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:146 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:271 (__check_type_size_impl)"
+      - "extern/nlopt/CMakeLists.txt:117 (check_type_size)"
+    checks:
+      - "Check size of uint32_t"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-al38zf"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-al38zf"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_SIZEOF_UINT32_T"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-al38zf'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_3a4d4
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_3a4d4.dir/SIZEOF_UINT32_T.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-al38zf/SIZEOF_UINT32_T.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_3a4d4.dir/SIZEOF_UINT32_T.c.o -o cmTC_3a4d4   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:146 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:271 (__check_type_size_impl)"
+      - "extern/nlopt/CMakeLists.txt:119 (check_type_size)"
+    checks:
+      - "Check size of unsigned int"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UrLN6V"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UrLN6V"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_SIZEOF_UNSIGNED_INT"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UrLN6V'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_8a2cb
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_8a2cb.dir/SIZEOF_UNSIGNED_INT.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-UrLN6V/SIZEOF_UNSIGNED_INT.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_8a2cb.dir/SIZEOF_UNSIGNED_INT.c.o -o cmTC_8a2cb   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:146 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckTypeSize.cmake:271 (__check_type_size_impl)"
+      - "extern/nlopt/CMakeLists.txt:120 (check_type_size)"
+    checks:
+      - "Check size of unsigned long"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-WFcuLm"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-WFcuLm"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_SIZEOF_UNSIGNED_LONG"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-WFcuLm'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_03e26
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_03e26.dir/SIZEOF_UNSIGNED_LONG.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-WFcuLm/SIZEOF_UNSIGNED_LONG.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_03e26.dir/SIZEOF_UNSIGNED_LONG.c.o -o cmTC_03e26   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "extern/nlopt/CMakeLists.txt:122 (check_library_exists)"
+    checks:
+      - "Looking for sqrt in m"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-DBtdeh"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-DBtdeh"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_LIBM"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-DBtdeh'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_b21a0
+        [1/2] /usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sqrt -std=gnu17 -o CMakeFiles/cmTC_b21a0.dir/CheckFunctionExists.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-DBtdeh/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function ‘sqrt’; expected ‘double(double)’ [-Wbuiltin-declaration-mismatch]
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-DBtdeh/CheckFunctionExists.c:7:3: note: in expansion of macro ‘CHECK_FUNCTION_EXISTS’
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-DBtdeh/CheckFunctionExists.c:1:1: note: ‘sqrt’ is declared in header ‘<math.h>’
+          +++ |+#include <math.h>
+            1 | #ifdef CHECK_FUNCTION_EXISTS
+        [2/2] : && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=sqrt  CMakeFiles/cmTC_b21a0.dir/CheckFunctionExists.c.o -o cmTC_b21a0  -lm && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "extern/nlopt/CMakeLists.txt:134 (try_compile)"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/extern/nlopt/build_fpclassify/CMakeFiles/CMakeTmp"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/extern/nlopt/build_fpclassify/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_FPCLASSIFY"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/extern/nlopt/build_fpclassify/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_fd6ea
+        [1/2] /usr/bin/cc   -std=gnu17 -o CMakeFiles/cmTC_fd6ea.dir/fpclassify.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/extern/nlopt/fpclassify.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_fd6ea.dir/fpclassify.c.o -o cmTC_fd6ea  -lm && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "extern/nlopt/CMakeLists.txt:145 (check_c_source_compiles)"
+    checks:
+      - "Performing Test HAVE_THREAD_LOCAL_STORAGE"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-qdU7WV"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-qdU7WV"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_THREAD_LOCAL_STORAGE"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-qdU7WV'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_44392
+        [1/2] /usr/bin/cc -DHAVE_THREAD_LOCAL_STORAGE  -std=gnu17 -o CMakeFiles/cmTC_44392.dir/src.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-qdU7WV/src.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_44392.dir/src.c.o -o cmTC_44392   && :
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "extern/nlopt/CMakeLists.txt:145 (check_c_source_compiles)"
+    checks:
+      - "Performing Test HAVE_THREAD_LOCAL_STORAGE"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "HAVE_THREAD_LOCAL_STORAGE"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_dfe01
+        [1/2] /usr/bin/cc -DHAVE_THREAD_LOCAL_STORAGE  -std=gnu17 -o CMakeFiles/cmTC_dfe01.dir/src.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c
+        \x1b[31mFAILED: \x1b[0mCMakeFiles/cmTC_dfe01.dir/src.c.o 
+        /usr/bin/cc -DHAVE_THREAD_LOCAL_STORAGE  -std=gnu17 -o CMakeFiles/cmTC_dfe01.dir/src.c.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c:2:5: warning: return type defaults to ‘int’ [-Wimplicit-int]
+            2 |     __declspec(thread) int tls;
+              |     ^~~~~~~~~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c: In function ‘__declspec’:
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c:4:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+            4 |     int main(void) {
+              |                    ^
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c:2:5: warning: type of ‘thread’ defaults to ‘int’ [-Wimplicit-int]
+            2 |     __declspec(thread) int tls;
+              |     ^~~~~~~~~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c:2:28: error: declaration for parameter ‘tls’ but no such parameter
+            2 |     __declspec(thread) int tls;
+              |                            ^~~
+        /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-zKvbtp/src.c:7: error: expected ‘{’ at end of input
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckSymbolExists.cmake:140 (try_compile)"
+      - "/home/damuna/Downloads/clion-2023.3.3/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckCXXSymbolExists.cmake:72 (__CHECK_SYMBOL_EXISTS_IMPL)"
+      - "extern/nlopt/CMakeLists.txt:159 (check_cxx_symbol_exists)"
+    checks:
+      - "Looking for __cplusplus"
+    directories:
+      source: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-BA8I2z"
+      binary: "/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-BA8I2z"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/damuna/Documents/QAOA-with-Grover-mixer/extern/nlopt/cmake"
+    buildResult:
+      variable: "SYSTEM_HAS_CXX"
+      cached: true
+      stdout: |
+        Change Dir: '/home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-BA8I2z'
+        
+        Run Build Command(s): /home/damuna/Downloads/clion-2023.3.3/bin/ninja/linux/x64/ninja -v cmTC_ead0a
+        [1/2] /usr/bin/c++   -std=gnu++20 -o CMakeFiles/cmTC_ead0a.dir/CheckSymbolExists.cxx.o -c /home/damuna/Documents/QAOA-with-Grover-mixer/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-BA8I2z/CheckSymbolExists.cxx
+        [2/2] : && /usr/bin/c++   CMakeFiles/cmTC_ead0a.dir/CheckSymbolExists.cxx.o -o cmTC_ead0a   && :
+        
+      exitCode: 0
+...
