@@ -37,6 +37,5 @@ add_executable(main main.c
 add_executable(generate ${SRC}/generator.cpp)
 
 target_link_libraries(main PRIVATE nlopt m)
-target_include_directories(main PRIVATE ${INCLUDE})
-
+target_include_directories(main PRIVATE ${INCLUDE} extern/nlopt)
 
