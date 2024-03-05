@@ -32,7 +32,8 @@ add_executable(main main.c
         ${SRC}/syslinks.c
         ${SRC}/qaoa_qtg.c
         ${SRC}/combowrp.c
-        ${SRC}/combo.c)
+        ${SRC}/combo.c
+        ${SRC}/qtgcount.c)
 
 add_executable(generate ${SRC}/generator.cpp)
 
