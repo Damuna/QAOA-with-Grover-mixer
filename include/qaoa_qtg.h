@@ -20,6 +20,11 @@
  * =============================================================================
  */
 
+num_t dpth;
+size_t num_smpls;
+size_t num_states;
+node_t *qtg_nodes;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -243,7 +248,7 @@ double angles_to_value(unsigned, const double*, double*, void*);
  *                          Frees the memory allocated in quasiadiabatic_evolution for the final QAOA state obtained
  *                          from inserting the optimized angles.
  */
-double qaoa_qtg(knapsack_t*, num_t, size_t, size_t, optimization_type_t);
+double qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, optimization_type_t optimization_type);
 
 
 
