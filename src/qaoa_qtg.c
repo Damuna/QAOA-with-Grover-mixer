@@ -47,13 +47,13 @@ write_plot_data_to_file(feassol_ampl_t *angle_state, double solution_value, num_
     create_dir(""); // TODO Create meaningful directories according to generated instances
     file = fopen("testfile", "w"); // TODO Create meaningful filenames according to generated instances
 
-    fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
+    fprintf(file, "%zu\n", num_states); // Save number of states for easier Python access
     fprintf(file, "%ld\n", optimal_solution_value); // Save optimal solution value for documentation
-    double tot_approx_ratio = solution_value / optimal_solution_value;
+    double tot_approx_ratio = solution_value / (double) optimal_solution_value;
     fprintf(file, "%f\n", tot_approx_ratio); // Save final approximation ratio for documentation
 
     for (size_t idx = 0; idx < num_states; ++idx) {
-        double approx_ratio = (double) angle_state[idx].profit / optimal_solution_value;
+        double approx_ratio = (double) angle_state[idx].profit / (double) optimal_solution_value;
         double prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
         fprintf(file, "%f %f\n", approx_ratio, prob);
     }
