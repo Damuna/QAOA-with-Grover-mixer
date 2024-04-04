@@ -234,20 +234,6 @@ static void error(char *str, ...)
  * in <unistd.h>, but only if _POSIX_SOURCE is defined.
  */
 
-#define _POSIX_SOURCE         /* to read <unistd.h> on digital UNIX */
-#define _INCLUDE_POSIX_SOURCE /* to read <unistd.h> on HP-UX */
-//#include <unistd.h>           /* define the constant _SC_CLK_TCK */
-//#include <sys/times.h>        /* timing routines */
-//
-//void give_time(long *time)
-//{ /* return the number of milliseconds used */
-//  struct tms timeend;
-//  double t1;
-//  times(&timeend);
-//  t1 = (double) (timeend.tms_utime) / sysconf(_SC_CLK_TCK);
-//  *time = t1 * 1000;
-//}
-
 
 /* ======================================================================
 				  palloc
