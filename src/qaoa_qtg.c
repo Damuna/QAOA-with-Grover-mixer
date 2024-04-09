@@ -16,17 +16,17 @@
 #define TRUE        1
 #define FALSE       0
 
-//num_t dpth;
-//size_t num_smpls;
-//size_t num_states;
-//node_t *qtg_nodes;
-
 
 /*
  * =============================================================================
  *                                   Utils
  * =============================================================================
  */
+
+num_t dpth;
+size_t num_smpls;
+size_t num_states;
+node_t *qtg_nodes;
 
 double
 random_value_on_windows_or_linux() {

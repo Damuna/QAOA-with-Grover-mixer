@@ -2,10 +2,9 @@
 
 ## TODO:
 
-- Debora: generate toy examples upper limit for qubits, look how optimizers behave from approx ratio
-- Paul: save gate count & resource estimations to an external file; create meaningful directory & file names
-- Lennart: plotting, fix git submodules to make compilation in main work
-- Soren: add more instances, anti aggression course, 
+- Look for bugs: printing test (Soeren), optimizers (Debora)
+- find comparison method (litterature review), start with rasmus but look for state of the art (Paul, Lennart)
+- new plot as number of items x axis
 
 ## FUTURE TODOS
 

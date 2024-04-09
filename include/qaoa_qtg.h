@@ -20,10 +20,10 @@
  * =============================================================================
  */
 
-num_t dpth;
-size_t num_smpls;
-size_t num_states;
-node_t *qtg_nodes;
+extern num_t dpth;
+extern size_t num_smpls;
+extern size_t num_states;
+extern node_t *qtg_nodes;
 
 #ifdef __cplusplus
 extern "C" {
