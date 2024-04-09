@@ -48,8 +48,8 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
-//No help, variable specified on the command line.
-CMAKE_C_COMPILER:UNINITIALIZED=/usr/bin/gcc
+//C compiler
+CMAKE_C_COMPILER:STRING=/usr/bin/gcc
 
 //Flags used by the C compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -194,7 +194,7 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=
 
 //The product will be built against the headers and libraries located
 // inside the indicated SDK.
-CMAKE_OSX_SYSROOT:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk
+CMAKE_OSX_SYSROOT:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk
 
 //Value Computed by CMake
 CMAKE_PROJECT_DESCRIPTION:STATIC=
@@ -356,12 +356,6 @@ Matlab_MAIN_PROGRAM:FILEPATH=Matlab_MAIN_PROGRAM-NOTFOUND
 
 //Extensions for the mex targets (automatically given by Matlab)
 Matlab_MEX_EXTENSION:STRING=
-
-//Path to a library.
-Matlab_MEX_LIBRARY:FILEPATH=Matlab_MEX_LIBRARY-NOTFOUND
-
-//Path to a library.
-Matlab_MX_LIBRARY:FILEPATH=Matlab_MX_LIBRARY-NOTFOUND
 
 //Matlab installation root path
 Matlab_ROOT_DIR:PATH=/usr/local/texlive/2023/bin
@@ -687,12 +681,8 @@ HAVE_TIME:INTERNAL=1
 HAVE_TIME_H:INTERNAL=1
 //Have include unistd.h
 HAVE_UNISTD_H:INTERNAL=1
-//internal matlab location for the discovered version
-Matlab_PROG_VERSION_STRING_AUTO_DETECT:INTERNAL=
 //last Matlab root dir location
 Matlab_ROOT_DIR_LAST_CACHED:INTERNAL=/usr/local/texlive/2023/bin
-//internal matlab location for the discovered version
-Matlab_VERSION_STRING_INTERNAL:INTERNAL=
 //ADVANCED property for variable: OCTAVE_CRUFT_LIBRARY
 OCTAVE_CRUFT_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OCTAVE_INCLUDE_DIR
@@ -725,8 +715,6 @@ _Python_INCLUDE_DIR:INTERNAL=/usr/local/opt/python@3.12/Frameworks/Python.framew
 //Python Properties
 _Python_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;1;64;;cpython-312-darwin;abi3;/usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12;/usr/local/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12;/usr/local/lib/python3.12/site-packages;/usr/local/lib/python3.12/site-packages
 _Python_INTERPRETER_SIGNATURE:INTERNAL=c4159777cca8713b33e567b5d8b498fe
-//Interpreter reason failure
-_Python_Interpreter_REASON_FAILURE:INTERNAL=
 //NumPy reason failure
 _Python_NumPy_REASON_FAILURE:INTERNAL=
 

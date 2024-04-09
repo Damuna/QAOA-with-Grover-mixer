@@ -66,41 +66,26 @@ int main() {
 
     int steps = 50;
     for (int i = 0; i < steps; ++i) {
-//        for (int k = 0; k < steps; ++k) {
-            for (int j = 0; j < steps; ++j) {
-//                for (int m = 0; m < steps; ++m) {
-
-                    opt_angles[0] = 2 * 3.14159 / steps * 22;
-                    opt_angles[1] = 2 * 3.14159 / steps * 46;
-                    opt_angles[2] = 2 * 3.14159 / steps * 28;
-                    opt_angles[3] = 2 * 3.14159 / steps * 41;
-                    opt_angles[4] = 2 * 3.14159 / steps * 12;
-                    opt_angles[5] = 2 * 3.14159 / steps * 47;
-                    opt_angles[6] = 2 * 3.14159 / steps * 8;
-                    opt_angles[7] = 2 * 3.14159 / steps * 4;
-                    opt_angles[8] = 2 * 3.14159 / steps * i;
-                    opt_angles[9] = 2 * 3.14159 / steps * j;
-                    feassol_ampl_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
-                    double exp = 0;
-                    for (int l = 0; l < num_states; ++l) {
-                        exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;
-//                        if (int_greedy_sol->tot_profit < opt_angle_state[l].profit)
-//                            exp += pow(cabs(opt_angle_state[l].amplitude), 2);
-                    }
-                    if (i == 0 && j == 0) {
-                        best = exp;
-                        init = exp;
-                    }
-                    if (exp > best) {
-                        index1 = i;
-                        index2 = j;
-                        best = exp;
-                    }
-                    printf("\r%3d %3d %3d %3d %f", i, 1, j, 1, best);
-                    fflush(stdout);
-                }
-//            }
-//        }
+        for (int j = 0; j < steps; ++j) {
+            opt_angles[0] = 2 * 3.14159 / steps * i;
+            opt_angles[1] = 2 * 3.14159 / steps * j;
+            feassol_ampl_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
+            double exp = 0;
+            for (int l = 0; l < num_states; ++l) {
+                exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;
+            }
+            if (i == 0 && j == 0) {
+                best = exp;
+                init = exp;
+            }
+            if (exp > best) {
+                index1 = i;
+                index2 = j;
+                best = exp;
+            }
+            printf("\r%3d %3d %3d %3d %f", i, 1, j, 1, best);
+            fflush(stdout);
+        }
     }
     printf("\nbest = %f", best);
     printf("\ninit = %f\n", init);
