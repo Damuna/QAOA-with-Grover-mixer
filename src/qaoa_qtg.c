@@ -168,7 +168,7 @@ nlopt_algorithm map_enum_to_nlopt_algorithm(optimization_type_t opt_type) {
 
 double *
 nlopt_optimizer(optimization_type_t optimization_type) {
-    double *angles = malloc(2 * dpth);
+    double *angles = malloc(2 * dpth * sizeof(double));
 
     nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
     nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * dpth);
