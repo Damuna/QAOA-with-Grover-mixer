@@ -81,10 +81,10 @@ typedef struct {
 
 #define sw_cmp(A1, A2) \
     ({ \
-        bool result = true; \
+        int result = 1; \
         for (size_t LOOPINDEX = 0; LOOPINDEX < (A1).n; ++LOOPINDEX) { \
             if ((A1).part[LOOPINDEX] != (A2).part[LOOPINDEX]) { \
-                result = false; \
+                result = 0; \
                 break; \
             } \
         } \
