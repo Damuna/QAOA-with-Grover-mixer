@@ -34,7 +34,6 @@ extern "C" {
  *              layers are conventionally not set.
  *      prob:   Probability of traversing this node.
  */
-//ub to be removed
 typedef struct node {
     path_t path;
     double prob;
@@ -62,14 +61,13 @@ void free_nodes(node_t*, size_t);
  *                  probability differs from its parent node's probability while
  *                  traversing the decision tree of a knapsack instance.
  * Parameters:
- *      parameter1: Pointer to knapsack whose decision tree should be traversed.
- *      parameter2: Current item/layer at which the branching happens.
- *      parameter3: Bias towards certain branch.
- *      parameter4: Whether left or right subtree is considered.
- *      parameter5: Bit string representation of current optimal path.
- * Returns:         Branching method's name as a string.
+ *      parameter1: Current item/layer at which the branching happens.
+ *      parameter2: Bias towards certain branch.
+ *      parameter3: Whether left or right subtree is considered.
+ *      parameter4: Bit string representation of current optimal path.
+ * Returns:         Branching probability.
  */
-double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, array_t);
+double branch_prob(bit_t, size_t, bool_t, array_t);
 
 /* 
  * =============================================================================
@@ -84,21 +82,22 @@ double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, array_t);
  *                  to the initial state |0> |Z> |0>, where Z is the capacity of
  *                  the specified knapsack. The simulation is conducted via
  *                  breadth-first search: The decision tree is traversed layer
- *                  layer. Following the design of the QTG, it is first checked
- *                  whether the item corresponding to the current layer can be
- *                  included or not. If not, no branching occurs. Otherwise, the
- *                  current node is expanded into two child nodes which carry
- *                  the measurement probability of the parent node, but updated
- *                  by the specified branching rule. This rule directly
- *                  corresponds to the way the Hadamard gates are biased in the
- *                  proposed design. For simulation purposes, at each node, the
- *                  local optimum of its subtree is calculated by applying Combo
- *                  to the corresponding knapsack subinstance. If the local 
- *                  optimum falls below a specified threshold, the branch is
- *                  cut. However, the probability of the remaining branch is
- *                  still updated. Therefore, this function only collects paths
- *                  whose total profit lies above the specified threshold, while
- *                  still assigning them the correct probabilities.
+ *                  by layer. Following the design of the QTG, it is first
+ *                  checked whether the item corresponding to the current layer
+ *                  can be included or not. If not, no branching occurs.
+ *                  Otherwise, the current node is expanded into two child nodes
+ *                  which carry the measurement probability of the parent node,
+ *                  but updated by the specified branching rule. This rule
+ *                  directly corresponds to the way the Hadamard gates are
+ *                  biased in the proposed design. For simulation purposes, at
+ *                  each node, the local optimum of its subtree is calculated by
+ *                  applying Combo to the corresponding knapsack subinstance. If
+ *                  the local optimum falls below a specified threshold, the
+ *                  branch is cut. However, the probability of the remaining
+ *                  branch is still updated. Therefore, this function only
+ *                  collects paths whose total profit lies above the specified
+ *                  threshold, while still assigning them the correct
+ *                  probabilities.
  * Parameters:
  *      parameter1: Pointer to knapsack whose decision tree should be traversed.
  *      parameter2: Bias towards certain branch.

@@ -25,13 +25,13 @@
  * =============================================================================
  */
 
- void
- free_nodes(node_t nodes[], size_t num_nodes) {
+void
+free_nodes(node_t nodes[], size_t num_nodes) {
     for (size_t i = 0; i < num_nodes; ++i) {
         sw_clear(nodes[i].path.vector);
     }
     free(nodes);
- }
+}
 
 
 /* 
@@ -41,16 +41,14 @@
  */
 
 double
-//remove single and default
-branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
-            array_t cur_sol) {
+branch_prob(bit_t i, size_t bias, bool_t left, array_t cur_sol) {
 
     if (left) {
-        return (1. + (1 - sw_tstbit(cur_sol, i)) * bias) \
-                        / (bias + 2);
+        return (1. + (1 - sw_tstbit(cur_sol, i)) * (double) bias) \
+                        / (double) (bias + 2);
     } else {
-        return (1. + sw_tstbit(cur_sol, i) * bias) \
-                        / (bias + 2);
+        return (1. + sw_tstbit(cur_sol, i) * (double) bias) \
+                        / (double) (bias + 2);
         }
 
 }
@@ -110,8 +108,9 @@ qtg(const knapsack_t* k, size_t bias, \
             sw_init(child[a].path.vector, k->size);
             sw_set(child[a].path.vector, parent[j].path.vector);
             /* update probability, then increase child index */
-            child[a].prob = parent[j].prob * branch_prob(k, i, bias, \
-                                                TRUE, cur_sol);
+            child[a].prob = parent[j].prob * branch_prob(i, bias, \
+
+                                                         TRUE, cur_sol);
             // printf("----------------\n");
             // printf("Node info:\n");
             // printf("Remaining cost: %ld\n", child[a].path.remain_cost);
@@ -134,8 +133,9 @@ qtg(const knapsack_t* k, size_t bias, \
             sw_setbit(child[a].path.vector, i);
             
             /* update probability, then increase child index */
-            child[a].prob = parent[j].prob * branch_prob(k, i, \
-                                      bias, FALSE, cur_sol);
+            child[a].prob = parent[j].prob * branch_prob(i, \
+
+                                                         bias, FALSE, cur_sol);
             // printf("----------------\n");
             // printf("Node info:\n");
             // printf("Remaining cost: %ld\n", child[a].path.remain_cost);
@@ -157,6 +157,6 @@ qtg(const knapsack_t* k, size_t bias, \
         // printf("---------------------------------\n");
     }
     /* final layer comprises all feasible paths above threshold */
-    // printf("Number of states after QTG: %zu\n", *num_states);
+    // printf("Number of states after QTG: %zu\n", *numStates);
     return parent;
 }

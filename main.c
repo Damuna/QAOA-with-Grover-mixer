@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "knapsack.h"
-#include "stategen.h"
 #include "qaoa_qtg.h"
 
 int main(int argc, const char **argv) {
@@ -14,16 +13,15 @@ int main(int argc, const char **argv) {
     FILE *file = fopen("../benchmark_instances.txt", "r");
     while (fgets(line, sizeof(line), file)) { // all the instances will be considered
         if (line[0] != '#') { // lines startin with '#' are ignored
-            sscanf(line, "%s %d %s %d %d\n", instance, &p, opt_type, &bias, &samples);
+            sscanf(line, "%s %d %s %d\n", instance, &p, opt_type, &bias);
             printf("p = %d\n", p);
             printf("bias = %d\n", bias);
-            printf("samples = %d\n", samples);
 
             printf("%s\n", instance);
             k = create_jooken_knapsack(instance);
 //            print_knapsack(k);
 
-            qaoa_qtg(k, p, bias, samples, POWELL);
+            qaoa(k, p, bias, QTG, POWELL);
         }
     }
     fclose(file);

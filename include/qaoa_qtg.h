@@ -20,10 +20,10 @@
  * =============================================================================
  */
 
-extern num_t dpth;
+extern num_t depth;
 extern size_t num_smpls;
-extern size_t num_states;
-extern node_t *qtg_nodes;
+extern size_t numStates;
+extern node_t *qtgNodes;
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,10 +47,10 @@ typedef double complex      cmplx;
  *      profit:     Profit (objective function value) of the computational basis state / feasible solution.
  *      amplitude:  Complex amplitude associated with this computational basis state / feasible solution.
  */
-typedef struct feassol_ampl {
+typedef struct cbs {
     num_t profit;
     cmplx amplitude;
-} feassol_ampl_t;
+} cbs_t;
 
 
 /*
@@ -81,18 +81,23 @@ typedef struct qaoa_result {
     approxratio_probability_t *approxratio_prob;
 } qaoa_result_t;
 
+typedef enum mixer {
+    QTG,
+    VANDAM,
+} mixer_t;
+
 /*
- * enum:                OptimizationType
- * ------------------------------------
+ * enum:                opt
+ * ------------------------
  * Description:         Choose the optimization that you want to use in qaoa
  *
  * Contents:            Three types of optimization considered
  */
-typedef enum optimization_type {
+typedef enum opt {
     BFGS,
     NELDER_MEAD,
     POWELL,
-} optimization_type_t;
+} opt_t;
 
 
 /*
@@ -123,7 +128,7 @@ double random_value_on_windows_or_linux();
  *      solution_value:             Final solution value returned by the QAOA.
  *      optimal_solution_value:     Optimal solution of the knapsack instance at hand.
  */
-void write_plot_data_to_file(feassol_ampl_t*, double, num_t);
+void write_plot_data_to_file(cbs_t*, double, num_t);
 
 
 /*
@@ -142,11 +147,11 @@ void write_plot_data_to_file(feassol_ampl_t*, double, num_t);
  *      angle_state:    Pointer to the current state before the application; will be updated.
  *      gamma:          Value of the angle gamma that parametrizes the unitary.
  */
-void phase_separation_unitary(feassol_ampl_t*, double);
+void phase_separation_unitary(cbs_t*, double);
 
 
 /*
- * Function:            mixing_unitary
+ * Function:            grover_mixer
  * --------------------
  * Description:         Classical emulation of the application of the mixing unitary. Its underlying formula is based on
  *                      theoretical considerations. First, it calculates the scalar product of the state returned by the
@@ -156,7 +161,7 @@ void phase_separation_unitary(feassol_ampl_t*, double);
  *      angle_state:    Pointer to the current state before the application; will be updated.
  *      beta:           Value of the angle beta that parametrizes the unitary.
  */
-void mixing_unitary(feassol_ampl_t*, double);
+void grover_mixer(cbs_t *angle_state, double beta);
 
 
 /*
@@ -173,7 +178,7 @@ void mixing_unitary(feassol_ampl_t*, double);
  * Returns:         The state with updated amplitudes after the alternating application.
  * Side Effect:     Allocates dynamically; pointer should eventually be freed.
  */
-feassol_ampl_t* quasiadiabatic_evolution(const double*);
+cbs_t* quasiadiabatic_evolution(const double*);
 
 
 /*
@@ -192,7 +197,7 @@ feassol_ampl_t* quasiadiabatic_evolution(const double*);
  *      angle_state:    Pointer to the state to compute the expectation value for.
  * Returns:             The sum of all terms making the expectation value.
  */
-double expectation_value(feassol_ampl_t*);
+double expectation_value(cbs_t*);
 
 
 /*
@@ -220,8 +225,8 @@ double angles_to_value(unsigned, const double*, double*, void*);
  */
 
 /*
- * Function:                qaoa_qtg
- * --------------------
+ * Function:                qaoa
+ * -------------------------
  * Description:             This is the main function to execute the QTG-induced QAOA, wrapping up all other functions
  *                          defined here. First, it updates the global variables holding the depth and the number of
  *                          samples. Then, it sorts the input knapsack by the relative profit of each item (i.e. the
@@ -240,6 +245,7 @@ double angles_to_value(unsigned, const double*, double*, void*);
  *      depth:              The depth of the QAOA.
  *      bias:               The bias for the QTG.
  *      num_samples:        The number of samples determining the number of measurements in each iteration.
+ *      mixerStrategy:      The mixer strategy that shall be used for the QAOA.
  *      optimizationType:   The classical optimizer that shall be used for the optimization.
  * Returns:                 The negative solution value obtained from inserting the optimized angles returned by the
  *                          classical optimization routine.
@@ -248,7 +254,7 @@ double angles_to_value(unsigned, const double*, double*, void*);
  *                          Frees the memory allocated in quasiadiabatic_evolution for the final QAOA state obtained
  *                          from inserting the optimized angles.
  */
-double qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, optimization_type_t optimization_type);
+double qaoa(knapsack_t *k, num_t depth, size_t bias, mixer_t mixerStrategy, opt_t optimizationType);
 
 
 

@@ -62,16 +62,16 @@ int main() {
     array_t cur;
     sw_init(cur, 4);
     for (int i = 0; i < 4; ++i) { if (k->items[i].included == 1) sw_setbit(cur, i); }
-    qtg_nodes = qtg(k, 1, cur, &num_states);
+    qtgNodes = qtg(k, 1, cur, &numStates);
 
     // Check, if the routine "qtg" worked properly
     // bias = 1
-    if (num_states == 8) printf("Correct number of states!\n");
+    if (numStates == 8) printf("Correct number of states!\n");
     int correct_prob = 1, correct_profit = 1, correct_vector = 1;
-    for (int i = 0; i < num_states; ++i) {
-        if (qtg_nodes[i].path.tot_profit != should_be[i].path.tot_profit) correct_profit = 0;
-        if (qtg_nodes[i].prob != should_be[i].prob) correct_prob = 0;
-        if (!sw_cmp(should_be[i].path.vector, qtg_nodes[i].path.vector)) correct_vector = 0;
+    for (int i = 0; i < numStates; ++i) {
+        if (qtgNodes[i].path.tot_profit != should_be[i].path.tot_profit) correct_profit = 0;
+        if (qtgNodes[i].prob != should_be[i].prob) correct_prob = 0;
+        if (!sw_cmp(should_be[i].path.vector, qtgNodes[i].path.vector)) correct_vector = 0;
     }
     if (correct_prob) printf("Correct probabilities!\n");
     else printf("Incorrect Probabilities!\n");
@@ -81,13 +81,13 @@ int main() {
     else printf("Incorrect Vectors!\n");
 
     // Check, if we get the same expectation value, if we use the angles=(0,0)
-    dpth = 1;
+    depth = 1;
     double opt_angles[2];
     opt_angles[0] = 0;
     opt_angles[1] = 0;
-    feassol_ampl_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
+    cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
     double exp = 0;
-    for (int l = 0; l < num_states; ++l) {
+    for (int l = 0; l < numStates; ++l) {
         exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;
     }
     if (fabs(exp - 6.74074) < pow(10, -5)) printf("Correct Expectation for p=1 angles=(0,0)!\n");
@@ -98,7 +98,7 @@ int main() {
     opt_angles[1] = 0.22;
     opt_angle_state = quasiadiabatic_evolution(opt_angles);
     exp = 0;
-    for (int l = 0; l < num_states; ++l) {
+    for (int l = 0; l < numStates; ++l) {
         exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;
     }
     printf("%f\n", exp);

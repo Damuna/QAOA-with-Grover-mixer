@@ -24,7 +24,7 @@ int main() {
         }
     }
 
-    dpth = 5;
+    depth = 5;
     num_smpls = samples;
 
     sort_knapsack(k, RATIO);
@@ -33,27 +33,27 @@ int main() {
     printf("greedy = %ld\n", int_greedy_sol->tot_profit);
 //    remove_all_items(k);
 
-    qtg_nodes = qtg(k, bias, int_greedy_sol->vector, &num_states);
+    qtgNodes = qtg(k, bias, int_greedy_sol->vector, &numStates);
 
     int max = 0;
     int index = 0;
-    for (int i = 0; i < num_states; ++i) {
-        if (max < qtg_nodes[i].path.tot_profit) {
-            max = qtg_nodes[i].path.tot_profit;
+    for (int i = 0; i < numStates; ++i) {
+        if (max < qtgNodes[i].path.tot_profit) {
+            max = qtgNodes[i].path.tot_profit;
             index = i;
         }
-//        printf("%ld\n", qtg_nodes[i].path.tot_profit);
+//        printf("%ld\n", qtgNodes[i].path.tot_profit);
     }
 //    printf("%ld\n", max);
-//    printf("%f\n", qtg_nodes[index].prob);
-//    printf("%ld\n", qtg_nodes[num_states - 3].path.tot_profit);
-//    printf("%.20f\n", qtg_nodes[num_states - 3].prob);
+//    printf("%f\n", qtgNodes[index].prob);
+//    printf("%ld\n", qtgNodes[numStates - 3].path.tot_profit);
+//    printf("%.20f\n", qtgNodes[numStates - 3].prob);
 
     double exp = 0;
-    for (int l = 0; l < num_states; ++l) {
+    for (int l = 0; l < numStates; ++l) {
 //                        exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;
 //                        if (int_greedy_sol->tot_profit < opt_angle_state[l].profit)
-        exp += qtg_nodes[l].prob;
+        exp += qtgNodes[l].prob;
     }
     printf("%f\n", exp);
 
@@ -69,9 +69,9 @@ int main() {
         for (int j = 0; j < steps; ++j) {
             opt_angles[0] = 2 * 3.14159 / steps * i;
             opt_angles[1] = 2 * 3.14159 / steps * j;
-            feassol_ampl_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
+            cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
             double exp = 0;
-            for (int l = 0; l < num_states; ++l) {
+            for (int l = 0; l < numStates; ++l) {
                 exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;
             }
             if (i == 0 && j == 0) {
