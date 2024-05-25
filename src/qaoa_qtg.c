@@ -68,6 +68,49 @@ write_plot_data_to_file(cbs_t *angle_state, double solution_value, num_t optimal
  * =============================================================================
  */
 
+void apply_ry(cbs_t *angle_state, int qubit, double prob) {
+    size_t blockDistance = POW2(qubit + 1);
+    size_t flipDistance = POW2(qubit);
+    cmplx tmp;
+    for (size_t i = 0; i < numStates; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            tmp = (angle_state + j)->amplitude;
+            (angle_state + j)->amplitude = sqrt(1 - prob * prob) * tmp \
+                                            - prob * (angle_state + j + flipDistance)->amplitude;
+            (angle_state + j + flipDistance)->amplitude = prob * tmp + sqrt(1 - prob * prob) \
+                                                           * (angle_state + j + flipDistance)->amplitude;
+        }
+    }
+}
+
+void apply_cry(cbs_t *angle_state, int control, int target, bool_t condition, double prob) {
+    size_t blockDistance = POW2(target + 1);
+    size_t flipDistance = POW2(target);
+    cmplx tmp;
+    for (size_t i = 0; i < numStates; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            if ((condition && (j & POW2(control))) || (!condition && !(j & POW2(control)))) {
+                tmp = (angle_state + j)->amplitude;
+                (angle_state + j)->amplitude = sqrt(1 - prob * prob) * tmp \
+                                        - prob * (angle_state + j + flipDistance)->amplitude;
+                (angle_state + j + flipDistance)->amplitude = prob * tmp + sqrt(1 - prob * prob) \
+                                                       * (angle_state + j + flipDistance)->amplitude;
+            }
+        }
+    }
+}
+
+void apply_rz(cbs_t *angle_state, int qubit, double angle) {
+    size_t blockDistance = POW2(qubit + 1);
+    size_t flipDistance = POW2(qubit);
+    for (size_t i = 0; i < numStates; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            (angle_state + j)->amplitude *= cos(angle) - I * sin(angle);
+            (angle_state + j + flipDistance)->amplitude *= cos(angle) + I * sin(angle);
+        }
+    }
+}
+
 void
 phase_separation_unitary(cbs_t *angle_state, double gamma) {
     for (size_t idx = 0; idx < numStates; ++idx) {
