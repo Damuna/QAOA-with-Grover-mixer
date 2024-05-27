@@ -35,7 +35,6 @@ add_executable(main main.c
         ${SRC}/qtg_count.c
         ${SRC}/general_count.c
         ${SRC}/copula_count.c
-        ${SRC}/general_qaoa.c
         ${SRC}/qaoa.c
 )
 
@@ -48,7 +47,6 @@ add_executable(landscape landscape.c
         ${SRC}/qtg_count.c
         ${SRC}/general_count.c
         ${SRC}/copula_count.c
-        ${SRC}/general_qaoa.c
         ${SRC}/qaoa.c
 )
 
@@ -59,7 +57,6 @@ add_executable(test unit_test.c
         ${SRC}/combowrp.c
         ${SRC}/combo.c
         ${SRC}/qtg_count.c
-        ${SRC}/general_qaoa.c
         ${SRC}/qaoa.c
 )
 
