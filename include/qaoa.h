@@ -90,6 +90,7 @@ extern qaoa_type_t qaoa_type;
 extern size_t bias;
 extern num_t depth;
 extern double k;
+extern double theta;
 extern size_t num_states;
 extern node_t *qtg_nodes;
 
@@ -282,7 +283,7 @@ void write_plot_data_to_file(const cbs_t* angle_state, double solution_value, nu
  */
 
 /*
- * Function:                qaoa_qtg
+ * Function:                qaoa
  * --------------------
  * Description:             This is the main function for executing the QTG-induced or Copula-based QAOA, depending on
  *                          the input QAOA type. It wraps up all other functions defined in this file. First, it updates
@@ -320,7 +321,8 @@ double qaoa(
     num_t input_depth,
     size_t input_bias,
     opt_t opt_type,
-    double copula_k
+    double copula_k,
+    double copula_theta
 );
 
 

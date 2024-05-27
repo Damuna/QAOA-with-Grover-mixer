@@ -30,13 +30,14 @@ qaoa_type_t qaoa_type;
 size_t bias;
 num_t depth;
 double k;
+double theta;
 size_t num_states;
 node_t* qtg_nodes;
 
 
 /*
  * =============================================================================
- *                              Utils
+ *                                  Utils
  * =============================================================================
  */
 
@@ -49,6 +50,57 @@ random_value_on_windows_or_linux() {
         srand48(time(NULL));
         return drand48();
     #endif
+}
+
+
+/*
+ * =============================================================================
+ *                              Gate application
+ * =============================================================================
+ */
+
+void
+apply_ry(cbs_t* angle_state, const int qubit, const double prob) {
+    const size_t blockDistance = POW2(qubit + 1);
+    const size_t flipDistance = POW2(qubit);
+    for (size_t i = 0; i < num_states; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            const cmplx tmp = (angle_state + j)->amplitude;
+            (angle_state + j)->amplitude = sqrt(1 - prob * prob) * tmp \
+                                            - prob * (angle_state + j + flipDistance)->amplitude;
+            (angle_state + j + flipDistance)->amplitude = prob * tmp + sqrt(1 - prob * prob) \
+                                                           * (angle_state + j + flipDistance)->amplitude;
+        }
+    }
+}
+
+void
+apply_cry(cbs_t* angle_state, const int control, const int target, const bool_t condition, const double prob) {
+    const size_t blockDistance = POW2(target + 1);
+    const size_t flipDistance = POW2(target);
+    for (size_t i = 0; i < num_states; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            if ((condition && (j & POW2(control))) || (!condition && !(j & POW2(control)))) {
+                const cmplx tmp = (angle_state + j)->amplitude;
+                (angle_state + j)->amplitude = sqrt(1 - prob * prob) * tmp \
+                                        - prob * (angle_state + j + flipDistance)->amplitude;
+                (angle_state + j + flipDistance)->amplitude = prob * tmp + sqrt(1 - prob * prob) \
+                                                       * (angle_state + j + flipDistance)->amplitude;
+            }
+        }
+    }
+}
+
+void
+apply_rz(cbs_t* angle_state, const int qubit, const double angle) {
+    const size_t blockDistance = POW2(qubit + 1);
+    const size_t flipDistance = POW2(qubit);
+    for (size_t i = 0; i < num_states; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            (angle_state + j)->amplitude *= cos(angle) - I * sin(angle);
+            (angle_state + j + flipDistance)->amplitude *= cos(angle) + I * sin(angle);
+        }
+    }
 }
 
 
@@ -124,6 +176,56 @@ copula_initial_state_prep(cbs_t* angle_state) {
 }
 
 
+void
+apply_r_dist(cbs_t* angle_state, const int qubit1, const int qubit2, const double d1, const double d2given1, const double d2givennot1) {
+    apply_ry(angle_state, qubit1, sqrt(d1)); // TODO: Square root here correct? Must be d1 instead of d2, correct?
+    apply_cry(angle_state, qubit1, qubit2, 1, sqrt(d2given1)); // TODO: Sqaure root here correct?
+    apply_cry(angle_state, qubit1, qubit2, 0, sqrt(d2givennot1)); // TODO: Square root here correct?
+}
+
+
+void
+apply_r_dist_inv(cbs_t* angle_state, const int qubit1, const int qubit2, const double d1, const double d2given1, const double d2givennot1) {
+    apply_cry(angle_state, qubit1, qubit2, 0, -sqrt(d2givennot1)); // TODO: minus square root here correct?
+    apply_cry(angle_state, qubit1, qubit2, 1, -sqrt(d2given1)); // TODO: minus square root here correct?
+    apply_ry(angle_state, qubit1, -sqrt(d1)) // TODO: minus square root here correct?
+}
+
+
+void
+apply_two_copula(cbs_t* angle_state, const int qubit1, const int qubit2, const double beta) {
+    const double d1 = prob_dist(qubit1);
+    const double d2 = prob_dist(qubit2);
+
+    const double d2given1 = d2 + theta * d2 * (1 - d1) * (1 - d2);
+    const double d2givennot1 = d2 - theta * d1 * d2 * (1 - d2);
+
+    apply_r_dist_inv(angle_state, qubit1, qubit2, d1, d2given1, d2givennot1);
+    apply_rz(angle_state, qubit1, 2 * beta);
+    apply_rz(angle_state, qubit2, 2 * beta);
+    apply_r_dist(angle_state, qubit1, qubit2, d1, d2given1, d2givennot1);
+}
+
+
+void
+copula_mixer(cbs_t* angle_state, double beta) {
+    const bool_t kp_size_even = {kp->size % 2 == 0};
+    for (bit_t qubit = 0; qubit < kp->size - 1; ++qubit) {
+        const bit_t odd_qubit = 2 * qubit + 1;
+        apply_two_copula(angle_state, odd_qubit, odd_qubit + 1, beta);
+    }
+    if (!kp_size_even) {
+        apply_two_copula(angle_state, kp->size, 1, beta);
+    }
+    for (bit_t qubit = 0; qubit < kp->size - 1; ++qubit) {
+        const bit_t even_qubit = 2 * qubit;
+        apply_two_copula(angle_state, even_qubit, even_qubit + 1, beta);
+    }
+    if (kp_size_even) {
+        apply_two_copula(angle_state, kp->size, 1, beta);
+    }
+}
+
 
 /*
  * =============================================================================
@@ -149,7 +251,7 @@ quasiadiabatic_evolution(const double *angles) {
             mixing_unitary = qtg_grover_mixer;
         case COPULA:
             initial_state_prep = copula_initial_state_prep;
-            // TODO assign Copula mixer once ready
+            mixing_unitary = copula_mixer;
     }
 
     cbs_t* angle_state = malloc(num_states * sizeof(cbs_t));
@@ -309,13 +411,15 @@ qaoa(
     const num_t input_depth,
     const opt_t opt_type,
     const size_t input_bias,
-    const double copula_k
+    const double copula_k,
+    const double copula_theta
 ) {
     kp = input_kp;
     qaoa_type = input_qaoa_type;
     depth = input_depth;
     bias = input_bias;
     k = copula_k;
+    theta = copula_theta;
 
     sort_knapsack(kp, RATIO);
 

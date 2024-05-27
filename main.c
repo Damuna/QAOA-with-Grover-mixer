@@ -7,7 +7,7 @@
 int main(int argc, const char **argv) {
 
     int p, bias;
-    double k;
+    double k, theta;
     char instance[1023];
     char input_qaoa_type[16];
     char input_opt_type[32];
@@ -15,10 +15,13 @@ int main(int argc, const char **argv) {
     FILE *file = fopen("../benchmark_instances.txt", "r");
     while (fgets(line, sizeof(line), file)) { // all the instances will be considered
         if (line[0] != '#') { // lines startin with '#' are ignored
-            sscanf(line, "%s %s %d %s %d %.0f\n", instance, input_qaoa_type, &p, input_opt_type, &bias, &k);
+            sscanf(line, "%s %s %d %s %d %.0f %.0f\n", instance, input_qaoa_type, &p, input_opt_type, &bias, \
+                &k,  &theta
+            );
             printf("p = %d\n", p);
             printf("bias = %d\n", bias);
             printf("k = %.0f\n", k);
+            printf("theta = %.0f\n", theta)
 
             printf("%s\n", instance);
             knapsack_t* kp = create_jooken_knapsack(instance);
@@ -50,7 +53,7 @@ int main(int argc, const char **argv) {
                     return -1;
             }
 
-            qaoa(kp, qaoa_type, depth, opt_type, bias, k);
+            qaoa(kp, qaoa_type, depth, opt_type, bias, k, theta);
         }
     }
     fclose(file);
