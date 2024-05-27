@@ -1,5 +1,5 @@
-#ifndef QTGCOUNT_H
-#define QTGCOUNT_H
+#ifndef QTG_COUNT_H
+#define QTG_COUNT_H
 
 /* 
  * =============================================================================
@@ -25,33 +25,15 @@ extern "C" {
  * =============================================================================
  */
 
-/*
- * Struct:      resource_t
- * -----------------------
- * Description: This struct represents a resource counter for a complete run of
- *              the QMaxSearch algorithm.
- * Contents:    
- *      qubit_count:        Number of qubits.
- *      cycle_count:        Number of quantum cycles.
- *      gate_count:         Number of quantum gates.
- *      cycle_count_decomp: Number of quantum cycles (decomposed Toffolis).
- *      gate_count_decomp:  Number of quantum gates (decomposed Toffolis).
- */
-typedef struct resource {
-    bit_t qubit_count;
-    count_t cycle_count;
-    count_t gate_count;
-    count_t cycle_count_decomp;
-    count_t gate_count_decomp;
-} resource_t;
-
 typedef enum qft {
     COPPERSMITH,
 } qft_t;
 
+
 typedef enum mc {
     TOFFOLI,
 } mc_t;
+
 
 /* 
  * =============================================================================
@@ -348,8 +330,60 @@ count_t cycle_count_qtg_mixer(const knapsack_t*, qft_t, mc_t, bool_t);
  */
 count_t gate_count_qtg_mixer(const knapsack_t*, qft_t, mc_t, bool_t);
 
+
 /*
- * Function:        print-qtg_counts
+ * Function: 		qubit_count_qtg_mixer
+ * --------------------------------
+ * Description:		This function counts the qubits used for an application of
+ *                  the full QAOA induced by the QTG. The main registers as
+ *                  well as any ancilla register contribute to the total number.
+ * Parameters:
+ *		k:	        Pointer to knapsack that should be considered.
+ * Returns:			Number of qubits.
+ */
+bit_t qubit_count_qtg_qaoa(const knapsack_t*);
+
+
+/*
+ * Function: 		cycle_count_qtg_qaoa
+ * --------------------------------
+ * Description:     This function counts the number of cycles used for an
+ *                  application of the full QAOA circuit induced by the QTG.
+ *                  The implementation of the QTG's subroutines also have to
+ *                  be specified. Subroutines on distinct registers are
+ *                  parallelized whenever possible.
+ * Parameters:
+ *      k:          Pointer to knapsack that should be considered.
+ *      depth:      Desired depth of the QAOA circuit.
+ *      method_qft: Implementation method for the QFT.
+ *      method_mc:  Decomposition method for any multi-controls.
+ *      tof_decomp: Whether toffoli gates should be decomposed or not.
+ * Returns:		    Number of cycles.
+ */
+count_t cycle_count_qtg_qaoa(const knapsack_t* k, num_t depth, qft_t method_qft, mc_t method_mc, bool_t tof_decomp);
+
+
+/*
+ * Function: 		gate_count_qtg_qaoa
+ * --------------------------------
+ * Description:     This function counts the number of gates used for an
+ *                  application of the full QAOA circuit induced by the QTG.
+ *                  The implementation of the QTG's subroutines also have to
+ *                  be specified. Subroutines on distinct registers are
+ *                  parallelized whenever possible.
+ * Parameters:
+ *      k:          Pointer to knapsack that should be considered.
+ *      depth:      Desired depth of the QAOA circuit.
+ *      method_qft: Implementation method for the QFT.
+ *      method_mc:  Decomposition method for any multi-controls.
+ *      tof_decomp: Whether toffoli gates should be decomposed or not.
+ * Returns:		    Number of gates.
+ */
+count_t gate_count_qtg_qaoa(const knapsack_t* k, num_t depth, qft_t method_qft, mc_t method_mc, bool_t tof_decomp);
+
+
+/*
+ * Function:        print_qtg_counts
  * ---------------------------------
  * Description:     This function prints the entire QTG statistics for a given
  *                  Knapsack instance with the specified circuit construction
@@ -361,6 +395,8 @@ count_t gate_count_qtg_mixer(const knapsack_t*, qft_t, mc_t, bool_t);
  *      parameter4: Whether toffoli gates should be decomposed or not.
  */
 void print_qtg_counts(const knapsack_t*, qft_t, mc_t, bool_t);
+
+
 
 #ifdef __cplusplus
 }

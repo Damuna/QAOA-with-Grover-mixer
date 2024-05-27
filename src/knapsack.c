@@ -595,6 +595,12 @@ break_item(const knapsack_t* k) {
     return current_item - 1;
 }
 
+ratio_t
+stop_item_ratio(const knapsack_t* k) {
+    const bit_t stop_item = break_item(k) + 1;
+    return k->items[stop_item].profit / k->items[stop_item].cost;
+}
+
 num_t
 int_greedy(const knapsack_t* k, sort_t method) {
     num_t tot_profit;

@@ -567,12 +567,23 @@ bool_t is_trivial(const knapsack_t*, num_t*);
 /*
  * Function:    break_item
  * -----------------------
- * Description: This function checks returns the index of a given knapsack
+ * Description: This function returns the index of a given knapsack
  *              instance's break item.
  * Parameter:   Pointer to knapsack whose break item should be inferred.
  * Returns:     The break item's index.
  */
 bit_t break_item(const knapsack_t* k);
+
+/*
+ * Function:    stop_item_ratio
+ * -----------------------
+ * Description: This function returns the relative profit (i.e. its ratio) of
+ *              a given knapsack instance's stop item (defined as the first
+ *              item not included by Lazy Greedy).
+ * Parameter:   Pointer to knapsack whose stop item ratio shall be determined.
+ * Returns:     The ratio of the stop item.
+ */
+ratio_t stop_item_ratio(const knapsack_t* k);
 
 /*
  * Function:    int_greedy
