@@ -241,6 +241,7 @@ double angles_to_value(unsigned, const double*, double*, void*);
  *      bias:               The bias for the QTG.
  *      num_samples:        The number of samples determining the number of measurements in each iteration.
  *      optimizationType:   The classical optimizer that shall be used for the optimization.
+ *      m:                  Precision of the fine grid search
  * Returns:                 The negative solution value obtained from inserting the optimized angles returned by the
  *                          classical optimization routine.
  * Side Effect:             Frees the memory allocated in path_rep for the integer greedy solution.
@@ -248,7 +249,7 @@ double angles_to_value(unsigned, const double*, double*, void*);
  *                          Frees the memory allocated in quasiadiabatic_evolution for the final QAOA state obtained
  *                          from inserting the optimized angles.
  */
-double qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, optimization_type_t optimization_type);
+double qaoa_qtg(knapsack_t* k, num_t depth, size_t bias, size_t num_samples, optimization_type_t optimization_type, int m);
 
 
 
