@@ -1,3 +1,3 @@
 # instance-name p optimization-type bias number-samples
 #   !!every line, that does not represent a benchmark instance has to start with '#'!!
-/Users/sorenwilkening/Desktop/UNI/Promotion/Projects/QAOA-with-Grover-mixer/instances/n_25_c_1023_g_3_f_0.3_eps_0_s_50/test.in 1 nelder_mead 14 100000
+../instances/n_25_c_1023_g_3_f_0.3_eps_0_s_50/test.in 2 nelder_mead 14 5000

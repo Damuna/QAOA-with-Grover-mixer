@@ -8,7 +8,7 @@ int main(int argc, const char **argv) {
     knapsack_t *k;
 
     int p, samples, bias;
-    int m = 10;      //value to set up
+    int m = 15;      //value to set up
     char instance[1023];
     char opt_type[32];
     char line[1023];
