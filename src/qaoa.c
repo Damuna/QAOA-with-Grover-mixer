@@ -66,9 +66,9 @@ apply_ry(cbs_t* angle_state, const int qubit, const double prob) {
     for (size_t i = 0; i < num_states; i += blockDistance) {
         for (size_t j = i; j < i + flipDistance; ++j) {
             const cmplx tmp = (angle_state + j)->amplitude;
-            (angle_state + j)->amplitude = sqrt(1 - prob * prob) * tmp \
-                                            - prob * (angle_state + j + flipDistance)->amplitude;
-            (angle_state + j + flipDistance)->amplitude = prob * tmp + sqrt(1 - prob * prob) \
+            (angle_state + j)->amplitude = sqrt(1 - prob) * tmp \
+                                            - sqrt(prob) * (angle_state + j + flipDistance)->amplitude;
+            (angle_state + j + flipDistance)->amplitude = sqrt(prob) * tmp + sqrt(1 - prob) \
                                                            * (angle_state + j + flipDistance)->amplitude;
         }
     }
@@ -82,9 +82,9 @@ apply_cry(cbs_t* angle_state, const int control, const int target, const bool_t 
         for (size_t j = i; j < i + flipDistance; ++j) {
             if ((condition && (j & POW2(control))) || (!condition && !(j & POW2(control)))) {
                 const cmplx tmp = (angle_state + j)->amplitude;
-                (angle_state + j)->amplitude = sqrt(1 - prob * prob) * tmp \
-                                        - prob * (angle_state + j + flipDistance)->amplitude;
-                (angle_state + j + flipDistance)->amplitude = prob * tmp + sqrt(1 - prob * prob) \
+                (angle_state + j)->amplitude = sqrt(1 - prob) * tmp \
+                                        - sqrt(prob) * (angle_state + j + flipDistance)->amplitude;
+                (angle_state + j + flipDistance)->amplitude = sqrt(prob) * tmp + sqrt(1 - prob) \
                                                        * (angle_state + j + flipDistance)->amplitude;
             }
         }
@@ -438,6 +438,11 @@ qaoa(
 
         case COPULA:
             num_states = POW2(kp->size);
+            // TODO Compute and store prob dist values
+            // TODO Init state prep
+            // TODO Evaluate and store feasibility array (boolean)
+            // TODO Unmodified objective function for phase separation
+            // TODO Modified objective function only for exp value calc -> switch
     }
 
     printf("angle opt\n");
@@ -477,6 +482,7 @@ qaoa(
             res.cycle_count_decomp = res.cycle_count;
             res.gate_count_decomp = res.gate_count;
     }
+    // TODO Export to separate file
 
     return sol_val;
 }
