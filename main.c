@@ -21,7 +21,7 @@ int main(int argc, const char **argv) {
             printf("p = %d\n", p);
             printf("bias = %d\n", bias);
             printf("k = %.0f\n", k);
-            printf("theta = %.0f\n", theta)
+            printf("theta = %.0f\n", theta);
 
             printf("%s\n", instance);
             knapsack_t* kp = create_jooken_knapsack(instance);
@@ -53,7 +53,11 @@ int main(int argc, const char **argv) {
                     return -1;
             }
 
-            qaoa(kp, qaoa_type, depth, opt_type, bias, k, theta);
+            char path[1023] = "../instances/";
+            strcat(path, instance);
+            create_dir(strcat(path, input_qaoa_type));
+
+            qaoa(instance, kp, qaoa_type, depth, opt_type, bias, k, theta);
         }
     }
     fclose(file);

@@ -91,8 +91,12 @@ extern size_t bias;
 extern num_t depth;
 extern double k;
 extern double theta;
+
 extern size_t num_states;
 extern node_t *qtg_nodes;
+extern num_t* sol_profits;
+extern double* prob_dist_vals;
+extern bool_t* sol_feasibilities;
 
 
 /*
@@ -145,18 +149,6 @@ void qtg_grover_mixer(cbs_t*, double);
  */
 double prob_dist(bit_t index);
 
-/*
- * Function:            modified_objective_func
- * --------------------
- * Description:         Computes the value of the modified objective function, which returns zero in case the given
- *                      solution is infeasible and its standard objective function value otherwise.
- * Parameters:
- *      kp:             Pointer to the underlying knapsack.
- *      solution:       Variable assignment whose modified objective function value shall be calculated.
- * Returns:             The corresponding value of the modified objective function.
- */
-int modified_objective_func(int solution);
-
 
 /*
  * Function:            copula_initial_state_prep
@@ -166,6 +158,61 @@ int modified_objective_func(int solution);
  *      angle_state:    Pointer to the current state before the application; will be updated.
  */
 void copula_initial_state_prep(cbs_t* angle_state);
+
+
+/*
+ * Function:            apply_r_dist
+ * --------------------
+ * Description:         Applies the operator R from the van Dam paper, depending on the values of the probability
+ *                      distribution corresponding to two (distinct) qubits, to the angle state.
+ * Parameters:
+ *      angle_state:    Pointer to the current state before the application; will be updated.
+ *      qubit1:         First qubit onto which the operator will be applied.
+ *      qubit2:         Second qubit onto which the operator will be applied.
+ *      d1:             Value of the probability distribution corresponding to the first item.
+ *      d2given1:       Value of the probability distribution corresponding to the second item, given the first.
+ *      d2givennot1:    Value of the probability distribution corresponding to the second item, given not the first.
+ */
+void apply_r_dist(cbs_t* angle_state, num_t qubit1, num_t qubit2, double d1, double d2given1, double d2givennot1);
+
+
+/*
+ * Function:            apply_r_dist_inv
+ * --------------------
+ * Description:         Applies the inverse of the operator R from the van Dam paper, depending on the values of the
+ *                      probability distribution corresponding to two (distinct) qubits, to the angle state.
+ * Parameters:
+ *      angle_state:    Pointer to the current state before the application; will be updated.
+ *      qubit1:         First qubit onto which the operator will be applied.
+ *      qubit2:         Second qubit onto which the operator will be applied.
+ *      d1:             Value of the probability distribution corresponding to the first item.
+ *      d2given1:       Value of the probability distribution corresponding to the second item, given the first.
+ *      d2givennot1:    Value of the probability distribution corresponding to the second item, given not the first.
+ */
+void apply_r_dist_inv(cbs_t* angle_state, num_t qubit1, num_t qubit2, double d1, double d2given1, double d2givennot1);
+
+
+/*
+ * Function:            apply_two_copula
+ * --------------------
+ * Description:         Applies the two-qubit Copula unitary from the van Dam paper.
+ * Parameters:
+ *      angle_state:    Pointer to the current state before the application; will be updated.
+ *      qubit1:         First qubit onto which the operator will be applied.
+ *      qubit2:         Second qubit onto which the operator will be applied.
+ */
+void apply_two_copula(cbs_t* angle_state, int qubit1, int qubit2, double beta);
+
+
+/*
+ * Function:            copula_mixer
+ * --------------------
+ * Description:         Applies the assembled Copula mixer from the van Dam paper.
+ * Parameters:
+ *      angle_state:    Pointer to the current state before the application; will be updated.
+ *      beta:           Angle by which the mixer is parametrized.
+ */
+void copula_mixer(cbs_t* angle_state, double beta);
 
 
 /*
@@ -257,23 +304,48 @@ double angles_to_value_nlopt(unsigned n, const double* angles, double* grad, voi
 
 /*
  * =============================================================================
- *                               Export results
+ *                               Export data
  * =============================================================================
  */
 
 /*
- * Function:                        write_plot_data_to_file
+ * Function:                        path_to_instance
+ * ----------------------
+ * Description:                     Assembles the path to the folder of the instance at hand.
+ * Parameters:
+ *      instance:                   Pointer to the name of the instance.
+ * Returns:                         Pointer to the path.
+ */
+char* path_to_instance(const char* instance);
+
+
+/*
+ * Function:                        export_results
  * ----------------------
  * Description:                     This function is used to extract pairs of approximation ratio and associated
  *                                  probability from the final QAOA state and write them to an external file. The
  *                                  approximation ratios are calculated via the specified optimal solution value and the
  *                                  probabilities are obtained from the amplitudes of the feasible solutions.
  * Parameters:
+ *      instance:                   Pointer to the name of the instance.
  *      angle_state:                Pointer to the angle state whose data is to be exported.
  *      solution_value:             Final solution value returned by the QAOA.
- *      optimal_solution_value:     Optimal solution of the knapsack instance at hand.
+ *      optimal_solution_val:       Optimal solution of the knapsack instance at hand.
  */
-void write_plot_data_to_file(const cbs_t* angle_state, double solution_value, num_t optimal_solution_value);
+void export_results(const char* instance, const cbs_t* angle_state, double solution_value, num_t optimal_solution_val);
+
+
+/*
+ * Function:                        export_resources
+ * ----------------------
+ * Description:                     Exports the counted resources for the chosen QAOA method by writing it to an
+ *                                  external file. This includes the qubit count, the cycle count, the gate count as
+ *                                  well as the latter two with Toffoli gates being decomposed.
+ * Parameters:
+ *      instance:                   Pointer to the name of the instance.
+ *      res:                        Resources counted.
+ */
+void export_resources(const char* instance, resource_t res);
 
 
 /*
@@ -302,6 +374,7 @@ void write_plot_data_to_file(const cbs_t* angle_state, double solution_value, nu
  *                          solution are passed to the function write_plot_data_to_file which exports the needed data to
  *                          an external file. Ultimately, the resources required to run the routine are counted.
  * Parameters:
+ *      instance:           Pointer to the name of the instance.
  *      input_kp:           Pointer to the knapsack on which the QAOA is to be applied.
  *      input_qaoa_type:    The type of the QAOA, i.e. QTG or Copula.
  *      input_depth:        The depth of the QAOA.
@@ -316,6 +389,7 @@ void write_plot_data_to_file(const cbs_t* angle_state, double solution_value, nu
  *                          from inserting the optimized angles.
  */
 double qaoa(
+    const char* instance,
     knapsack_t* input_kp,
     qaoa_type_t input_qaoa_type,
     num_t input_depth,

@@ -25,14 +25,20 @@
  * =============================================================================
  */
 
+// Variables to be set from the outset
 knapsack_t* kp;
 qaoa_type_t qaoa_type;
 size_t bias;
 num_t depth;
 double k;
 double theta;
+
+// Variables that are initialized later
 size_t num_states;
 node_t* qtg_nodes;
+num_t* sol_profits;
+double* prob_dist_vals;
+bool_t* sol_feasibilities;
 
 
 /*
@@ -147,55 +153,51 @@ prob_dist(const bit_t index) {
 }
 
 
-int
-modified_objective_func(const int solution) {
-    int tot_profit = 0;
-    int tot_cost = 0;
-    for (bit_t idx = 0; idx < kp->size; ++idx) {
-        if (solution & (1 << idx) == 1) {
-            tot_profit += kp->items[idx].profit;
-            tot_cost += kp->items[idx].cost;
-            if (tot_cost > kp->capacity) {
-                return 0;
-            }
-        }
-    }
-    return tot_profit;
-}
-
-
 void
 copula_initial_state_prep(cbs_t* angle_state) {
-    for (size_t idx = 0; idx < num_states; ++idx) {
-        angle_state->profit = modified_objective_func(idx);
+    for (bit_t bit = 0; bit < kp->size; ++bit) {
+        angle_state->profit = sol_profits[bit];
 
-        const double d = prob_dist(idx);
-        bit_t num_set_bits = num_set_bits(idx);
-        angle_state->amplitude = pow(sqrt(d), num_set_bits) * pow(sqrt(1-d), kp->size - num_set_bits);
+        const double d = prob_dist_vals[bit];
+        apply_ry(angle_state, bit, d);
     }
 }
 
 
 void
-apply_r_dist(cbs_t* angle_state, const int qubit1, const int qubit2, const double d1, const double d2given1, const double d2givennot1) {
-    apply_ry(angle_state, qubit1, sqrt(d1)); // TODO: Square root here correct? Must be d1 instead of d2, correct?
-    apply_cry(angle_state, qubit1, qubit2, 1, sqrt(d2given1)); // TODO: Sqaure root here correct?
-    apply_cry(angle_state, qubit1, qubit2, 0, sqrt(d2givennot1)); // TODO: Square root here correct?
+apply_r_dist(
+    cbs_t* angle_state,
+    const num_t qubit1,
+    const num_t qubit2,
+    const double d1,
+    const double d2given1,
+    const double d2givennot1
+) {
+    apply_ry(angle_state, qubit1, d1); // TODO: Must be d1 instead of d2, correct?
+    apply_cry(angle_state, qubit1, qubit2, 1, d2given1);
+    apply_cry(angle_state, qubit1, qubit2, 0, d2givennot1);
 }
 
 
 void
-apply_r_dist_inv(cbs_t* angle_state, const int qubit1, const int qubit2, const double d1, const double d2given1, const double d2givennot1) {
-    apply_cry(angle_state, qubit1, qubit2, 0, -sqrt(d2givennot1)); // TODO: minus square root here correct?
-    apply_cry(angle_state, qubit1, qubit2, 1, -sqrt(d2given1)); // TODO: minus square root here correct?
-    apply_ry(angle_state, qubit1, -sqrt(d1)) // TODO: minus square root here correct?
+apply_r_dist_inv(
+    cbs_t* angle_state,
+    const num_t qubit1,
+    const num_t qubit2,
+    const double d1,
+    const double d2given1,
+    const double d2givennot1
+) {
+    apply_cry(angle_state, qubit1, qubit2, 0, -d2givennot1); // TODO: minus here correct?
+    apply_cry(angle_state, qubit1, qubit2, 1, -d2given1); // TODO: minus here correct?
+    apply_ry(angle_state, qubit1, -d1); // TODO: minus here correct? Must be d1 instead of d2, correct?
 }
 
 
 void
 apply_two_copula(cbs_t* angle_state, const int qubit1, const int qubit2, const double beta) {
-    const double d1 = prob_dist(qubit1);
-    const double d2 = prob_dist(qubit2);
+    const double d1 = prob_dist_vals[qubit1];
+    const double d2 = prob_dist_vals[qubit2];
 
     const double d2given1 = d2 + theta * d2 * (1 - d1) * (1 - d2);
     const double d2givennot1 = d2 - theta * d1 * d2 * (1 - d2);
@@ -279,6 +281,11 @@ expectation_value(const cbs_t* angle_state) {
     double exp_val = 0;
 
     for (size_t idx = 0; idx < num_states; ++idx) {
+        if (qaoa_type == COPULA) {
+            if (!sol_feasibilities[idx])
+                continue; // Add 0 in case that solution is infeasible (modified objective function)
+        }
+
         const double prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
         exp_val += prob * angle_state[idx].profit;
     }
@@ -372,27 +379,52 @@ nlopt_optimizer(const opt_t optimization_type) {
 
 /*
  * =============================================================================
- *                                  Export results
+ *                                  Export data
  * =============================================================================
  */
 
+char*
+path_to_instance(const char* instance) {
+    char qaoa_type_str[16];
+    switch (qaoa_type) {
+        case QTG:
+            strcpy(qaoa_type_str, "qtg");
+        case COPULA:
+            strcpy(qaoa_type_str, "copula");
+    }
+
+    return strcat(strcat("../instances/", instance), qaoa_type_str);
+}
+
+
 void
-write_plot_data_to_file(
-    const cbs_t* angle_state, const double solution_value, const num_t optimal_solution_value
+export_results(
+    const char* instance, const cbs_t* angle_state, const double solution_value, const num_t optimal_solution_val
 ) {
-    create_dir(""); // TODO Create meaningful directories according to generated instances
-    FILE* file = fopen("testfile", "w"); // TODO Create meaningful filenames according to generated instances
+    FILE* file = fopen(strcat(path_to_instance(instance), "results"), "w");
 
     fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
-    fprintf(file, "%ld\n", optimal_solution_value); // Save optimal solution value for documentation
-    const double tot_approx_ratio = solution_value / optimal_solution_value;
+    fprintf(file, "%ld\n", optimal_solution_val); // Save optimal solution value for documentation
+    const double tot_approx_ratio = solution_value / optimal_solution_val;
     fprintf(file, "%f\n", tot_approx_ratio); // Save final approximation ratio for documentation
 
     for (size_t idx = 0; idx < num_states; ++idx) {
-        double approx_ratio = (double) angle_state[idx].profit / optimal_solution_value;
-        double prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
+        double const approx_ratio = (double) angle_state[idx].profit / optimal_solution_val;
+        double const prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
         fprintf(file, "%f %f\n", approx_ratio, prob);
     }
+
+    fclose(file);
+}
+
+void
+export_resources(const char* instance, const resource_t res) {
+    FILE* file = fopen(strcat(path_to_instance(instance), "resources"), "w");
+
+    fprintf(file, "%d\n", res.qubit_count);
+    fprintf(file, "%u\n", res.cycle_count);
+    fprintf(file, "%u\n", res.gate_count);
+    fprintf(file, "%u\n", res.gate_count_decomp);
 
     fclose(file);
 }
@@ -406,6 +438,7 @@ write_plot_data_to_file(
 
 double
 qaoa(
+    const char* instance,
     knapsack_t* input_kp,
     const qaoa_type_t input_qaoa_type,
     const num_t input_depth,
@@ -423,6 +456,7 @@ qaoa(
 
     sort_knapsack(kp, RATIO);
 
+    // Initialize algorithms
     switch (qaoa_type) {
         case QTG:
             apply_int_greedy(kp);
@@ -438,13 +472,24 @@ qaoa(
 
         case COPULA:
             num_states = POW2(kp->size);
-            // TODO Compute and store prob dist values
-            // TODO Init state prep
-            // TODO Evaluate and store feasibility array (boolean)
-            // TODO Unmodified objective function for phase separation
-            // TODO Modified objective function only for exp value calc -> switch
+
+            prob_dist_vals = malloc(kp->size * sizeof(double));
+            for (bit_t bit = 0; bit < kp->size; ++bit) {
+                prob_dist_vals[bit] = prob_dist(bit);
+            }
+
+            sol_profits = malloc(num_states * sizeof(num_t));
+            for (size_t idx = 0; idx < num_states; ++idx) {
+                sol_profits[idx] = objective_func(kp, idx);
+            }
+
+            sol_feasibilities = malloc(num_states * sizeof(bool_t));
+            for (size_t idx = 0; idx < num_states; ++idx) {
+                sol_feasibilities[idx] = sol_cost(kp, idx) <= kp->capacity;
+            }
     }
 
+    // Optimize
     printf("angle opt\n");
     const double* opt_angles = nlopt_optimizer(opt_type);
 
@@ -458,14 +503,18 @@ qaoa(
     }
 
     const double sol_val = -expectation_value(opt_angle_state);
+
+    // Export results data
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
     printf("optimal = %ld\n", optimal_sol_val);
-    write_plot_data_to_file(opt_angle_state, sol_val, optimal_sol_val);
+    export_results(instance, opt_angle_state, sol_val, optimal_sol_val);
 
+    // Free optimal-angles solution
     if (opt_angle_state != NULL) {
         free(opt_angle_state);
     }
 
+    // Export resources data
     resource_t res;
     switch (qaoa_type) {
         case QTG:
@@ -482,7 +531,7 @@ qaoa(
             res.cycle_count_decomp = res.cycle_count;
             res.gate_count_decomp = res.gate_count;
     }
-    // TODO Export to separate file
+    export_resources(instance, res);
 
     return sol_val;
 }

@@ -429,6 +429,38 @@ void sort_knapsack(knapsack_t*, sort_t);
  */
 void apply_int_greedy(knapsack_t*);
 
+
+/*
+ * =============================================================================
+ *                                Evaluation
+ * =============================================================================
+ */
+
+/*
+ * Function:        objective_func
+ * --------------------
+ * Description:     Computes the objective function value for a given solution.
+ * Parameters:
+ *      k:          Pointer to the underlying knapsack.
+ *      solution:   Solution given as an integer which will be used in its binary encoding.
+ * Returns:         The objective function value.
+ */
+
+num_t objective_func(const knapsack_t* k, num_t solution);
+
+
+/*
+ * Function:        sol_cost
+ * --------------------
+ * Description:     Computes the total cost of a given solution.
+ * Parameters:
+ *      k:          Pointer to the underlying knapsack.
+ *      solution:   Solution given as an integer which will be used in its binary encoding.
+ * Returns:         The total cost.
+ */
+
+num_t sol_cost(const knapsack_t* k, num_t solution);
+
 /*
  * =============================================================================
  *                            knapsack information
