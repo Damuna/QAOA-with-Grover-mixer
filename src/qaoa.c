@@ -334,9 +334,39 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
 }
 
 
+// Helper function to perform a fine grid search
+void fine_grid_search(const int m, double* best_angles, double* best_value) {
+    const int total_angles = 2 * depth;
+    const double step_size_p = M_PI / m;
+    const double step_size_2p = 2 * M_PI / m;
+    double angles[total_angles];
+    *best_value = -INFINITY;
+
+    for (int i = 0; i < (int)pow(m, total_angles); ++i) {
+        int index = i;
+        for (int j = 0; j < total_angles; ++j) {
+            if (j < depth) {
+                angles[j] = (index % m) * step_size_p;
+            } else {
+                angles[j] = (index % m) * step_size_2p;
+            }
+            index /= m;
+        }
+        const double value = expectation_value(angles);
+        if (value > *best_value) {
+            *best_value = value;
+            for (int k = 0; k < total_angles; ++k) {
+                best_angles[k] = angles[k];
+            }
+        }
+    }
+}
+
+
 double*
-nlopt_optimizer(const opt_t optimization_type) {
+nlopt_optimizer(const opt_t optimization_type, const int m) {
     double *angles = malloc(2 * depth * sizeof(double));
+    double best_value;
 
     nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
     nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
@@ -352,23 +382,30 @@ nlopt_optimizer(const opt_t optimization_type) {
     for (size_t j = 0; j < depth; j++) {
         if ((j + 1) % 2) {
             angles[j] = 0;
-//            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
+            //            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
         } else {
             angles[j] = 0;
-//            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
+            //            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
         }
     }
+    printf("Start Fine grid\n");
+    // Perform fine grid search before optimizing
+    fine_grid_search(m, angles, &best_value);
+
+    printf("Start nlopt\n");
     // Run the optimization
     // opt_f must not be NULL
     double obj = 0;
-    nlopt_result result = nlopt_optimize(opt, angles, &obj);
+    const nlopt_result result = nlopt_optimize(opt, angles, &obj);
+    printf("Finished nlopt\n");
 
     // Check the result and print the optimized values
     if (result < 0) {
         printf("NLOpt failed with code %d\n", result);
     } else {
-        printf("Found minimum at f(%g, %g) = %g\n", angles[0], angles[1], angles_to_value_nlopt(num_states, angles, NULL,
-                                                                                          NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
+        printf(
+            "Found minimum at f(%g, %g) = %g\n", angles[0], angles[1], angles_to_value_nlopt(num_states, angles, NULL, NULL)
+        ); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
     }
 
     // Clean up
@@ -443,6 +480,7 @@ qaoa(
     const qaoa_type_t input_qaoa_type,
     const num_t input_depth,
     const opt_t opt_type,
+    const num_t m,
     const size_t input_bias,
     const double copula_k,
     const double copula_theta
@@ -491,7 +529,7 @@ qaoa(
 
     // Optimize
     printf("angle opt\n");
-    const double* opt_angles = nlopt_optimizer(opt_type);
+    const double* opt_angles = nlopt_optimizer(opt_type, m);
 
     printf("evolution\n");
     fflush(stdout);

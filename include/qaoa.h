@@ -379,8 +379,10 @@ void export_resources(const char* instance, resource_t res);
  *      input_qaoa_type:    The type of the QAOA, i.e. QTG or Copula.
  *      input_depth:        The depth of the QAOA.
  *      opt_type:           The classical method that shall be used for the optimization.
+ *      m:                  Precision of the fine grid search applied before optimization.
  *      input_bias:         The bias for the QTG.
  *      copula_k:           The hyperparameter k for the probability distribution in the Copula ansatz.
+ *      copula_theta:       The hyperparameter theta for the two-qubit Copula unitaries.
  * Returns:                 The negative solution value obtained from inserting the optimized angles returned by the
  *                          classical optimization routine, i.e. a positive result to the given knapsack problem.
  * Side Effect:             Frees the memory allocated in path_rep for the integer greedy solution.
@@ -393,8 +395,9 @@ double qaoa(
     knapsack_t* input_kp,
     qaoa_type_t input_qaoa_type,
     num_t input_depth,
-    size_t input_bias,
     opt_t opt_type,
+    num_t m,
+    size_t input_bias,
     double copula_k,
     double copula_theta
 );

@@ -6,7 +6,7 @@
 
 int main(int argc, const char **argv) {
 
-    int p, bias;
+    int p, m, bias;
     double k, theta;
     char instance[1023];
     char input_qaoa_type[16];
@@ -15,8 +15,10 @@ int main(int argc, const char **argv) {
     FILE *file = fopen("../benchmark_instances.txt", "r");
     while (fgets(line, sizeof(line), file)) { // all the instances will be considered
         if (line[0] != '#') { // lines startin with '#' are ignored
-            sscanf(line, "%s %s %d %s %d %.0f %.0f\n", instance, input_qaoa_type, &p, input_opt_type, &bias, \
-                &k,  &theta
+            sscanf(
+                line,
+                "%s %s %d %s %d %d %.0f %.0f\n",
+                instance, input_qaoa_type, &p, input_opt_type, &m, &bias, &k,  &theta
             );
             printf("p = %d\n", p);
             printf("bias = %d\n", bias);
@@ -57,7 +59,7 @@ int main(int argc, const char **argv) {
             strcat(path, instance);
             create_dir(strcat(path, input_qaoa_type));
 
-            qaoa(instance, kp, qaoa_type, depth, opt_type, bias, k, theta);
+            qaoa(instance, kp, qaoa_type, depth, opt_type, m, bias, k, theta);
         }
     }
     fclose(file);
