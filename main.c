@@ -31,28 +31,26 @@ int main(int argc, const char **argv) {
 
             printf("QAOA type = %s", input_qaoa_type);
             qaoa_type_t qaoa_type;
-            switch (input_qaoa_type) {
-                case "qtg":
-                    qaoa_type = QTG;
-                case "copula":
-                    qaoa_type = COPULA;
-                default:
-                    printf("Error: Input for QAOA type does not match any of the permitted values.");
-                    return -1;
+            if (strcmp(input_qaoa_type, "qtg") == 0) {
+                qaoa_type = QTG;
+            } else if (strcmp(input_qaoa_type, "copula") == 0) {
+                qaoa_type = COPULA;
+            } else {
+                printf("Error: Input for QAOA type does not match any of the permitted values.");
+                return -1;
             }
 
             printf("Optimization type = %s", input_opt_type);
             opt_t opt_type;
-            switch (input_opt_type) {
-                case "bfgs":
-                    opt_type = BFGS;
-                case "nelder_mead":
-                    opt_type = NELDER_MEAD;
-                case "powell":
-                    opt_type = POWELL;
-                default:
-                    printf("Error: Input for optimization type does not match any of the permitted values.");
-                    return -1;
+            if (strcmp(input_opt_type, "bfgs") == 0) {
+                opt_type = BFGS;
+            } else if (strcmp(input_opt_type, "nelder_mead") == 0) {
+                opt_type = NELDER_MEAD;
+            } else if (strcmp(input_opt_type, "powell") == 0) {
+                opt_type = POWELL;
+            } else {
+                printf("Error: Input for optimization type does not match any of the permitted values.");
+                return -1;
             }
 
             char path[1023] = "../instances/";
