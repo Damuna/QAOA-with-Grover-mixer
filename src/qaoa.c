@@ -251,9 +251,11 @@ quasiadiabatic_evolution(const double *angles) {
         case QTG:
             initial_state_prep = qtg_initial_state_prep;
             mixing_unitary = qtg_grover_mixer;
+            break;
         case COPULA:
             initial_state_prep = copula_initial_state_prep;
             mixing_unitary = copula_mixer;
+            break;
     }
 
     cbs_t* angle_state = malloc(num_states * sizeof(cbs_t));
@@ -429,8 +431,10 @@ path_to_instance(const char* instance) {
         case COPULA:
             strcpy(qaoa_type_str, "copula");
     }
-
-    return strcat(strcat("../instances/", instance), qaoa_type_str);
+    char *new_str = calloc(1024, sizeof(char));
+    sprintf(new_str, "../instances/%s%s", instance, qaoa_type_str);
+    //return strcat(strcat("../instances/", instance), qaoa_type_str);
+    return new_str;
 }
 
 

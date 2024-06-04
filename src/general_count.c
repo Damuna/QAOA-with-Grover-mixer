@@ -5,7 +5,7 @@
  */
 
 #include "general_count.h"
-#include "knapsack.c"
+#include "knapsack.h"
 
 
 bit_t qubit_count_phase_separator(const knapsack_t* k) {

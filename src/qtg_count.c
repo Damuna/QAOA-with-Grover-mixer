@@ -5,7 +5,7 @@
  */
 
 #include "qtg_count.h"
-#include "general_count.c"
+#include "general_count.h"
 
 /* 
  * =============================================================================

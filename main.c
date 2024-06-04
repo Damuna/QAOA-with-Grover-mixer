@@ -57,7 +57,7 @@ int main(int argc, const char **argv) {
             strcat(path, instance);
             create_dir(strcat(path, input_qaoa_type));
 
-            qaoa(instance, kp, qaoa_type, depth, opt_type, m, bias, k, theta);
+            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
         }
     }
     fclose(file);

@@ -89,7 +89,10 @@ count_t cycle_count_qaoa(num_t depth, count_t cycle_count_mixer);
  */
 count_t gate_count_qaoa(const knapsack_t* k, num_t depth, count_t gate_count_mixer);
 
+bit_t qubit_count_phase_separator(const knapsack_t* k);
 
+bit_t
+qubit_count_qaoa(const knapsack_t* k, const bit_t qubit_count_mixer);
 
 
 
