@@ -8,6 +8,7 @@ int main(int argc, const char **argv) {
     knapsack_t *k;
 
     int p, samples, bias;
+    int m = 15;      //value to set up
     char instance[1023];
     char opt_type[32];
     char line[1023];
@@ -23,7 +24,7 @@ int main(int argc, const char **argv) {
             k = create_jooken_knapsack(instance);
 //            print_knapsack(k);
 
-            qaoa_qtg(k, p, bias, samples, POWELL);
+            qaoa_qtg(k, p, bias, samples, POWELL, m);
         }
     }
     fclose(file);

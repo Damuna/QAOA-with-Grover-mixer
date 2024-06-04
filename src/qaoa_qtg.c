@@ -150,6 +150,33 @@ angles_to_value(unsigned n, const double *angles, double *grad, void *my_func_da
     return -exp_value;
 }
 
+// Helper function to perform a fine grid search
+void fine_grid_search(int m, double *best_angles, double *best_value) {
+    int total_angles = 2 * dpth;
+    double step_size_p = M_PI / m;
+    double step_size_2p = 2 * M_PI / m;
+    double angles[total_angles];
+    *best_value = -INFINITY;
+
+    for (int i = 0; i < (int)pow(m, total_angles); ++i) {
+        int index = i;
+        for (int j = 0; j < total_angles; ++j) {
+            if (j < dpth) {
+                angles[j] = (index % m) * step_size_p;
+            } else {
+                angles[j] = (index % m) * step_size_2p;
+            }
+            index /= m;
+        }
+        double value = expectation_value(angles);
+        if (value > *best_value) {
+            *best_value = value;
+            for (int k = 0; k < total_angles; ++k) {
+                best_angles[k] = angles[k];
+            }
+        }
+    }
+}
 
 nlopt_algorithm map_enum_to_nlopt_algorithm(optimization_type_t opt_type) {
     switch (opt_type) {
@@ -167,8 +194,9 @@ nlopt_algorithm map_enum_to_nlopt_algorithm(optimization_type_t opt_type) {
 
 
 double *
-nlopt_optimizer(optimization_type_t optimization_type) {
+nlopt_optimizer(optimization_type_t optimization_type, int m) {
     double *angles = malloc(2 * dpth * sizeof(double));
+    double best_value;
 
     nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
     nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * dpth);
@@ -190,18 +218,23 @@ nlopt_optimizer(optimization_type_t optimization_type) {
 //            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
         }
     }
+    printf("Start Fine grid\n");
+    // Perform fine grid search before optimizing
+    fine_grid_search(m, angles, &best_value);
+    printf("Start nlop\n");
     // Run the optimization
     // opt_f must not be NULL
-    double obj = 0;
-    nlopt_result result = nlopt_optimize(opt, angles, &obj);
+    //double obj = 0;
+    //nlopt_result result = nlopt_optimize(opt, angles, &obj);
+    //printf("Finished nlop\n");
 
     // Check the result and print the optimized values
-    if (result < 0) {
-        printf("NLOpt failed with code %d\n", result);
-    } else {
-        printf("Found minimum at f(%g, %g) = %g\n", angles[0], angles[1], angles_to_value(num_states, angles, NULL,
-                                                                                          NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
-    }
+    //if (result < 0) {
+    //    printf("NLOpt failed with code %d\n", result);
+    //} else {
+    //    printf("Found minimum at f(%g, %g) = %g\n", angles[0], angles[1], angles_to_value(num_states, angles, NULL,
+    //                                                                                      NULL)); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
+    //}
 
     // Clean up
     nlopt_destroy(opt);
@@ -216,7 +249,7 @@ nlopt_optimizer(optimization_type_t optimization_type) {
  */
 
 double
-qaoa_qtg(knapsack_t *k, num_t depth, size_t bias, size_t num_samples, optimization_type_t optimization_type) {
+qaoa_qtg(knapsack_t *k, num_t depth, size_t bias, size_t num_samples, optimization_type_t optimization_type, int m) {
 
     double *opt_angles;
 
@@ -236,7 +269,7 @@ qaoa_qtg(knapsack_t *k, num_t depth, size_t bias, size_t num_samples, optimizati
     free_path(int_greedy_sol);
 
     printf("angle opt\n");
-    opt_angles = nlopt_optimizer(optimization_type);
+    opt_angles = nlopt_optimizer(optimization_type, m);
 
     printf("evolution\n");
     fflush(stdout);
@@ -248,9 +281,12 @@ qaoa_qtg(knapsack_t *k, num_t depth, size_t bias, size_t num_samples, optimizati
     }
 
     double sol_val = -expectation_value(opt_angle_state);
-    num_t optimal_sol_val = combo_wrap(k, 0, k->capacity, FALSE, FALSE, TRUE, FALSE);
-    printf("optimal = %ld\n", optimal_sol_val);
-    write_plot_data_to_file(opt_angle_state, sol_val, optimal_sol_val);
+    printf("combo\n");
+    //num_t optimal_sol_val = combo_wrap(k, 0, k->capacity, FALSE, FALSE, TRUE, FALSE);
+    //printf("optimal = %ld\n", optimal_sol_val);
+    //write_plot_data_to_file(opt_angle_state, sol_val, optimal_sol_val);
+
+    printf("%f",-sol_val);
 
     if (opt_angle_state != NULL) {
         free(opt_angle_state);
