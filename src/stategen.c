@@ -25,13 +25,13 @@
  * =============================================================================
  */
 
- void
- free_nodes(node_t nodes[], size_t num_nodes) {
+void
+free_nodes(node_t nodes[], size_t num_nodes) {
     for (size_t i = 0; i < num_nodes; ++i) {
-        //sw_clear(nodes[i].path.vector);
+        sw_clear(nodes[i].path.vector);
     }
     free(nodes);
- }
+}
 
 
 /* 

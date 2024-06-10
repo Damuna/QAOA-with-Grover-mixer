@@ -354,7 +354,7 @@ void fine_grid_search(const int m, double* best_angles, double* best_value) {
             }
             index /= m;
         }
-        const double value = expectation_value(angles);
+        const double value = angles_to_value(angles);
         if (value > *best_value) {
             *best_value = value;
             for (int k = 0; k < total_angles; ++k) {
@@ -511,6 +511,7 @@ qaoa(
             printf("states = %zu\n", num_states);
 
             free_path(int_greedy_sol);
+            break;
 
         case COPULA:
             num_states = POW2(kp->size);
@@ -529,6 +530,7 @@ qaoa(
             for (size_t idx = 0; idx < num_states; ++idx) {
                 sol_feasibilities[idx] = sol_cost(kp, idx) <= kp->capacity;
             }
+            break;
     }
 
     // Optimize

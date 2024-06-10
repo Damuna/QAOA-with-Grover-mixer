@@ -29,7 +29,7 @@ int main(int argc, const char **argv) {
             knapsack_t* kp = create_jooken_knapsack(instance);
 //            print_knapsack(k);
 
-            printf("QAOA type = %s", input_qaoa_type);
+            printf("QAOA type = %s\n", input_qaoa_type);
             qaoa_type_t qaoa_type;
             if (strcmp(input_qaoa_type, "qtg") == 0) {
                 qaoa_type = QTG;
@@ -40,7 +40,7 @@ int main(int argc, const char **argv) {
                 return -1;
             }
 
-            printf("Optimization type = %s", input_opt_type);
+            printf("Optimization type = %s\n", input_opt_type);
             opt_t opt_type;
             if (strcmp(input_opt_type, "bfgs") == 0) {
                 opt_type = BFGS;
@@ -55,6 +55,7 @@ int main(int argc, const char **argv) {
 
             char path[1023] = "../instances/";
             strcat(path, instance);
+            strcat(path, "/");
             create_dir(strcat(path, input_qaoa_type));
 
             qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
