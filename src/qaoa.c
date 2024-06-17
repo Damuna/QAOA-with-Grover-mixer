@@ -423,18 +423,19 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
  */
 
 char*
-path_to_instance(const char* instance) {
+path_for_instance(const char* instance) {
     char qaoa_type_str[16];
     switch (qaoa_type) {
         case QTG:
             strcpy(qaoa_type_str, "qtg");
+            break;
         case COPULA:
             strcpy(qaoa_type_str, "copula");
+            break;
     }
-    char *new_str = calloc(1024, sizeof(char));
-    sprintf(new_str, "../instances/%s%s", instance, qaoa_type_str);
-    //return strcat(strcat("../instances/", instance), qaoa_type_str);
-    return new_str;
+    char *path = calloc(1024, sizeof(char));
+    sprintf(path, "../instances/%s/%s/", instance, qaoa_type_str);
+    return path;
 }
 
 
@@ -442,7 +443,7 @@ void
 export_results(
     const char* instance, const cbs_t* angle_state, const double solution_value, const num_t optimal_solution_val
 ) {
-    FILE* file = fopen(strcat(path_to_instance(instance), "results"), "w");
+    FILE* file = fopen(strcat(path_for_instance(instance), "results"), "w");
 
     fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
     fprintf(file, "%ld\n", optimal_solution_val); // Save optimal solution value for documentation
@@ -460,7 +461,7 @@ export_results(
 
 void
 export_resources(const char* instance, const resource_t res) {
-    FILE* file = fopen(strcat(path_to_instance(instance), "resources"), "w");
+    FILE* file = fopen(strcat(path_for_instance(instance), "resources"), "w");
 
     fprintf(file, "%d\n", res.qubit_count);
     fprintf(file, "%u\n", res.cycle_count);

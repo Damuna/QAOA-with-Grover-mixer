@@ -309,14 +309,14 @@ double angles_to_value_nlopt(unsigned n, const double* angles, double* grad, voi
  */
 
 /*
- * Function:                        path_to_instance
+ * Function:                        path_for_instance
  * ----------------------
  * Description:                     Assembles the path to the folder of the instance at hand.
  * Parameters:
  *      instance:                   Pointer to the name of the instance.
  * Returns:                         Pointer to the path.
  */
-char* path_to_instance(const char* instance);
+char* path_for_instance(const char* instance);
 
 
 /*

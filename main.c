@@ -53,10 +53,9 @@ int main(int argc, const char **argv) {
                 return -1;
             }
 
-            char path[1023] = "../instances/";
-            strcat(path, instance);
-            strcat(path, "/");
-            create_dir(strcat(path, input_qaoa_type));
+            char *path = calloc(1024, sizeof(char));
+            sprintf(path, "../instances/%s/%s", instance, input_qaoa_type);
+            create_dir(path);
 
             qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
         }
