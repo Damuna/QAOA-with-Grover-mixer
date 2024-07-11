@@ -339,22 +339,17 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
 // Helper function to perform a fine grid search
 void fine_grid_search(const int m, double* best_angles, double* best_value) {
     const int total_angles = 2 * depth;
-    const double step_size_p = M_PI / m;
-    const double step_size_2p = 2 * M_PI / m;
+    const double step_size = 2 * M_PI / m;
     double angles[total_angles];
     *best_value = -INFINITY;
 
     for (int i = 0; i < (int)pow(m, total_angles); ++i) {
         int index = i;
         for (int j = 0; j < total_angles; ++j) {
-            if (j < depth) {
-                angles[j] = (index % m) * step_size_p;
-            } else {
-                angles[j] = (index % m) * step_size_2p;
-            }
+            angles[j] = (index % m) * step_size;
             index /= m;
         }
-        const double value = angles_to_value(angles);
+        const double value = expectation_value(angles);
         if (value > *best_value) {
             *best_value = value;
             for (int k = 0; k < total_angles; ++k) {
@@ -363,6 +358,7 @@ void fine_grid_search(const int m, double* best_angles, double* best_value) {
         }
     }
 }
+
 
 
 double*
