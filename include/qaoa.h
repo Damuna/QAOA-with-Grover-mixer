@@ -263,7 +263,6 @@ cbs_t* quasiadiabatic_evolution(const double* angles);
                         amplitudes of the state.
  * Parameters:
  *      angle_state:    Pointer to the state to compute the expectation value for.
- *      num_states:     The number of states included in the angle state.
  * Returns:             The sum of all terms making the expectation value.
  */
 double expectation_value(const cbs_t* angle_state);

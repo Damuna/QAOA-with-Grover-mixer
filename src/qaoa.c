@@ -349,7 +349,7 @@ void fine_grid_search(const int m, double* best_angles, double* best_value) {
             angles[j] = (index % m) * step_size;
             index /= m;
         }
-        const double value = expectation_value(angles);
+        const double value = angles_to_value(angles);
         if (value > *best_value) {
             *best_value = value;
             for (int k = 0; k < total_angles; ++k) {
@@ -401,9 +401,15 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
     if (result < 0) {
         printf("NLOpt failed with code %d\n", result);
     } else {
-        printf(
-            "Found minimum at f(%g, %g) = %g\n", angles[0], angles[1], angles_to_value_nlopt(num_states, angles, NULL, NULL)
-        ); // TODO There will be more than 2 angles, so printing x[0] and x[1] is meaningless
+        printf("NLOPT returned optimal gamma values (");
+        for (size_t j = 0; j < depth; j++) {
+            printf("%g", angles[2 * j]);
+        }
+        printf(") as well as optimal beta values (");
+        for (size_t j = 0; j < depth; j++) {
+            printf("%g", angles[2 * j + 1]);
+        }
+        printf("), resulting in optimal objective function value %g\n", angles_to_value(angles));
     }
 
     // Clean up
