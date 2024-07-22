@@ -20,14 +20,20 @@ int main(int argc, const char **argv) {
                 "%s %s %d %s %d %d %.0f %.0f\n",
                 instance, input_qaoa_type, &p, input_opt_type, &m, &bias, &k,  &theta
             );
+            printf("===== Input parameters =====\n");
             printf("p = %d\n", p);
             printf("bias = %d\n", bias);
             printf("k = %.0f\n", k);
             printf("theta = %.0f\n", theta);
 
-            printf("%s\n", instance);
+            const char* instance_without_prefix = strstr(instance, "../instances/") + strlen("../instances/");
+            const size_t terminate_length = strstr(instance_without_prefix, "/test.in") - instance_without_prefix;
+            char instance_without_prefix_and_suffix[1023];
+            memcpy(instance_without_prefix_and_suffix, instance_without_prefix, terminate_length);
+            printf("Instance = %s\n", instance_without_prefix_and_suffix);
+
             knapsack_t* kp = create_jooken_knapsack(instance);
-//            print_knapsack(k);
+            // print_knapsack(k);
 
             printf("QAOA type = %s\n", input_qaoa_type);
             qaoa_type_t qaoa_type;

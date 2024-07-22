@@ -422,30 +422,35 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
             //            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
         }
     }
-    printf("Start Fine grid\n");
+    printf("Performing fine-grid search...\n");
     // Perform fine grid search before optimizing
     fine_grid_search(m, angles, &best_value);
 
-    printf("Start nlopt\n");
+    printf("Starting NLOpt...\n");
     // Run the optimization
     // opt_f must not be NULL
     double obj = 0;
     const nlopt_result result = nlopt_optimize(opt, angles, &obj);
-    printf("Finished nlopt\n");
 
     // Check the result and print the optimized values
     if (result < 0) {
         printf("NLOpt failed with code %d\n", result);
     } else {
-        printf("NLOPT returned optimal gamma values (");
+        char* string_to_adjust = "value";
+        if (depth > 1) {
+            string_to_adjust = strcat(string_to_adjust, "s");
+        }
+        printf("Done! NLOPT returned optimal gamma ");
+        printf("%s (", string_to_adjust);
         for (size_t j = 0; j < depth; j++) {
             printf("%g", angles[2 * j]);
         }
-        printf(") as well as optimal beta values (");
+        printf(") and optimal beta ");
+        printf("%s (", string_to_adjust);
         for (size_t j = 0; j < depth; j++) {
             printf("%g", angles[2 * j + 1]);
         }
-        printf("), resulting in optimal objective function value %g\n", angles_to_value(angles));
+        printf(") with objective function value %g\n", angles_to_value(angles));
     }
 
     // Clean up
@@ -538,16 +543,17 @@ qaoa(
     sort_knapsack(kp, RATIO);
 
     // Initialize algorithms
+    printf("\n===== Preparation ======\n");
     switch (qaoa_type) {
         case QTG:
             apply_int_greedy(kp);
             path_t *int_greedy_sol = path_rep(kp);
-            printf("greedy = %ld\n", int_greedy_sol->tot_profit);
+            printf("Integer greedy solution = %ld\n", int_greedy_sol->tot_profit);
             remove_all_items(kp);
 
-            printf("stategen\n");
+            printf("Generating states via QTG...\n");
             qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
-            printf("states = %zu\n", num_states);
+            printf("Done! Number of states = %zu\n", num_states);
 
             free_path(int_greedy_sol);
             break;
@@ -573,14 +579,17 @@ qaoa(
     }
 
     // Optimize
-    printf("angle opt\n");
+    printf("\n===== Optimization =====\n");
+    printf("Optimize angles...\n");
     const double* opt_angles = nlopt_optimizer(opt_type, m);
 
-    printf("evolution\n");
+    printf("\n===== Final phase of evaluation =====\n");
+
+    printf("Quasi-adiabatic evolution of optimal angles...\n");
     fflush(stdout);
     cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
 
-    printf("exp value\n");
+    printf("Compute final expectation value...\n");
     if (qtg_nodes != NULL) {
         free_nodes(qtg_nodes, num_states);
     }
@@ -589,7 +598,7 @@ qaoa(
 
     // Export results data
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
-    printf("optimal = %ld\n", optimal_sol_val);
+    printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
     export_results(instance, opt_angle_state, sol_val, optimal_sol_val);
 
     // Free optimal-angles solution
