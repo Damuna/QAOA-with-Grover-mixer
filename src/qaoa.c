@@ -80,6 +80,23 @@ apply_ry(cbs_t* angle_state, const int qubit, const double prob) {
     }
 }
 
+
+void
+apply_ry_inv(cbs_t* angle_state, const int qubit, const double prob) {
+    const size_t blockDistance = POW2(qubit + 1);
+    const size_t flipDistance = POW2(qubit);
+    for (size_t i = 0; i < num_states; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            const cmplx tmp = (angle_state + j)->amplitude;
+            (angle_state + j)->amplitude = sqrt(1 - prob) * tmp \
+                                            + sqrt(prob) * (angle_state + j + flipDistance)->amplitude;
+            (angle_state + j + flipDistance)->amplitude = - sqrt(prob) * tmp + sqrt(1 - prob) \
+                                                           * (angle_state + j + flipDistance)->amplitude;
+        }
+    }
+}
+
+
 void
 apply_cry(cbs_t* angle_state, const int control, const int target, const bool_t condition, const double prob) {
     const size_t blockDistance = POW2(target + 1);
@@ -96,6 +113,25 @@ apply_cry(cbs_t* angle_state, const int control, const int target, const bool_t 
         }
     }
 }
+
+
+void
+apply_cry_inv(cbs_t* angle_state, const int control, const int target, const bool_t condition, const double prob) {
+    const size_t blockDistance = POW2(target + 1);
+    const size_t flipDistance = POW2(target);
+    for (size_t i = 0; i < num_states; i += blockDistance) {
+        for (size_t j = i; j < i + flipDistance; ++j) {
+            if ((condition && (j & POW2(control))) || (!condition && !(j & POW2(control)))) {
+                const cmplx tmp = (angle_state + j)->amplitude;
+                (angle_state + j)->amplitude = sqrt(1 - prob) * tmp \
+                                        + sqrt(prob) * (angle_state + j + flipDistance)->amplitude;
+                (angle_state + j + flipDistance)->amplitude = - sqrt(prob) * tmp + sqrt(1 - prob) \
+                                                       * (angle_state + j + flipDistance)->amplitude;
+            }
+        }
+    }
+}
+
 
 void
 apply_rz(cbs_t* angle_state, const int qubit, const double angle) {
@@ -173,7 +209,7 @@ apply_r_dist(
     const double d2given1,
     const double d2givennot1
 ) {
-    apply_ry(angle_state, qubit1, d1); // TODO: Must be d1 instead of d2, correct?
+    apply_ry(angle_state, qubit1, d1);
     apply_cry(angle_state, qubit1, qubit2, 1, d2given1);
     apply_cry(angle_state, qubit1, qubit2, 0, d2givennot1);
 }
@@ -188,9 +224,9 @@ apply_r_dist_inv(
     const double d2given1,
     const double d2givennot1
 ) {
-    apply_cry(angle_state, qubit1, qubit2, 0, -d2givennot1); // TODO: minus here correct?
-    apply_cry(angle_state, qubit1, qubit2, 1, -d2given1); // TODO: minus here correct?
-    apply_ry(angle_state, qubit1, -d1); // TODO: minus here correct? Must be d1 instead of d2, correct?
+    apply_cry_inv(angle_state, qubit1, qubit2, 0, d2givennot1);
+    apply_cry_inv(angle_state, qubit1, qubit2, 1, d2given1);
+    apply_ry_inv(angle_state, qubit1, d1);
 }
 
 
