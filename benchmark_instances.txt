@@ -1,5 +1,4 @@
-# instance-name p optimization-type bias number-samples
-#   !!every line, that does not represent a benchmark instance has to start with '#'!!
+# !! every line, that does not represent a benchmark instance has to start with '#' !!
 # file qaoa_type depth optimization_type fine-grid-precision bias k theta
 ../instances/n_5_c_1023_g_1_f_0.3_eps_0_s_50/test.in qtg 1 powell 10 1 10 -1
 #../instances/n_6_c_1023_g_1_f_0.3_eps_0_s_50/test.in qtg 1 powell 10 1 10 -1

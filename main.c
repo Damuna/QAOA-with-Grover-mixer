@@ -12,7 +12,11 @@ int main(int argc, const char **argv) {
     char input_qaoa_type[16];
     char input_opt_type[32];
     char line[1023];
-    FILE *file = fopen("../benchmark_instances.txt", "r");
+    const char *benchmark_instance = argv[1];
+    char *path_to_benchmark = calloc(1024, sizeof(char));
+    sprintf(path_to_benchmark, "../benchmark_instances/%s.txt", benchmark_instance);
+    printf("File = %s\n", path_to_benchmark);
+    FILE *file = fopen(path_to_benchmark, "r");
     while (fgets(line, sizeof(line), file)) { // all the instances will be considered
         if (line[0] != '#') { // lines startin with '#' are ignored
             sscanf(
@@ -60,7 +64,7 @@ int main(int argc, const char **argv) {
             }
 
             char *path = calloc(1024, sizeof(char));
-            sprintf(path, "../instances/%s/%s", instance, input_qaoa_type);
+            sprintf(path, "%s/%s", instance, input_qaoa_type);
             create_dir(path);
 
             qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
