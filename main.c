@@ -12,32 +12,32 @@ int main(int argc, const char **argv) {
     char input_qaoa_type[16];
     char input_opt_type[32];
     char line[1023];
+
     const char *benchmark_instance = argv[1];
     char *path_to_benchmark = calloc(1024, sizeof(char));
     sprintf(path_to_benchmark, "../benchmark_instances/%s.txt", benchmark_instance);
-    printf("File = %s\n", path_to_benchmark);
     FILE *file = fopen(path_to_benchmark, "r");
+
     while (fgets(line, sizeof(line), file)) { // all the instances will be considered
         if (line[0] != '#') { // lines startin with '#' are ignored
             sscanf(
                 line,
-                "%s %s %d %s %d %d %.0f %.0f\n",
+                "%s %s %d %s %d %d %lf %lf\n",
                 instance, input_qaoa_type, &p, input_opt_type, &m, &bias, &k,  &theta
             );
-            printf("===== Input parameters =====\n");
+            printf("\n===== Input parameters =====\n");
             printf("p = %d\n", p);
+            printf("m = %d\n", m);
             printf("bias = %d\n", bias);
-            printf("k = %.0f\n", k);
-            printf("theta = %.0f\n", theta);
+            printf("k = %.1f\n", k);
+            printf("theta = %.1f\n", theta);
 
-            const char* instance_without_prefix = strstr(instance, "../instances/") + strlen("../instances/");
-            const size_t terminate_length = strstr(instance_without_prefix, "/test.in") - instance_without_prefix;
-            char instance_without_prefix_and_suffix[1023];
-            memcpy(instance_without_prefix_and_suffix, instance_without_prefix, terminate_length);
-            printf("Instance = %s\n", instance_without_prefix_and_suffix);
-
-            knapsack_t* kp = create_jooken_knapsack(instance);
-            // print_knapsack(k);
+            printf("Instance = %s\n", instance);
+            char path_to_instance[1024];
+            sprintf(path_to_instance, "..%cinstances%c%s%c", path_sep(), path_sep(), instance, path_sep());
+            strcat(path_to_instance, "test.in");
+            knapsack_t* kp = create_jooken_knapsack(path_to_instance);
+            //print_knapsack(kp);
 
             printf("QAOA type = %s\n", input_qaoa_type);
             qaoa_type_t qaoa_type;
@@ -63,9 +63,8 @@ int main(int argc, const char **argv) {
                 return -1;
             }
 
-            char *path = calloc(1024, sizeof(char));
-            sprintf(path, "%s/%s", instance, input_qaoa_type);
-            create_dir(path);
+            strcat(path_to_instance, input_qaoa_type);
+            create_dir(path_to_instance);
 
             qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
         }

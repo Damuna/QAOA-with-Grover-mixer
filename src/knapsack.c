@@ -276,10 +276,11 @@ create_jooken_knapsack(char* filename) {
     /* determine size of knapsack */
     fscanf(stream, "%d", &size);
 
-    /* instanciate knapsack and set name (capacity is determined later */
+    /* instanciate knapsack and set name (capacity is determined later) */
     new_knapsack = create_empty_knapsack(size, 0);
-    filename[strlen(filename) - 8] = '\0';
-    sprintf(new_knapsack->name, "%s", filename + 10);
+    filename[strlen(filename) - strlen("/test.in")] = '\0';
+    sprintf(new_knapsack->name, "%s", filename + strlen("../instances/"));
+    strcat(filename, "/");
 
     while (num_line < size && fgets(line, sizeof(line), stream) != NULL) {
         fscanf(stream, "%d %ld %ld", &a, &(new_knapsack->items[num_line].profit), \

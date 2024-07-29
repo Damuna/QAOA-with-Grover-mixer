@@ -386,8 +386,10 @@ void fine_grid_search(const int m, double* best_angles, double* best_value) {
             index /= m;
         }
         const double value = angles_to_value(angles);
+        //printf("Value in fine-grid = %f\n", value);
         if (value > *best_value) {
             *best_value = value;
+            //printf("Best value in fine-grid = %f\n", *best_value);
             for (int k = 0; k < total_angles; ++k) {
                 best_angles[k] = angles[k];
             }
@@ -425,6 +427,8 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
     printf("Performing fine-grid search...\n");
     // Perform fine grid search before optimizing
     fine_grid_search(m, angles, &best_value);
+    //printf("Angles found by fine-grid search = (%f, %f)\n", angles[0], angles[1]);
+    //printf("Objective function value at these angles = %f\n", best_value);
 
     printf("Starting NLOpt...\n");
     // Run the optimization
@@ -440,7 +444,7 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
         if (depth > 1) {
             string_to_adjust = strcat(string_to_adjust, "s");
         }
-        printf("Done! NLOPT returned optimal gamma ");
+        printf("Done! NLOpt returned optimal gamma ");
         printf("%s (", string_to_adjust);
         for (size_t j = 0; j < depth; j++) {
             printf("%g", angles[2 * j]);
@@ -477,7 +481,9 @@ path_for_instance(const char* instance) {
             break;
     }
     char *path = calloc(1024, sizeof(char));
-    sprintf(path, "../instances/%s/%s/", instance, qaoa_type_str);
+    sprintf(
+        path, "..%cinstances%c%s%c%s%c", path_sep(), path_sep(), instance, path_sep(), qaoa_type_str, path_sep()
+    );
     return path;
 }
 
@@ -486,7 +492,8 @@ void
 export_results(
     const char* instance, const cbs_t* angle_state, const double solution_value, const num_t optimal_solution_val
 ) {
-    FILE* file = fopen(strcat(path_for_instance(instance), "results"), "w");
+    char* path = path_for_instance(instance);
+    FILE* file = fopen(strcat(path, "results"), "w");
 
     fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
     fprintf(file, "%ld\n", optimal_solution_val); // Save optimal solution value for documentation
@@ -500,11 +507,13 @@ export_results(
     }
 
     fclose(file);
+    free(path);
 }
 
 void
 export_resources(const char* instance, const resource_t res) {
-    FILE* file = fopen(strcat(path_for_instance(instance), "resources"), "w");
+    char* path = path_for_instance(instance);
+    FILE* file = fopen(strcat(path, "resources"), "w");
 
     fprintf(file, "%d\n", res.qubit_count);
     fprintf(file, "%u\n", res.cycle_count);
@@ -512,6 +521,7 @@ export_resources(const char* instance, const resource_t res) {
     fprintf(file, "%u\n", res.gate_count_decomp);
 
     fclose(file);
+    free(path);
 }
 
 
@@ -595,10 +605,14 @@ qaoa(
     }
 
     const double sol_val = -expectation_value(opt_angle_state);
+    printf("Objective function value for optimized angles = %g\n", sol_val);
 
-    // Export results data
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
     printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
+
+    printf("\nExport results and resources...\n");
+
+    // Export results data
     export_results(instance, opt_angle_state, sol_val, optimal_sol_val);
 
     // Free optimal-angles solution
