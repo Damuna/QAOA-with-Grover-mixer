@@ -339,7 +339,7 @@ angles_to_value(const double* angles) {
     if (angle_state != NULL) {
         free(angle_state);
     }
-    return -exp_value;
+    return exp_value;
 }
 
 
@@ -352,7 +352,7 @@ angles_to_value(const double* angles) {
 double
 angles_to_value_nlopt(unsigned n, const double *angles, double *grad, void *my_func_data) {
     // grad is NULL bcs both Nelder Mead and Powell are derivative-free algorithms
-    return angles_to_value(angles);
+    return -angles_to_value(angles);
 }
 
 
@@ -418,17 +418,17 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
     for (size_t j = 0; j < depth; j++) {
         if ((j + 1) % 2) {
             angles[j] = 0;
-            //            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
+            //angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
         } else {
             angles[j] = 0;
-            //            angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
+            //angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
         }
     }
     printf("Performing fine-grid search...\n");
     // Perform fine grid search before optimizing
     fine_grid_search(m, angles, &best_value);
-    //printf("Angles found by fine-grid search = (%f, %f)\n", angles[0], angles[1]);
-    //printf("Objective function value at these angles = %f\n", best_value);
+    printf("Angles found by fine-grid search = (%f, %f)\n", angles[0], angles[1]);
+    printf("Objective function value at these angles = %f\n", best_value);
 
     printf("Starting NLOpt...\n");
     // Run the optimization
@@ -604,7 +604,7 @@ qaoa(
         free_nodes(qtg_nodes, num_states);
     }
 
-    const double sol_val = -expectation_value(opt_angle_state);
+    const double sol_val = expectation_value(opt_angle_state);
     printf("Objective function value for optimized angles = %g\n", sol_val);
 
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
