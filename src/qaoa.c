@@ -373,7 +373,8 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
 
 
 // Helper function to perform a fine grid search
-void fine_grid_search(const int m, double* best_angles, double* best_value) {
+void
+fine_grid_search(const int m, double* best_angles, double* best_value) {
     const int total_angles = 2 * depth;
     const double step_size = 2 * M_PI / m;
     double angles[total_angles];
@@ -398,14 +399,77 @@ void fine_grid_search(const int m, double* best_angles, double* best_value) {
 }
 
 
-
-double*
-nlopt_optimizer(const opt_t optimization_type, const int m) {
-    double *angles = malloc(2 * depth * sizeof(double));
+void
+single_optimization_cycle(const nlopt_opt opt, const int m, double* final_angles, double* final_value) {
+    double angles[2 * depth];
     double best_value;
 
-    nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
-    nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
+    // Set all angles initially to 0
+    for (size_t j = 0; j < 2 * depth; j++) {
+        angles[j] = 0;
+    }
+
+    // Perform fine grid search before optimizing
+    fine_grid_search(m, angles, &best_value);
+
+    printf("Fine-grid search --> NLOpt transformed gamma = (");
+    for (size_t j = 0; j < depth; j++) {
+        printf("%g", angles[2 * j]);
+        if (depth > 1 & j != depth - 1) {
+            printf(", ");
+        }
+    }
+    printf("), beta = (");
+    for (size_t j = 0; j < depth; j++) {
+        printf("%g", angles[2 * j + 1]);
+        if (depth > 1 & j != depth - 1) {
+            printf(", ");
+        }
+    }
+    printf(") --> ");
+
+    // Run the optimization
+    double obj = 0;
+    const nlopt_result result = nlopt_optimize(opt, angles, &obj); // opt_f must not be NULL
+    const double value = angles_to_value(angles);
+
+    // Check the result and print the optimized values
+    if (result < 0) {
+        printf("\nNLOpt failed with code %d\n", result);
+    } else {
+        printf("gamma = (");
+        for (size_t j = 0; j < depth; j++) {
+            printf("%g", angles[2 * j]);
+            if (depth > 1 & j != depth - 1) {
+                printf(", ");
+            }
+        }
+        printf("), beta = (");
+        for (size_t j = 0; j < depth; j++) {
+            printf("%g", angles[2 * j + 1]);
+            if (depth > 1 & j != depth - 1) {
+                printf(", ");
+            }
+        }
+        printf(") with objective function value %g\n", value);
+    }
+
+    if (value > *final_value) {
+        *final_value = value;
+        for (int k = 0; k < 2 * depth; ++k) {
+            final_angles[k] = angles[k];
+        }
+    }
+}
+
+
+double*
+nlopt_optimizer(const opt_t optimization_type) {
+    double *final_angles = malloc(2 * depth * sizeof(double));
+    double final_value;
+
+    const nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
+    const nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
@@ -413,53 +477,15 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
     // Set the objective function
     nlopt_set_min_objective(opt, angles_to_value_nlopt, NULL);
 
-    // Set initial guess
-    // Set all gammas to random and betas to 0
-    for (size_t j = 0; j < depth; j++) {
-        if ((j + 1) % 2) {
-            angles[j] = 0;
-            //angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
-        } else {
-            angles[j] = 0;
-            //angles[j] = random_value_on_windows_or_linux() * 2.0 * M_PI;
-        }
-    }
-    printf("Performing fine-grid search...\n");
-    // Perform fine grid search before optimizing
-    fine_grid_search(m, angles, &best_value);
-    printf("Angles found by fine-grid search = (%f, %f)\n", angles[0], angles[1]);
-    printf("Objective function value at these angles = %f\n", best_value);
-
-    printf("Starting NLOpt...\n");
-    // Run the optimization
-    // opt_f must not be NULL
-    double obj = 0;
-    const nlopt_result result = nlopt_optimize(opt, angles, &obj);
-
-    // Check the result and print the optimized values
-    if (result < 0) {
-        printf("NLOpt failed with code %d\n", result);
-    } else {
-        char* string_to_adjust = "value";
-        if (depth > 1) {
-            string_to_adjust = strcat(string_to_adjust, "s");
-        }
-        printf("Done! NLOpt returned optimal gamma ");
-        printf("%s (", string_to_adjust);
-        for (size_t j = 0; j < depth; j++) {
-            printf("%g", angles[2 * j]);
-        }
-        printf(") and optimal beta ");
-        printf("%s (", string_to_adjust);
-        for (size_t j = 0; j < depth; j++) {
-            printf("%g", angles[2 * j + 1]);
-        }
-        printf(") with objective function value %g\n", angles_to_value(angles));
+    for (int m = 10; m <= 50; m += 10) {
+        printf("Running optimization procedure for m = %d ...\n", m);
+        printf("Here");
+        single_optimization_cycle(opt, m, final_angles, &final_value);
     }
 
     // Clean up
     nlopt_destroy(opt);
-    return angles;
+    return final_angles;
 }
 
 
@@ -538,7 +564,6 @@ qaoa(
     const qaoa_type_t input_qaoa_type,
     const num_t input_depth,
     const opt_t opt_type,
-    const num_t m,
     const size_t input_bias,
     const double copula_k,
     const double copula_theta
@@ -552,7 +577,6 @@ qaoa(
 
     sort_knapsack(kp, RATIO);
 
-    // Initialize algorithms
     printf("\n===== Preparation ======\n");
     switch (qaoa_type) {
         case QTG:
@@ -588,10 +612,23 @@ qaoa(
             break;
     }
 
-    // Optimize
     printf("\n===== Optimization =====\n");
-    printf("Optimize angles...\n");
-    const double* opt_angles = nlopt_optimizer(opt_type, m);
+    double* opt_angles = nlopt_optimizer(opt_type);
+    printf("\nFinal angles from all fine-grid search and optimization iterations: gamma = (");
+    for (size_t j = 0; j < depth; j++) {
+        printf("%g", opt_angles[2 * j]);
+        if (depth > 1 & j != depth - 1) {
+            printf(", ");
+        }
+    }
+    printf(") and beta = (");
+    for (size_t j = 0; j < depth; j++) {
+        printf("%g", opt_angles[2 * j + 1]);
+        if (depth > 1 & j != depth - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
 
     printf("\n===== Final phase of evaluation =====\n");
 
@@ -599,10 +636,14 @@ qaoa(
     fflush(stdout);
     cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
 
-    printf("Compute final expectation value...\n");
     if (qtg_nodes != NULL) {
         free_nodes(qtg_nodes, num_states);
     }
+    if (opt_angles != NULL) {
+        free(opt_angles);
+    }
+
+    printf("Compute final expectation value...\n");
 
     const double sol_val = expectation_value(opt_angle_state);
     printf("Objective function value for optimized angles = %g\n", sol_val);

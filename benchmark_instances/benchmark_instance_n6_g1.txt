@@ -1,3 +1,3 @@
 # !! every line, that does not represent a benchmark instance has to start with '#' !!
-# instance qaoa_type depth optimization_type fine-grid-precision bias k theta
-n_6_c_1023_g_1_f_0.3_eps_0_s_50 qtg 1 powell 10 1 10 -1
+# instance qaoa_type depth optimization_type bias k theta
+n_6_c_1023_g_1_f_0.3_eps_0_s_50 qtg 1 powell 1 10 -1

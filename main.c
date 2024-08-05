@@ -6,7 +6,7 @@
 
 int main(int argc, const char **argv) {
 
-    int p, m, bias;
+    int p, bias;
     double k, theta;
     char instance[1023];
     char input_qaoa_type[16];
@@ -22,12 +22,11 @@ int main(int argc, const char **argv) {
         if (line[0] != '#') { // lines startin with '#' are ignored
             sscanf(
                 line,
-                "%s %s %d %s %d %d %lf %lf\n",
-                instance, input_qaoa_type, &p, input_opt_type, &m, &bias, &k,  &theta
+                "%s %s %d %s %d %lf %lf\n",
+                instance, input_qaoa_type, &p, input_opt_type, &bias, &k,  &theta
             );
             printf("\n===== Input parameters =====\n");
             printf("p = %d\n", p);
-            printf("m = %d\n", m);
             printf("bias = %d\n", bias);
             printf("k = %.1f\n", k);
             printf("theta = %.1f\n", theta);
@@ -66,7 +65,7 @@ int main(int argc, const char **argv) {
             strcat(path_to_instance, input_qaoa_type);
             create_dir(path_to_instance);
 
-            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
+            qaoa(instance, kp, qaoa_type, p, opt_type, bias, k, theta);
         }
     }
     fclose(file);
