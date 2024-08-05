@@ -8,20 +8,6 @@
 
 /* 
  * =============================================================================
- *                            macros
- * =============================================================================
- */
-
-#define TRUE                    1
-#define FALSE                   0
-
-#define MIN(a,b)                ((a) < (b) ? (a) : (b))
-#define MAX(a,b)                ((a) > (b) ? (a) : (b))
-#define SWAP(a, b, T)           do { register T q; q = *(a); *(a) = *(b); \
-                                *(b) = q; } while(0)
-
-/* 
- * =============================================================================
  *                            enum names
  * =============================================================================
  */
@@ -290,10 +276,11 @@ create_jooken_knapsack(char* filename) {
     /* determine size of knapsack */
     fscanf(stream, "%d", &size);
 
-    /* instanciate knapsack and set name (capacity is determined later */
+    /* instanciate knapsack and set name (capacity is determined later) */
     new_knapsack = create_empty_knapsack(size, 0);
-    filename[strlen(filename) - 8] = '\0';
-    sprintf(new_knapsack->name, "%s", filename + 10);
+    filename[strlen(filename) - strlen("/test.in")] = '\0';
+    sprintf(new_knapsack->name, "%s", filename + strlen("../instances/"));
+    strcat(filename, "/");
 
     while (num_line < size && fgets(line, sizeof(line), stream) != NULL) {
         fscanf(stream, "%d %ld %ld", &a, &(new_knapsack->items[num_line].profit), \
@@ -463,6 +450,36 @@ apply_int_greedy(knapsack_t* k) {
     }
 }
 
+
+/*
+ * =============================================================================
+ *                                  Evaluation
+ * =============================================================================
+ */
+
+num_t
+objective_func(const knapsack_t* k, const num_t solution) {
+    num_t tot_profit = 0;
+    for (bit_t bit = 0; bit < k->size; ++bit) {
+        if ((solution & (1 << bit)) == 1) {
+            tot_profit += k->items[bit].profit;
+        }
+    }
+    return tot_profit;
+}
+
+num_t
+sol_cost(const knapsack_t* k, const num_t solution) {
+    num_t tot_cost = 0;
+    for (bit_t bit = 0; bit < k->size; ++bit) {
+        if ((solution & (1 << bit)) == 1) {
+            tot_cost += k->items[bit].cost;
+        }
+    }
+    return tot_cost;
+}
+
+
 /* 
  * =============================================================================
  *                            knapsack information
@@ -593,6 +610,12 @@ break_item(const knapsack_t* k) {
         ++current_item;
     } while(break_cost <= k->capacity);
     return current_item - 1;
+}
+
+ratio_t
+stop_item_ratio(const knapsack_t* k) {
+    const bit_t stop_item = break_item(k) + 1;
+    return k->items[stop_item].profit / k->items[stop_item].cost;
 }
 
 num_t

@@ -17,6 +17,20 @@
 #include "intarray.h"
 #include "syslinks.h"
 
+/*
+ * =============================================================================
+ *                            macros
+ * =============================================================================
+ */
+
+#define TRUE                    1
+#define FALSE                   0
+
+#define MIN(a,b)                ((a) < (b) ? (a) : (b))
+#define MAX(a,b)                ((a) > (b) ? (a) : (b))
+#define SWAP(a, b, T)           do { register T q; q = *(a); *(a) = *(b); \
+                                *(b) = q; } while(0)
+
 /* 
  * =============================================================================
  *                            C++ check
@@ -429,6 +443,38 @@ void sort_knapsack(knapsack_t*, sort_t);
  */
 void apply_int_greedy(knapsack_t*);
 
+
+/*
+ * =============================================================================
+ *                                Evaluation
+ * =============================================================================
+ */
+
+/*
+ * Function:        objective_func
+ * --------------------
+ * Description:     Computes the objective function value for a given solution.
+ * Parameters:
+ *      k:          Pointer to the underlying knapsack.
+ *      solution:   Solution given as an integer which will be used in its binary encoding.
+ * Returns:         The objective function value.
+ */
+
+num_t objective_func(const knapsack_t* k, num_t solution);
+
+
+/*
+ * Function:        sol_cost
+ * --------------------
+ * Description:     Computes the total cost of a given solution.
+ * Parameters:
+ *      k:          Pointer to the underlying knapsack.
+ *      solution:   Solution given as an integer which will be used in its binary encoding.
+ * Returns:         The total cost.
+ */
+
+num_t sol_cost(const knapsack_t* k, num_t solution);
+
 /*
  * =============================================================================
  *                            knapsack information
@@ -567,12 +613,23 @@ bool_t is_trivial(const knapsack_t*, num_t*);
 /*
  * Function:    break_item
  * -----------------------
- * Description: This function checks returns the index of a given knapsack
+ * Description: This function returns the index of a given knapsack
  *              instance's break item.
  * Parameter:   Pointer to knapsack whose break item should be inferred.
  * Returns:     The break item's index.
  */
 bit_t break_item(const knapsack_t* k);
+
+/*
+ * Function:    stop_item_ratio
+ * -----------------------
+ * Description: This function returns the relative profit (i.e. its ratio) of
+ *              a given knapsack instance's stop item (defined as the first
+ *              item not included by Lazy Greedy).
+ * Parameter:   Pointer to knapsack whose stop item ratio shall be determined.
+ * Returns:     The ratio of the stop item.
+ */
+ratio_t stop_item_ratio(const knapsack_t* k);
 
 /*
  * Function:    int_greedy

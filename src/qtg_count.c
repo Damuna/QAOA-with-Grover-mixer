@@ -4,7 +4,8 @@
  * =============================================================================
  */
 
-#include "qtgcount.h"
+#include "qtg_count.h"
+#include "general_count.h"
 
 /* 
  * =============================================================================
@@ -15,8 +16,6 @@
 #define TRUE                    1
 #define FALSE                   0
 
-#define MIN(a,b)                ((a) < (b) ? (a) : (b))
-#define MAX(a,b)                ((a) > (b) ? (a) : (b))
 #define SWAP(a, b, T)           do { register T q; q = *(a); *(a) = *(b); \
                                 *(b) = q; } while(0)
 
@@ -404,6 +403,33 @@ gate_count_qtg_mixer(const knapsack_t* k, qft_t method_qft, mc_t method_mc, bool
     count_t cost_prep = num_set_bits(k->capacity); // Preparation of 2nd register to encode full capacity
     count_t cost_mc = gate_count_mc(k->size - 1, method_mc, tof_decomp);
     return 2 * (cost_qtg + cost_prep) + cost_mc;
+}
+
+bit_t
+qubit_count_qtg_qaoa(const knapsack_t* k) {
+    return qubit_count_qaoa(k, qubit_count_qtg_mixer(k));
+}
+
+count_t
+cycle_count_qtg_qaoa(
+    const knapsack_t* k,
+    const num_t depth,
+    const qft_t method_qft,
+    const mc_t method_mc,
+    const bool_t tof_decomp
+) {
+    return cycle_count_qaoa(depth, cycle_count_qtg_mixer(k, method_qft, method_mc, tof_decomp));
+}
+
+count_t
+gate_count_qtg_qaoa(
+    const knapsack_t* k,
+    const num_t depth,
+    const qft_t method_qft,
+    const mc_t method_mc,
+    const bool_t tof_decomp
+) {
+    return gate_count_qaoa(k, depth, gate_count_qtg_mixer(k, method_qft, method_mc, tof_decomp));
 }
 
 void

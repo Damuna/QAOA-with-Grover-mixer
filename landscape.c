@@ -1,39 +1,36 @@
-//
-// Created by Sören Wilkening on 12.03.24.
-//
-
-#include "include/qaoa_qtg.h"
+#include "include/qaoa.h"
 
 
 int main() {
-    knapsack_t *k;
-    int p, samples, bias;
+    knapsack_t* kp;
+    int p, bias;
+    double k;
     char instance[1023];
+    char input_qaoa_type[16];
     char opt_type[32];
     char line[1023];
     FILE *file = fopen("../benchmark_instances.txt", "r");
     while (fgets(line, sizeof(line), file)) { // all the instances will be considered
         if (line[0] != '#') { // lines startin with '#' are ignored
-            sscanf(line, "%s %d %s %d %d\n", instance, &p, opt_type, &bias, &samples);
+            sscanf(line, "%s %s %d %s %d %.0f\n", instance, input_qaoa_type, &p, opt_type, &bias, &k);
             printf("p = %d\n", p);
             printf("bias = %d\n", bias);
-            printf("samples = %d\n", samples);
+            printf("k = %.0f\n", k);
 
             printf("%s\n", instance);
-            k = create_jooken_knapsack(instance);
+            kp = create_jooken_knapsack(instance);
         }
     }
 
-    dpth = 5;
-    num_smpls = samples;
+    depth = 5;
 
-    sort_knapsack(k, RATIO);
-    apply_int_greedy(k);
-    path_t *int_greedy_sol = path_rep(k);
+    sort_knapsack(kp, RATIO);
+    apply_int_greedy(kp);
+    path_t *int_greedy_sol = path_rep(kp);
     printf("greedy = %ld\n", int_greedy_sol->tot_profit);
 //    remove_all_items(k);
 
-    qtg_nodes = qtg(k, bias, int_greedy_sol->vector, &num_states);
+    qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
 
     int max = 0;
     int index = 0;
@@ -69,7 +66,7 @@ int main() {
         for (int j = 0; j < steps; ++j) {
             opt_angles[0] = 2 * 3.14159 / steps * i;
             opt_angles[1] = 2 * 3.14159 / steps * j;
-            feassol_ampl_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
+            cbs_t* opt_angle_state = quasiadiabatic_evolution(opt_angles);
             double exp = 0;
             for (int l = 0; l < num_states; ++l) {
                 exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;

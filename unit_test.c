@@ -1,11 +1,7 @@
-//
-// Created by Sören Wilkening on 09.04.24.
-//
-
 #include <stdio.h>
 #include "stategen.h"
 #include "knapsack.h"
-#include "include/qaoa_qtg.h"
+#include "include/qaoa.h"
 
 int main() {
     knapsack_t *k = create_empty_knapsack(4, 10);
@@ -81,11 +77,11 @@ int main() {
     else printf("Incorrect Vectors!\n");
 
     // Check, if we get the same expectation value, if we use the angles=(0,0)
-    dpth = 1;
+    depth = 1;
     double opt_angles[2];
     opt_angles[0] = 0;
     opt_angles[1] = 0;
-    feassol_ampl_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
+    cbs_t* opt_angle_state = quasiadiabatic_evolution(opt_angles);
     double exp = 0;
     for (int l = 0; l < num_states; ++l) {
         exp += pow(cabs(opt_angle_state[l].amplitude), 2) * (double) opt_angle_state[l].profit;

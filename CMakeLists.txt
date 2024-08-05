@@ -30,28 +30,35 @@ add_executable(main main.c
         ${SRC}/knapsack.c
         ${SRC}/stategen.c
         ${SRC}/syslinks.c
-        ${SRC}/qaoa_qtg.c
         ${SRC}/combowrp.c
         ${SRC}/combo.c
-        ${SRC}/qtgcount.c)
+        ${SRC}/qtg_count.c
+        ${SRC}/general_count.c
+        ${SRC}/copula_count.c
+        ${SRC}/qaoa.c
+)
 
 add_executable(landscape landscape.c
         ${SRC}/knapsack.c
         ${SRC}/stategen.c
         ${SRC}/syslinks.c
-        ${SRC}/qaoa_qtg.c
         ${SRC}/combowrp.c
         ${SRC}/combo.c
-        ${SRC}/qtgcount.c)
+        ${SRC}/qtg_count.c
+        ${SRC}/general_count.c
+        ${SRC}/copula_count.c
+        ${SRC}/qaoa.c
+)
 
 add_executable(test unit_test.c
         ${SRC}/knapsack.c
         ${SRC}/stategen.c
         ${SRC}/syslinks.c
-        ${SRC}/qaoa_qtg.c
         ${SRC}/combowrp.c
         ${SRC}/combo.c
-        ${SRC}/qtgcount.c)
+        ${SRC}/qtg_count.c
+        ${SRC}/qaoa.c
+)
 
 add_executable(generate ${SRC}/generator.cpp)
 
