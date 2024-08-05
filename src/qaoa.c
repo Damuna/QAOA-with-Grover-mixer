@@ -479,7 +479,6 @@ nlopt_optimizer(const opt_t optimization_type) {
 
     for (int m = 10; m <= 50; m += 10) {
         printf("Running optimization procedure for m = %d ...\n", m);
-        printf("Here");
         single_optimization_cycle(opt, m, final_angles, &final_value);
     }
 
