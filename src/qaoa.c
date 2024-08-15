@@ -246,21 +246,25 @@ apply_two_copula(cbs_t* angle_state, const int qubit1, const int qubit2, const d
 
 
 void
-copula_mixer(cbs_t* angle_state, double beta) {
+copula_mixer(cbs_t* angle_state, const double beta) {
     const bool_t kp_size_even = {kp->size % 2 == 0};
-    for (bit_t qubit = 0; qubit < kp->size - 1; ++qubit) {
+
+    const bit_t upper_bound_reduction_odd_part = kp_size_even ? 3 : 2;
+    for (bit_t qubit = 0; qubit < ((kp->size - upper_bound_reduction_odd_part) - 1) / 2; ++qubit) {
         const bit_t odd_qubit = 2 * qubit + 1;
         apply_two_copula(angle_state, odd_qubit, odd_qubit + 1, beta);
     }
-    if (!kp_size_even) {
-        apply_two_copula(angle_state, kp->size, 1, beta);
+    if (kp_size_even) {
+        apply_two_copula(angle_state, kp->size - 1, 0, beta);
     }
-    for (bit_t qubit = 0; qubit < kp->size - 1; ++qubit) {
+
+    const bit_t upper_bound_reduction_even_part = kp_size_even ? 2 : 3;
+    for (bit_t qubit = 0; qubit < (kp->size - upper_bound_reduction_even_part) / 2; ++qubit) {
         const bit_t even_qubit = 2 * qubit;
         apply_two_copula(angle_state, even_qubit, even_qubit + 1, beta);
     }
-    if (kp_size_even) {
-        apply_two_copula(angle_state, kp->size, 1, beta);
+    if (!kp_size_even) {
+        apply_two_copula(angle_state, kp->size - 1, 0, beta);
     }
 }
 
