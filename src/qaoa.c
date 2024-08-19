@@ -359,15 +359,14 @@ angles_to_value_nlopt(unsigned n, const double *angles, double *grad, void *my_f
 nlopt_algorithm
 map_enum_to_nlopt_algorithm(const opt_t opt_type) {
     switch (opt_type) {
-        case BFGS:
-            return 0;
         case NELDER_MEAD:
             return NLOPT_LN_NELDERMEAD;
         case POWELL:
             return NLOPT_LN_BOBYQA; // or another suitable algorithm for POWELL
         default:
-            // Handle invalid enum value
-            return NLOPT_LN_BOBYQA; // Default to BOBYQA or any other suitable default
+            // Cannot happen because main function is interrupted in case of a non-matching optimization type
+            printf("No matching classial optimizer.");
+            return 0;
     }
 }
 
@@ -399,9 +398,18 @@ fine_grid_search(const int m, double* best_angles, double* best_value) {
 }
 
 
-void
-single_optimization_cycle(const nlopt_opt opt, const int m, double* final_angles, double* final_value) {
-    double angles[2 * depth];
+double*
+nlopt_optimizer(const opt_t optimization_type, const int m) {
+    const nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
+    const nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
+
+    // Set your optimization parameters
+    nlopt_set_xtol_rel(opt, 1e-6);
+
+    // Set the objective function
+    nlopt_set_min_objective(opt, angles_to_value_nlopt, NULL);
+
+    double* angles = malloc(2 * depth * sizeof(double));
     double best_value;
 
     // Set all angles initially to 0
@@ -454,37 +462,9 @@ single_optimization_cycle(const nlopt_opt opt, const int m, double* final_angles
         printf(") with objective function value %g\n", value);
     }
 
-    if (value > *final_value) {
-        *final_value = value;
-        for (int k = 0; k < 2 * depth; ++k) {
-            final_angles[k] = angles[k];
-        }
-    }
-}
-
-
-double*
-nlopt_optimizer(const opt_t optimization_type) {
-    double *final_angles = malloc(2 * depth * sizeof(double));
-    double final_value;
-
-    const nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
-    const nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
-
-    // Set your optimization parameters
-    nlopt_set_xtol_rel(opt, 1e-6);
-
-    // Set the objective function
-    nlopt_set_min_objective(opt, angles_to_value_nlopt, NULL);
-
-    for (int m = 10; m <= 50; m += 10) {
-        printf("Running optimization procedure for m = %d ...\n", m);
-        single_optimization_cycle(opt, m, final_angles, &final_value);
-    }
-
     // Clean up
     nlopt_destroy(opt);
-    return final_angles;
+    return angles;
 }
 
 
@@ -513,26 +493,82 @@ path_for_instance(const char* instance) {
 }
 
 
-void
-export_results(
-    const char* instance, const cbs_t* angle_state, const double solution_value, const num_t optimal_solution_val
-) {
+char*
+path_to_global_results(const char* instance) {
     char* path = path_for_instance(instance);
-    FILE* file = fopen(strcat(path, "results"), "w");
+    char* path_to_global_results = calloc(1024, sizeof(char));
+    sprintf(path_to_global_results, "%sresults%cglobal_results.txt", path, path_sep());
+    free(path);
+    return path_to_global_results;
+}
+
+char*
+path_to_detailed_results(const char* instance, const char* opt_type_name, const int m) {
+    char* path = path_for_instance(instance);
+    char* opt_type_str = opt_type_name == "Nelder-Mead" ? "nelder-mead" : "powell";
+    char* path_to_detailed_results = calloc(1024, sizeof(char));
+    sprintf(path_to_detailed_results, "%sresults%c%s%cm_%d.txt", path, path_sep(), opt_type_str, path_sep(), m);
+    free(path);
+    return path_to_detailed_results;
+}
+
+
+void
+create_result_directories(const char* instance) {
+    char path_to_dir[128];
+    char* path = path_for_instance(instance);
+
+    sprintf(path_to_dir, "%sresults%c", path, path_sep());
+    create_dir(path_to_dir);
+    free(path);
+
+    strcat(path_to_dir, "nelder-mead");
+    create_dir(path_to_dir);
+
+    path_to_dir[strlen(path_to_dir) - strlen("nelder-mead")] = '\0';
+    strcat(path_to_dir, "powell");
+    create_dir(path_to_dir);
+}
+
+
+void
+create_global_results_file(const char* instance, const num_t optimal_solution_val) {
+    char* path_to_global_results_file = path_to_global_results(instance);
+    FILE* file = fopen(path_to_global_results_file, "w");
 
     fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
     fprintf(file, "%ld\n", optimal_solution_val); // Save optimal solution value for documentation
-    const double tot_approx_ratio = solution_value / optimal_solution_val;
-    fprintf(file, "%f\n", tot_approx_ratio); // Save final approximation ratio for documentation
+
+    fclose(file);
+    free(path_to_global_results_file);
+}
+
+
+void
+extend_global_results(const char* instance, const char* opt_type_name, const int m, const double tot_approx_ratio) {
+    char* path_to_global_results_file = path_to_global_results(instance);
+    FILE* file = fopen(path_to_global_results_file, "a");
+    fprintf(file, "%s %d %f\n", opt_type_name, m, tot_approx_ratio);
+    fclose(file);
+    free(path_to_global_results_file);
+}
+
+
+void
+export_detailed_results(
+    const char* instance, const char* opt_type_name, const int m, const cbs_t* angle_state, const num_t optimal_sol_val
+) {
+    char* path_to_detailed_results_file = path_to_detailed_results(instance, opt_type_name, m);
+    FILE* file = fopen(path_to_detailed_results_file, "w");
 
     for (size_t idx = 0; idx < num_states; ++idx) {
-        double const approx_ratio = (double) angle_state[idx].profit / optimal_solution_val;
+        double const approx_ratio = (double) angle_state[idx].profit / optimal_sol_val;
         double const prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
         fprintf(file, "%f %f\n", approx_ratio, prob);
     }
 
     fclose(file);
-    free(path);
+    free(path_to_detailed_results_file);
 }
 
 void
@@ -556,13 +592,12 @@ export_resources(const char* instance, const resource_t res) {
  * =============================================================================
  */
 
-double
+void
 qaoa(
     const char* instance,
     knapsack_t* input_kp,
     const qaoa_type_t input_qaoa_type,
     const num_t input_depth,
-    const opt_t opt_type,
     const size_t input_bias,
     const double copula_k,
     const double copula_theta
@@ -576,7 +611,9 @@ qaoa(
 
     sort_knapsack(kp, RATIO);
 
+
     printf("\n===== Preparation ======\n");
+
     switch (qaoa_type) {
         case QTG:
             apply_int_greedy(kp);
@@ -594,6 +631,10 @@ qaoa(
         case COPULA:
             num_states = POW2(kp->size);
 
+            printf(
+                "Computing a list of probability distribution values, objective function values and feasibilities...\n"
+            );
+
             prob_dist_vals = malloc(kp->size * sizeof(double));
             for (bit_t bit = 0; bit < kp->size; ++bit) {
                 prob_dist_vals[bit] = prob_dist(bit);
@@ -602,65 +643,82 @@ qaoa(
             sol_profits = malloc(num_states * sizeof(num_t));
             for (size_t idx = 0; idx < num_states; ++idx) {
                 sol_profits[idx] = objective_func(kp, idx);
+                //printf("Profit of solution with index %lu is %ld\n", idx, sol_profits[idx]);
             }
 
             sol_feasibilities = malloc(num_states * sizeof(bool_t));
             for (size_t idx = 0; idx < num_states; ++idx) {
                 sol_feasibilities[idx] = sol_cost(kp, idx) <= kp->capacity;
+                //printf("Solution with index %lu is feasible?: %d\n", idx, sol_feasibilities[idx]);
             }
             break;
     }
 
-    printf("\n===== Optimization =====\n");
-    double* opt_angles = nlopt_optimizer(opt_type);
-    printf("\nFinal angles from all fine-grid search and optimization iterations: gamma = (");
-    for (size_t j = 0; j < depth; j++) {
-        printf("%g", opt_angles[2 * j]);
-        if (depth > 1 & j != depth - 1) {
-            printf(", ");
-        }
-    }
-    printf(") and beta = (");
-    for (size_t j = 0; j < depth; j++) {
-        printf("%g", opt_angles[2 * j + 1]);
-        if (depth > 1 & j != depth - 1) {
-            printf(", ");
-        }
-    }
-    printf(")\n");
 
-    printf("\n===== Final phase of evaluation =====\n");
-
-    printf("Quasi-adiabatic evolution of optimal angles...\n");
-    fflush(stdout);
-    cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
-
-    if (qtg_nodes != NULL) {
-        free_nodes(qtg_nodes, num_states);
-    }
-    if (opt_angles != NULL) {
-        free(opt_angles);
-    }
-
-    printf("Compute final expectation value...\n");
-
-    const double sol_val = expectation_value(opt_angle_state);
-    printf("Objective function value for optimized angles = %g\n", sol_val);
+    printf("\n===== Create global results file to export to =====\n");
 
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
     printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
 
-    printf("\nExport results and resources...\n");
+    create_result_directories(instance); // Create directories to store results
 
-    // Export results data
-    export_results(instance, opt_angle_state, sol_val, optimal_sol_val);
+    create_global_results_file(instance, optimal_sol_val);
 
-    // Free optimal-angles solution
-    if (opt_angle_state != NULL) {
-        free(opt_angle_state);
+
+    printf("\n===== Looping over classical optimizers and fine-grid precisions =====\n");
+
+    for (opt_t opt_type = NELDER_MEAD; opt_type <= POWELL; opt_type++) {
+        char* opt_type_name = opt_type == NELDER_MEAD ? "Nelder-Mead" : "Powell";
+
+        for (int m = 10; m <= 10; m += 10) {
+            printf("\nRunning QAOA with classical optimizer %s and m = %d ...\n\n", opt_type_name, m);
+
+            printf("Optimize angles...\n");
+            double* opt_angles = nlopt_optimizer(opt_type, m);
+
+            printf("Quasi-adiabatic evolution of optimal angles...\n");
+            fflush(stdout);
+            cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
+
+            if (opt_angles != NULL) {
+                free(opt_angles);
+            }
+
+            printf("Compute expectation value...\n");
+
+            const double sol_val = expectation_value(opt_angle_state);
+            printf("Objective function value for optimized angles = %g\n", sol_val);
+
+            const double tot_approx_ratio = sol_val / optimal_sol_val;
+            printf("Total approximation ratio for optimized angles = %g\n", tot_approx_ratio);
+
+            printf("Export total approximation ratio to global results...\n");
+
+            extend_global_results(instance, opt_type_name, m, tot_approx_ratio);
+            export_detailed_results(instance, opt_type_name, m, opt_angle_state, optimal_sol_val);
+
+            // Free optimal-angles solution
+            if (opt_angle_state != NULL) {
+                free(opt_angle_state);
+            }
+        }
     }
 
-    // Export resources data
+    if (qtg_nodes != NULL) {
+        free_nodes(qtg_nodes, num_states); // To be freed in case of QTG QAOA
+    }
+    if (prob_dist_vals != NULL) {
+        free(prob_dist_vals); // To be freed in case of Copula QAOA
+    }
+    if (sol_profits != NULL) {
+        free(sol_profits); // To be freed in case of Copula QAOA
+    }
+    if (sol_feasibilities != NULL) {
+        free(sol_feasibilities); // To be freed in case of Copula QAOA
+    }
+
+    printf("\n===== Export resource counts =====\n");
+
     resource_t res;
     switch (qaoa_type) {
         case QTG:
@@ -678,6 +736,4 @@ qaoa(
             res.gate_count_decomp = res.gate_count;
     }
     export_resources(instance, res);
-
-    return sol_val;
 }

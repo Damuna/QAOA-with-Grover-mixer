@@ -73,7 +73,6 @@ typedef enum qaoa_type {
  * Contents:            Three types of optimization considered
  */
 typedef enum opt {
-    BFGS,
     NELDER_MEAD,
     POWELL,
 } opt_t;
@@ -318,6 +317,9 @@ double angles_to_value_nlopt(unsigned n, const double* angles, double* grad, voi
 char* path_for_instance(const char* instance);
 
 
+char* path_to_global_results(const char* instance);
+
+
 /*
  * Function:                        export_results
  * ----------------------
@@ -388,12 +390,11 @@ void export_resources(const char* instance, resource_t res);
  *                          Frees the memory allocated in quasiadiabatic_evolution for the final QAOA state obtained
  *                          from inserting the optimized angles.
  */
-double qaoa(
+void qaoa(
     const char* instance,
     knapsack_t* input_kp,
     qaoa_type_t input_qaoa_type,
     num_t input_depth,
-    opt_t opt_type,
     size_t input_bias,
     double copula_k,
     double copula_theta
