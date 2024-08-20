@@ -461,7 +461,7 @@ num_t
 objective_func(const knapsack_t* k, const num_t solution) {
     num_t tot_profit = 0;
     for (bit_t bit = 0; bit < k->size; ++bit) {
-        if ((solution & (1 << bit)) == 1) {
+        if ((solution & (1 << bit)) != 0) {
             tot_profit += k->items[bit].profit;
         }
     }
@@ -472,7 +472,7 @@ num_t
 sol_cost(const knapsack_t* k, const num_t solution) {
     num_t tot_cost = 0;
     for (bit_t bit = 0; bit < k->size; ++bit) {
-        if ((solution & (1 << bit)) == 1) {
+        if ((solution & (1 << bit)) != 0) {
             tot_cost += k->items[bit].cost;
         }
     }
@@ -610,12 +610,6 @@ break_item(const knapsack_t* k) {
         ++current_item;
     } while(break_cost <= k->capacity);
     return current_item - 1;
-}
-
-ratio_t
-stop_item_ratio(const knapsack_t* k) {
-    const bit_t stop_item = break_item(k) + 1;
-    return k->items[stop_item].profit / k->items[stop_item].cost;
 }
 
 num_t
