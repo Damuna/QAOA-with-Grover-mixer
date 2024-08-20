@@ -35,7 +35,6 @@ int main(int argc, const char **argv) {
             sprintf(path_to_instance, "..%cinstances%c%s%c", path_sep(), path_sep(), instance, path_sep());
             strcat(path_to_instance, "test.in");
             knapsack_t* kp = create_jooken_knapsack(path_to_instance);
-            //print_knapsack(kp);
 
             printf("QAOA type = %s\n", input_qaoa_type);
             qaoa_type_t qaoa_type;

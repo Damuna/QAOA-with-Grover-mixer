@@ -1,0 +1,12 @@
+12
+574
+Nelder-Mead 10 0.968673
+Nelder-Mead 20 0.968673
+Nelder-Mead 30 0.981674
+Nelder-Mead 40 0.968673
+Nelder-Mead 50 0.974192
+Powell 10 0.968668
+Powell 20 0.968668
+Powell 30 0.981674
+Powell 40 0.967266
+Powell 50 0.968673

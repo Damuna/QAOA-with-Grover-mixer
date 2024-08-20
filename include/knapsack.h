@@ -621,17 +621,6 @@ bool_t is_trivial(const knapsack_t*, num_t*);
 bit_t break_item(const knapsack_t* k);
 
 /*
- * Function:    stop_item_ratio
- * -----------------------
- * Description: This function returns the relative profit (i.e. its ratio) of
- *              a given knapsack instance's stop item (defined as the first
- *              item not included by Lazy Greedy).
- * Parameter:   Pointer to knapsack whose stop item ratio shall be determined.
- * Returns:     The ratio of the stop item.
- */
-ratio_t stop_item_ratio(const knapsack_t* k);
-
-/*
  * Function:    int_greedy
  * -----------------------
  * Description:     This function calculates the total profit that arises when

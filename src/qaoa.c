@@ -182,20 +182,28 @@ qtg_grover_mixer(cbs_t *angle_state, double beta) {
 
 double
 prob_dist(const bit_t index) {
-    const double c = cost_sum(kp) / kp->capacity - 1;
-    const double r_st = stop_item_ratio(kp);
-    const double r = kp->items[index].profit / kp->items[index].cost;
+    const double c = (double)cost_sum(kp) / kp->capacity - 1;
+    const bit_t stop_item = break_item(kp);
+    const double r_st = (double)kp->items[stop_item].profit / kp->items[stop_item].cost;
+    const double r = (double)kp->items[index].profit / kp->items[index].cost;
     return 1 / (1 + c * exp(-k * (r - r_st)));
 }
 
 
 void
 copula_initial_state_prep(cbs_t* angle_state) {
-    for (bit_t bit = 0; bit < kp->size; ++bit) {
-        angle_state->profit = sol_profits[bit];
+    for (size_t idx = 0; idx < num_states; idx++) {
+        angle_state[idx].profit = sol_profits[idx];
+        angle_state[idx].amplitude = 1;
 
-        const double d = prob_dist_vals[bit];
-        apply_ry(angle_state, bit, d);
+        for (bit_t bit = 0; bit < kp->size; bit++) {
+            const double prob_dist_val = prob_dist_vals[bit];
+            if ((idx & (1 << bit)) != 0) {
+                angle_state[idx].amplitude *= sqrt(prob_dist_val);
+            } else {
+                angle_state[idx].amplitude *= sqrt(1 - prob_dist_val);
+            }
+        }
     }
 }
 
@@ -643,13 +651,11 @@ qaoa(
             sol_profits = malloc(num_states * sizeof(num_t));
             for (size_t idx = 0; idx < num_states; ++idx) {
                 sol_profits[idx] = objective_func(kp, idx);
-                //printf("Profit of solution with index %lu is %ld\n", idx, sol_profits[idx]);
             }
 
             sol_feasibilities = malloc(num_states * sizeof(bool_t));
             for (size_t idx = 0; idx < num_states; ++idx) {
                 sol_feasibilities[idx] = sol_cost(kp, idx) <= kp->capacity;
-                //printf("Solution with index %lu is feasible?: %d\n", idx, sol_feasibilities[idx]);
             }
             break;
     }
@@ -670,7 +676,7 @@ qaoa(
     for (opt_t opt_type = NELDER_MEAD; opt_type <= POWELL; opt_type++) {
         char* opt_type_name = opt_type == NELDER_MEAD ? "Nelder-Mead" : "Powell";
 
-        for (int m = 10; m <= 10; m += 10) {
+        for (int m = 10; m <= 50; m += 10) {
             printf("\nRunning QAOA with classical optimizer %s and m = %d ...\n\n", opt_type_name, m);
 
             printf("Optimize angles...\n");
@@ -693,8 +699,9 @@ qaoa(
             printf("Total approximation ratio for optimized angles = %g\n", tot_approx_ratio);
 
             printf("Export total approximation ratio to global results...\n");
-
             extend_global_results(instance, opt_type_name, m, tot_approx_ratio);
+
+            printf("Export single-state data to detailed results...\n");
             export_detailed_results(instance, opt_type_name, m, opt_angle_state, optimal_sol_val);
 
             // Free optimal-angles solution
