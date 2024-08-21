@@ -419,6 +419,18 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
 
     double* angles = malloc(2 * depth * sizeof(double));
     double best_value;
+    double lower_bounds[2 * depth];
+    double upper_bounds[2 * depth];
+
+    // Set constraints for the optimizer
+    for (int i = 0; i < 2 * depth; ++i) {
+        lower_bounds[i] = 0.0;
+        upper_bounds[i] = 2.0 * M_PI;
+    }
+
+    // Set the bounds for the optimization variables
+    nlopt_set_lower_bounds(opt, lower_bounds);
+    nlopt_set_upper_bounds(opt, upper_bounds);
 
     // Set all angles initially to 0
     for (size_t j = 0; j < 2 * depth; j++) {
