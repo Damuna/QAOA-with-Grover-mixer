@@ -470,6 +470,18 @@ nlopt_optimizer(const opt_t optimization_type) {
 
     const nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
     const nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
+    double lower_bounds[2 * depth];
+    double upper_bounds[2 * depth];
+
+    // Set constraints for the optimizer
+    for (int i = 0; i < 2 * depth; ++i) {
+        lower_bounds[i] = 0.0;
+        upper_bounds[i] = 2.0 * M_PI;
+    }
+
+    // Set the bounds for the optimization variables
+    nlopt_set_lower_bounds(opt, lower_bounds);
+    nlopt_set_upper_bounds(opt, upper_bounds);
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
