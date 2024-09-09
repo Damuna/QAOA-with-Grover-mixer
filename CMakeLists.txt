@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.16) # ITP server standard
 project(QAOA-QTG C CXX)
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 11) # ITP server standard
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
@@ -57,6 +57,8 @@ add_executable(test unit_test.c
         ${SRC}/combowrp.c
         ${SRC}/combo.c
         ${SRC}/qtg_count.c
+        ${SRC}/general_count.c
+        ${SRC}/copula_count.c
         ${SRC}/qaoa.c
 )
 
