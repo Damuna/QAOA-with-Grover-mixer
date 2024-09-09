@@ -1,0 +1,6 @@
+268435456
+1244
+Nelder-Mead 10 0.460155
+Nelder-Mead 20 0.460155
+Nelder-Mead 30 0.460155
+Nelder-Mead 40 0.460156
