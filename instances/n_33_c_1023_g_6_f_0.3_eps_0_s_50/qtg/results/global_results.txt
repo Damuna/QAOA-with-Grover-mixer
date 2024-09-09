@@ -1,0 +1,12 @@
+86546959
+1174
+Nelder-Mead 10 0.925103
+Nelder-Mead 20 0.925334
+Nelder-Mead 30 0.925408
+Nelder-Mead 40 0.925334
+Nelder-Mead 50 0.925549
+Powell 10 0.925103
+Powell 20 0.925334
+Powell 30 0.925408
+Powell 40 0.925334
+Powell 50 0.925549

@@ -1,0 +1,12 @@
+33554432
+1247
+Nelder-Mead 10 0.409951
+Nelder-Mead 20 0.409951
+Nelder-Mead 30 0.410032
+Nelder-Mead 40 0.410032
+Nelder-Mead 50 0.410032
+Powell 10 0.409951
+Powell 20 0.409951
+Powell 30 0.410032
+Powell 40 0.410032
+Powell 50 0.410032

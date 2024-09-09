@@ -1,0 +1,12 @@
+30731
+1085
+Nelder-Mead 10 0.874912
+Nelder-Mead 20 0.877946
+Nelder-Mead 30 0.876991
+Nelder-Mead 40 0.877946
+Nelder-Mead 50 0.880034
+Powell 10 0.875340
+Powell 20 0.875867
+Powell 30 0.876665
+Powell 40 0.875867
+Powell 50 0.877444

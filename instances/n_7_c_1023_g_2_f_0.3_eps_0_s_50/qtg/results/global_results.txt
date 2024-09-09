@@ -1,12 +1,12 @@
 80
 972
-Nelder-Mead 10 0.702757
-Nelder-Mead 20 0.732891
-Nelder-Mead 30 0.718824
-Nelder-Mead 40 0.732891
+Nelder-Mead 10 0.732891
+Nelder-Mead 20 0.773775
+Nelder-Mead 30 0.718347
+Nelder-Mead 40 0.773775
 Nelder-Mead 50 0.772737
-Powell 10 0.681345
-Powell 20 0.732891
-Powell 30 0.718347
-Powell 40 0.732891
+Powell 10 0.732756
+Powell 20 0.732880
+Powell 30 0.769212
+Powell 40 0.732880
 Powell 50 0.772737
