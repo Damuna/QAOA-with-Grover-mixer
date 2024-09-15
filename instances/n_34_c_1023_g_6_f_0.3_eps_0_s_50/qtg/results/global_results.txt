@@ -1,0 +1,12 @@
+229866846
+1292
+Nelder-Mead 10 0.902757
+Nelder-Mead 20 0.902874
+Nelder-Mead 30 0.902780
+Nelder-Mead 40 0.902768
+Nelder-Mead 50 0.902874
+Powell 10 0.902557
+Powell 20 0.902597
+Powell 30 0.902780
+Powell 40 0.902768
+Powell 50 0.902874

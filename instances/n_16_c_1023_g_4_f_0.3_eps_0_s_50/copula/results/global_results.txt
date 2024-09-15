@@ -1,0 +1,12 @@
+65536
+1081
+Nelder-Mead 10 0.413943
+Nelder-Mead 20 0.420443
+Nelder-Mead 30 0.420299
+Nelder-Mead 40 0.416396
+Nelder-Mead 50 0.415667
+Powell 10 0.412527
+Powell 20 0.420443
+Powell 30 0.420299
+Powell 40 0.416396
+Powell 50 0.415667

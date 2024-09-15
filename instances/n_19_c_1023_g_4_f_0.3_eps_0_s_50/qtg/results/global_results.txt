@@ -1,0 +1,12 @@
+66121
+1129
+Nelder-Mead 10 0.879481
+Nelder-Mead 20 0.880679
+Nelder-Mead 30 0.880096
+Nelder-Mead 40 0.880761
+Nelder-Mead 50 0.881164
+Powell 10 0.879481
+Powell 20 0.880071
+Powell 30 0.880139
+Powell 40 0.880800
+Powell 50 0.880777
