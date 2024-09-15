@@ -507,7 +507,8 @@ path_for_instance(const char* instance) {
     }
     char *path = calloc(1024, sizeof(char));
     sprintf(
-        path, "..%cinstances%c%s%c%s%c", path_sep(), path_sep(), instance, path_sep(), qaoa_type_str, path_sep()
+        path, "..%cinstances%c%s%c%s%cp_%ld%c",
+        path_sep(), path_sep(), instance, path_sep(), qaoa_type_str, path_sep(), depth, path_sep()
     );
     return path;
 }
@@ -599,6 +600,7 @@ export_resources(const char* instance, const resource_t res) {
     fprintf(file, "%d\n", res.qubit_count);
     fprintf(file, "%u\n", res.cycle_count);
     fprintf(file, "%u\n", res.gate_count);
+    fprintf(file, "%u\n", res.cycle_count_decomp);
     fprintf(file, "%u\n", res.gate_count_decomp);
 
     fclose(file);
@@ -725,15 +727,19 @@ qaoa(
 
     if (qtg_nodes != NULL) {
         free_nodes(qtg_nodes, num_states); // To be freed in case of QTG QAOA
+        qtg_nodes = NULL;
     }
     if (prob_dist_vals != NULL) {
         free(prob_dist_vals); // To be freed in case of Copula QAOA
+        prob_dist_vals = NULL;
     }
     if (sol_profits != NULL) {
         free(sol_profits); // To be freed in case of Copula QAOA
+        sol_profits = NULL;
     }
     if (sol_feasibilities != NULL) {
         free(sol_feasibilities); // To be freed in case of Copula QAOA
+        sol_feasibilities = NULL;
     }
 
     printf("\n===== Export resource counts =====\n");
@@ -746,13 +752,14 @@ qaoa(
             res.gate_count = gate_count_qtg_qaoa(kp, depth, COPPERSMITH, TOFFOLI, FALSE);
             res.cycle_count_decomp = cycle_count_qtg_qaoa(kp, depth, COPPERSMITH, TOFFOLI, TRUE);
             res.gate_count_decomp = gate_count_qtg_qaoa(kp, depth, COPPERSMITH, TOFFOLI, TRUE);
-
+            break;
         case COPULA:
             res.qubit_count = qubit_count_copula_qaoa(kp);
             res.cycle_count = cycle_count_copula_qaoa(kp, depth);
             res.gate_count = gate_count_copula_qaoa(kp, depth);
             res.cycle_count_decomp = res.cycle_count;
             res.gate_count_decomp = res.gate_count;
+            break;
     }
     export_resources(instance, res);
 }

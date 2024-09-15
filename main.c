@@ -47,18 +47,11 @@ int main(int argc, const char **argv) {
                 return -1;
             }
 
-            /*printf("Optimization type = %s\n", input_opt_type);
-            opt_t opt_type;
-            if (strcmp(input_opt_type, "nelder_mead") == 0) {
-                opt_type = NELDER_MEAD;
-            } else if (strcmp(input_opt_type, "powell") == 0) {
-                opt_type = POWELL;
-            } else {
-                printf("Error: Input for optimization type does not match any of the permitted values.");
-                return -1;
-            }*/
-
             strcat(path_to_instance, input_qaoa_type);
+            create_dir(path_to_instance);
+            char depth_string[16];
+            sprintf(depth_string, "%cp_%d", path_sep(), p);
+            strcat(path_to_instance, depth_string);
             create_dir(path_to_instance);
 
             qaoa(instance, kp, qaoa_type, p, bias, k, theta);
