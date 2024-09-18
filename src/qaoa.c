@@ -29,7 +29,9 @@
 knapsack_t* kp;
 qaoa_type_t qaoa_type;
 size_t bias;
-num_t depth;
+int depth;
+opt_t opt_type;
+int m;
 double k;
 double theta;
 
@@ -56,6 +58,26 @@ random_value_on_windows_or_linux() {
         srand48(time(NULL));
         return drand48();
     #endif
+}
+
+void
+free_global_variables() {
+    if (qtg_nodes != NULL) {
+        free_nodes(qtg_nodes, num_states); // To be freed in case of QTG QAOA
+        qtg_nodes = NULL;
+    }
+    if (prob_dist_vals != NULL) {
+        free(prob_dist_vals); // To be freed in case of Copula QAOA
+        prob_dist_vals = NULL;
+    }
+    if (sol_profits != NULL) {
+        free(sol_profits); // To be freed in case of Copula QAOA
+        sol_profits = NULL;
+    }
+    if (sol_feasibilities != NULL) {
+        free(sol_feasibilities); // To be freed in case of Copula QAOA
+        sol_feasibilities = NULL;
+    }
 }
 
 
@@ -496,45 +518,38 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
 
 char*
 path_for_instance(const char* instance) {
-    char qaoa_type_str[16];
-    switch (qaoa_type) {
-        case QTG:
-            strcpy(qaoa_type_str, "qtg");
-            break;
-        case COPULA:
-            strcpy(qaoa_type_str, "copula");
-            break;
-    }
+    char* qaoa_type_str = qaoa_type == QTG ? "qtg" : "copula";
     char *path = calloc(1024, sizeof(char));
     sprintf(
-        path, "..%cinstances%c%s%c%s%cp_%ld%c",
+        path, "..%cinstances%c%s%c%s%cp_%d%c",
         path_sep(), path_sep(), instance, path_sep(), qaoa_type_str, path_sep(), depth, path_sep()
     );
     return path;
 }
 
 
-char*
+/*char*
 path_to_global_results(const char* instance) {
     char* path = path_for_instance(instance);
     char* path_to_global_results = calloc(1024, sizeof(char));
     sprintf(path_to_global_results, "%sresults%cglobal_results.txt", path, path_sep());
     free(path);
     return path_to_global_results;
-}
+}*/
+
 
 char*
-path_to_detailed_results(const char* instance, const char* opt_type_name, const int m) {
+path_to_results(const char* instance) {
     char* path = path_for_instance(instance);
-    char* opt_type_str = opt_type_name == "Nelder-Mead" ? "nelder-mead" : "powell";
-    char* path_to_detailed_results = calloc(1024, sizeof(char));
-    sprintf(path_to_detailed_results, "%sresults%c%s%cm_%d.txt", path, path_sep(), opt_type_str, path_sep(), m);
+    char* opt_type_str = opt_type == POWELL ? "powell" : "nelder-mead";
+    char* path_to_results = calloc(1024, sizeof(char));
+    sprintf(path_to_results, "%s%s%cresults.txt", path, opt_type_str, path_sep());
     free(path);
-    return path_to_detailed_results;
+    return path_to_results;
 }
 
 
-void
+/*void
 create_result_directories(const char* instance) {
     char path_to_dir[128];
     char* path = path_for_instance(instance);
@@ -549,10 +564,10 @@ create_result_directories(const char* instance) {
     path_to_dir[strlen(path_to_dir) - strlen("nelder-mead")] = '\0';
     strcat(path_to_dir, "powell");
     create_dir(path_to_dir);
-}
+}*/
 
 
-void
+/*void
 create_global_results_file(const char* instance, const num_t optimal_solution_val) {
     char* path_to_global_results_file = path_to_global_results(instance);
     FILE* file = fopen(path_to_global_results_file, "w");
@@ -562,25 +577,34 @@ create_global_results_file(const char* instance, const num_t optimal_solution_va
 
     fclose(file);
     free(path_to_global_results_file);
-}
+}*/
 
 
-void
+/*void
 extend_global_results(const char* instance, const char* opt_type_name, const int m, const double tot_approx_ratio) {
     char* path_to_global_results_file = path_to_global_results(instance);
     FILE* file = fopen(path_to_global_results_file, "a");
     fprintf(file, "%s %d %f\n", opt_type_name, m, tot_approx_ratio);
     fclose(file);
     free(path_to_global_results_file);
-}
+}*/
 
 
 void
-export_detailed_results(
-    const char* instance, const char* opt_type_name, const int m, const cbs_t* angle_state, const num_t optimal_sol_val
+export_results(
+    const char* instance,
+    const cbs_t* angle_state,
+    const num_t optimal_sol_val,
+    const num_t int_greedy_sol_val,
+    const double tot_approx_ratio
 ) {
-    char* path_to_detailed_results_file = path_to_detailed_results(instance, opt_type_name, m);
+    char* path_to_detailed_results_file = path_to_results(instance);
     FILE* file = fopen(path_to_detailed_results_file, "w");
+
+    fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
+    fprintf(file, "%ld\n", optimal_sol_val); // Save optimal solution value for documentation
+    fprintf(file, "%f\n", (double) int_greedy_sol_val / optimal_sol_val); // Save rescaled integer Greedy solution
+    fprintf(file, "%f\n", tot_approx_ratio); // Save total approximation ratio as global QAOA result
 
     for (size_t idx = 0; idx < num_states; ++idx) {
         double const approx_ratio = (double) angle_state[idx].profit / optimal_sol_val;
@@ -619,7 +643,9 @@ qaoa(
     const char* instance,
     knapsack_t* input_kp,
     const qaoa_type_t input_qaoa_type,
-    const num_t input_depth,
+    const int input_depth,
+    const opt_t input_opt_type,
+    const int input_m,
     const size_t input_bias,
     const double copula_k,
     const double copula_theta
@@ -627,6 +653,8 @@ qaoa(
     kp = input_kp;
     qaoa_type = input_qaoa_type;
     depth = input_depth;
+    opt_type = input_opt_type;
+    m = input_m;
     bias = input_bias;
     k = copula_k;
     theta = copula_theta;
@@ -636,18 +664,18 @@ qaoa(
 
     printf("\n===== Preparation ======\n");
 
+    apply_int_greedy(kp);
+    path_t* int_greedy_sol = path_rep(kp);
+    const num_t int_greedy_sol_val = int_greedy_sol->tot_profit;
+    printf("Integer greedy solution = %ld\n", int_greedy_sol_val);
+    remove_all_items(kp);
+    free_path(int_greedy_sol);
+
     switch (qaoa_type) {
         case QTG:
-            apply_int_greedy(kp);
-            path_t *int_greedy_sol = path_rep(kp);
-            printf("Integer greedy solution = %ld\n", int_greedy_sol->tot_profit);
-            remove_all_items(kp);
-
             printf("Generating states via QTG...\n");
             qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
             printf("Done! Number of states = %zu\n", num_states);
-
-            free_path(int_greedy_sol);
             break;
 
         case COPULA:
@@ -674,73 +702,42 @@ qaoa(
             break;
     }
 
-
-    printf("\n===== Create global results file to export to =====\n");
-
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
     printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
 
-    create_result_directories(instance); // Create directories to store results
 
-    create_global_results_file(instance, optimal_sol_val);
+    printf("\n===== Running QAOA =====\n");
 
+    printf("Optimize angles...\n");
+    double* opt_angles = nlopt_optimizer(opt_type, m);
 
-    printf("\n===== Looping over classical optimizers and fine-grid precisions =====\n");
+    printf("Quasi-adiabatic evolution of optimal angles...\n");
+    fflush(stdout);
+    cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
 
-    for (opt_t opt_type = NELDER_MEAD; opt_type <= POWELL; opt_type++) {
-        char* opt_type_name = opt_type == NELDER_MEAD ? "Nelder-Mead" : "Powell";
-
-        for (int m = 10; m <= 50; m += 10) {
-            printf("\nRunning QAOA with classical optimizer %s and m = %d ...\n\n", opt_type_name, m);
-
-            printf("Optimize angles...\n");
-            double* opt_angles = nlopt_optimizer(opt_type, m);
-
-            printf("Quasi-adiabatic evolution of optimal angles...\n");
-            fflush(stdout);
-            cbs_t *opt_angle_state = quasiadiabatic_evolution(opt_angles);
-
-            if (opt_angles != NULL) {
-                free(opt_angles);
-            }
-
-            printf("Compute expectation value...\n");
-
-            const double sol_val = expectation_value(opt_angle_state);
-            printf("Objective function value for optimized angles = %g\n", sol_val);
-
-            const double tot_approx_ratio = sol_val / optimal_sol_val;
-            printf("Total approximation ratio for optimized angles = %g\n", tot_approx_ratio);
-
-            printf("Export total approximation ratio to global results...\n");
-            extend_global_results(instance, opt_type_name, m, tot_approx_ratio);
-
-            printf("Export single-state data to detailed results...\n");
-            export_detailed_results(instance, opt_type_name, m, opt_angle_state, optimal_sol_val);
-
-            // Free optimal-angles solution
-            if (opt_angle_state != NULL) {
-                free(opt_angle_state);
-            }
-        }
+    if (opt_angles != NULL) {
+        free(opt_angles);
     }
 
-    if (qtg_nodes != NULL) {
-        free_nodes(qtg_nodes, num_states); // To be freed in case of QTG QAOA
-        qtg_nodes = NULL;
+    printf("Compute expectation value...\n");
+
+    const double sol_val = expectation_value(opt_angle_state);
+    printf("Objective function value for optimized angles = %g\n", sol_val);
+
+    const double tot_approx_ratio = sol_val / optimal_sol_val;
+    printf("Total approximation ratio for optimized angles = %g\n", tot_approx_ratio);
+
+
+    printf("\n ===== Export results =====\n");
+    export_results(instance, opt_angle_state, optimal_sol_val, int_greedy_sol_val, tot_approx_ratio);
+    printf("Results exported successfully!\n");
+
+    // Free optimal-angles solution staten and global variables
+    if (opt_angle_state != NULL) {
+        free(opt_angle_state);
     }
-    if (prob_dist_vals != NULL) {
-        free(prob_dist_vals); // To be freed in case of Copula QAOA
-        prob_dist_vals = NULL;
-    }
-    if (sol_profits != NULL) {
-        free(sol_profits); // To be freed in case of Copula QAOA
-        sol_profits = NULL;
-    }
-    if (sol_feasibilities != NULL) {
-        free(sol_feasibilities); // To be freed in case of Copula QAOA
-        sol_feasibilities = NULL;
-    }
+    free_global_variables();
+
 
     printf("\n===== Export resource counts =====\n");
 
@@ -762,4 +759,6 @@ qaoa(
             break;
     }
     export_resources(instance, res);
+
+    printf("Resource counts exported successfully!\n");
 }

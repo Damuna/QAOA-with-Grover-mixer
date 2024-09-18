@@ -1,3 +1,4 @@
 # !! every line, that does not represent a benchmark instance has to start with '#' !!
-# instance qaoa_type depth bias k theta
-n_33_c_1023_g_6_f_0.3_eps_0_s_50 qtg 1 7 10 -1
+# instance qaoa_type depth optimization_type m bias(required:QTG) k(required:Copula) theta(required:Copula)
+n_33_c_1023_g_6_f_0.3_eps_0_s_50 qtg 1 powell 50 7 10 -1
+n_33_c_1023_g_6_f_0.3_eps_0_s_50 copula 1 powell 50 7 10 -1
