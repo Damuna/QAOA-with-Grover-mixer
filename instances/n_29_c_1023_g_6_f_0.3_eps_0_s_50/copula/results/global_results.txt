@@ -1,5 +1,0 @@
-536870912
-1288
-Nelder-Mead 10 0.446334
-Nelder-Mead 20 0.446322
-Nelder-Mead 30 0.446339

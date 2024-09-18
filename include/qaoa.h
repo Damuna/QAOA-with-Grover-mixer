@@ -86,8 +86,10 @@ typedef enum opt {
 
 extern knapsack_t* kp;
 extern qaoa_type_t qaoa_type;
+extern int depth;
+extern opt_t opt_type;
+extern int m;
 extern size_t bias;
-extern num_t depth;
 extern double k;
 extern double theta;
 
@@ -330,10 +332,17 @@ char* path_to_global_results(const char* instance);
  * Parameters:
  *      instance:                   Pointer to the name of the instance.
  *      angle_state:                Pointer to the angle state whose data is to be exported.
- *      solution_value:             Final solution value returned by the QAOA.
- *      optimal_solution_val:       Optimal solution of the knapsack instance at hand.
+ *      optimal_sol_val:            Optimal solution value of the knapsack instance at hand.
+ *      int_greedy_sol_val:         Integer Greedy solution value.
+ *      tot_approx_ratio:           Total approximation ratio returned by QAOA.
  */
-void export_results(const char* instance, const cbs_t* angle_state, double solution_value, num_t optimal_solution_val);
+void export_results(
+    const char* instance,
+    const cbs_t* angle_state,
+    num_t optimal_sol_val,
+    num_t int_greedy_sol_val,
+    double tot_approx_ratio
+);
 
 
 /*
@@ -394,7 +403,9 @@ void qaoa(
     const char* instance,
     knapsack_t* input_kp,
     qaoa_type_t input_qaoa_type,
-    num_t input_depth,
+    int input_depth,
+    opt_t input_opt_type,
+    int input_m,
     size_t input_bias,
     double copula_k,
     double copula_theta
