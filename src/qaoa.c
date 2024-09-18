@@ -528,16 +528,6 @@ path_for_instance(const char* instance) {
 }
 
 
-/*char*
-path_to_global_results(const char* instance) {
-    char* path = path_for_instance(instance);
-    char* path_to_global_results = calloc(1024, sizeof(char));
-    sprintf(path_to_global_results, "%sresults%cglobal_results.txt", path, path_sep());
-    free(path);
-    return path_to_global_results;
-}*/
-
-
 char*
 path_to_results(const char* instance) {
     char* path = path_for_instance(instance);
@@ -547,47 +537,6 @@ path_to_results(const char* instance) {
     free(path);
     return path_to_results;
 }
-
-
-/*void
-create_result_directories(const char* instance) {
-    char path_to_dir[128];
-    char* path = path_for_instance(instance);
-
-    sprintf(path_to_dir, "%sresults%c", path, path_sep());
-    create_dir(path_to_dir);
-    free(path);
-
-    strcat(path_to_dir, "nelder-mead");
-    create_dir(path_to_dir);
-
-    path_to_dir[strlen(path_to_dir) - strlen("nelder-mead")] = '\0';
-    strcat(path_to_dir, "powell");
-    create_dir(path_to_dir);
-}*/
-
-
-/*void
-create_global_results_file(const char* instance, const num_t optimal_solution_val) {
-    char* path_to_global_results_file = path_to_global_results(instance);
-    FILE* file = fopen(path_to_global_results_file, "w");
-
-    fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
-    fprintf(file, "%ld\n", optimal_solution_val); // Save optimal solution value for documentation
-
-    fclose(file);
-    free(path_to_global_results_file);
-}*/
-
-
-/*void
-extend_global_results(const char* instance, const char* opt_type_name, const int m, const double tot_approx_ratio) {
-    char* path_to_global_results_file = path_to_global_results(instance);
-    FILE* file = fopen(path_to_global_results_file, "a");
-    fprintf(file, "%s %d %f\n", opt_type_name, m, tot_approx_ratio);
-    fclose(file);
-    free(path_to_global_results_file);
-}*/
 
 
 void
@@ -607,7 +556,12 @@ export_results(
     fprintf(file, "%f\n", tot_approx_ratio); // Save total approximation ratio as global QAOA result
 
     for (size_t idx = 0; idx < num_states; ++idx) {
-        double const approx_ratio = (double) angle_state[idx].profit / optimal_sol_val;
+        double approx_ratio;
+        if (qaoa_type == COPULA && !sol_feasibilities[idx]) {
+            approx_ratio = 0; // Put approximation ratios of infeasible solutions to 0 to ignore them at read-out
+        } else {
+            approx_ratio = (double) angle_state[idx].profit / optimal_sol_val;
+        }
         double const prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
         fprintf(file, "%f %f\n", approx_ratio, prob);
     }
@@ -729,6 +683,7 @@ qaoa(
 
 
     printf("\n ===== Export results =====\n");
+
     export_results(instance, opt_angle_state, optimal_sol_val, int_greedy_sol_val, tot_approx_ratio);
     printf("Results exported successfully!\n");
 
