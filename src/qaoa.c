@@ -404,26 +404,30 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
 // Helper function to perform a fine grid search
 void
 fine_grid_search(const int m, double* best_angles, double* best_value) {
-    const int total_angles = 2 * depth;
     const double step_size = 2 * M_PI / m;
-    double angles[total_angles];
+    double angles[2 * depth];
     *best_value = -INFINITY;
 
-    for (int i = 0; i < (int)pow(m, total_angles); ++i) {
-        int index = i;
-        for (int j = 0; j < total_angles; ++j) {
-            angles[j] = (index % m) * step_size;
-            index /= m;
-        }
-        const double value = angles_to_value(angles);
-        //printf("Value in fine-grid = %f\n", value);
-        if (value > *best_value) {
-            *best_value = value;
-            //printf("Best value in fine-grid = %f\n", *best_value);
-            for (int k = 0; k < total_angles; ++k) {
-                best_angles[k] = angles[k];
+    for (int j = 0; j < 2 * depth; j++) {
+        angles[j] = 0; // Set all angles to 0 initially to prepare layer-wise fine-grid search
+    }
+
+    for (int j = 0; j < depth; j++) { // Iterate over pairs of angles
+        for (int s1 = 0; s1 < m; ++s1) { // Iterate over m choices for gamma value
+            angles[2*j] = s1 * step_size;
+            for (int s2 = 0; s2 < m; ++s2) { // Iterate over m choices for beta value
+                angles[2*j+1] = s2 * step_size;
+
+                const double value = angles_to_value(angles);
+                if (value > *best_value) {
+                    *best_value = value;
+                    best_angles[2*j] = angles[2*j];
+                    best_angles[2*j+1] = angles[2*j+1];
+                }
             }
         }
+        angles[2*j] = best_angles[2*j];
+        angles[2*j+1] = best_angles[2*j+1];
     }
 }
 
