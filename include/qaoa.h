@@ -331,17 +331,17 @@ char* path_to_global_results(const char* instance);
  *                                  probabilities are obtained from the amplitudes of the feasible solutions.
  * Parameters:
  *      instance:                   Pointer to the name of the instance.
- *      angle_state:                Pointer to the angle state whose data is to be exported.
  *      optimal_sol_val:            Optimal solution value of the knapsack instance at hand.
  *      int_greedy_sol_val:         Integer Greedy solution value.
  *      tot_approx_ratio:           Total approximation ratio returned by QAOA.
+ *      prob_beating_greedy:        Probability of measuring a state with an objective value better than Greedy.
  */
 void export_results(
     const char* instance,
-    const cbs_t* angle_state,
     num_t optimal_sol_val,
     num_t int_greedy_sol_val,
-    double tot_approx_ratio
+    double tot_approx_ratio,
+    double prob_beating_greedy
 );
 
 

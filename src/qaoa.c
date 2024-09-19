@@ -80,6 +80,29 @@ free_global_variables() {
     }
 }
 
+double
+prob_for_amplitude(const cbs_t* angle_state, const size_t idx) {
+    return cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
+}
+
+
+double
+prob_beating_greedy(const cbs_t* angle_state, const num_t int_greedy_sol_val) {
+    double prob = 0;
+
+    for (size_t idx = 0; idx < num_states; ++idx) {
+        if (angle_state[idx].profit > int_greedy_sol_val) {
+            if (qaoa_type == COPULA && !sol_feasibilities[idx]) {
+                continue;
+            }
+            prob += prob_for_amplitude(angle_state, idx);
+        }
+
+    }
+
+    return prob;
+}
+
 
 /*
  * =============================================================================
@@ -354,7 +377,7 @@ expectation_value(const cbs_t* angle_state) {
                 continue; // Add 0 in case that solution is infeasible (modified objective function)
         }
 
-        const double prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
+        const double prob = prob_for_amplitude(angle_state, idx);
         exp_val += prob * angle_state[idx].profit;
     }
     return exp_val;
@@ -426,8 +449,8 @@ fine_grid_search(const int m, double* best_angles, double* best_value) {
                 }
             }
         }
-        angles[2*j] = best_angles[2*j];
-        angles[2*j+1] = best_angles[2*j+1];
+        angles[2*j] = best_angles[2*j]; // Keep best angles found in this layer
+        angles[2*j+1] = best_angles[2*j+1]; // Keep best angles found in this layer
     }
 }
 
@@ -533,45 +556,53 @@ path_for_instance(const char* instance) {
 
 
 char*
-path_to_results(const char* instance) {
+path_to_storage(const char* instance) {
     char* path = path_for_instance(instance);
     char* opt_type_str = opt_type == POWELL ? "powell" : "nelder-mead";
-    char* path_to_results = calloc(1024, sizeof(char));
-    sprintf(path_to_results, "%s%s%cresults.txt", path, opt_type_str, path_sep());
+    char* path_to_storage = calloc(1024, sizeof(char));
+    sprintf(path_to_storage, "%s%s%c", path, opt_type_str, path_sep());
     free(path);
-    return path_to_results;
+    return path_to_storage;
 }
 
 
 void
 export_results(
     const char* instance,
-    const cbs_t* angle_state,
     const num_t optimal_sol_val,
     const num_t int_greedy_sol_val,
-    const double tot_approx_ratio
+    const double tot_approx_ratio,
+    const double prob_beating_greedy
 ) {
-    char* path_to_detailed_results_file = path_to_results(instance);
-    FILE* file = fopen(path_to_detailed_results_file, "w");
+    char* path_to_results = path_to_storage(instance);
+    strcat(path_to_results, "results.txt");
+    FILE* file = fopen(path_to_results, "w");
 
     fprintf(file, "%llu\n", num_states); // Save number of states for easier Python access
     fprintf(file, "%ld\n", optimal_sol_val); // Save optimal solution value for documentation
     fprintf(file, "%f\n", (double) int_greedy_sol_val / optimal_sol_val); // Save rescaled integer Greedy solution
     fprintf(file, "%f\n", tot_approx_ratio); // Save total approximation ratio as global QAOA result
+    fprintf(file, "%f", prob_beating_greedy); // Save probability of beating Greedy for easier Python access
+
+    fclose(file);
+    free(path_to_results);
+}
+
+
+void
+export_raw_data(const char* instance, const cbs_t* angle_state, const num_t optimal_sol_val) {
+    char* path_to_raw_data = path_to_storage(instance);
+    strcat(path_to_raw_data, "raw_data.txt");
+    FILE* file = fopen(path_to_raw_data, "w");
 
     for (size_t idx = 0; idx < num_states; ++idx) {
-        double approx_ratio;
-        if (qaoa_type == COPULA && !sol_feasibilities[idx]) {
-            approx_ratio = 0; // Put approximation ratios of infeasible solutions to 0 to ignore them at read-out
-        } else {
-            approx_ratio = (double) angle_state[idx].profit / optimal_sol_val;
-        }
-        double const prob = cabs(angle_state[idx].amplitude) * cabs(angle_state[idx].amplitude);
+        const double approx_ratio = (double) angle_state[idx].profit / optimal_sol_val;
+        double const prob = prob_for_amplitude(angle_state, idx);
         fprintf(file, "%f %f\n", approx_ratio, prob);
     }
 
     fclose(file);
-    free(path_to_detailed_results_file);
+    free(path_to_raw_data);
 }
 
 void
@@ -583,7 +614,7 @@ export_resources(const char* instance, const resource_t res) {
     fprintf(file, "%u\n", res.cycle_count);
     fprintf(file, "%u\n", res.gate_count);
     fprintf(file, "%u\n", res.cycle_count_decomp);
-    fprintf(file, "%u\n", res.gate_count_decomp);
+    fprintf(file, "%u", res.gate_count_decomp);
 
     fclose(file);
     free(path);
@@ -685,13 +716,17 @@ qaoa(
     const double tot_approx_ratio = sol_val / optimal_sol_val;
     printf("Total approximation ratio for optimized angles = %g\n", tot_approx_ratio);
 
+    const double prob_beat_greedy = prob_beating_greedy(opt_angle_state, int_greedy_sol_val);
+    printf("Probability of beating Greedy = %f\n", prob_beat_greedy);
+
 
     printf("\n ===== Export results =====\n");
 
-    export_results(instance, opt_angle_state, optimal_sol_val, int_greedy_sol_val, tot_approx_ratio);
+    export_results(instance, optimal_sol_val, int_greedy_sol_val, tot_approx_ratio, prob_beat_greedy);
+    export_raw_data(instance, opt_angle_state, optimal_sol_val);
     printf("Results exported successfully!\n");
 
-    // Free optimal-angles solution staten and global variables
+    // Free optimized-angles solution state and global variables
     if (opt_angle_state != NULL) {
         free(opt_angle_state);
     }
