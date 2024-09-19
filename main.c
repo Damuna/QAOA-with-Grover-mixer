@@ -6,10 +6,10 @@
 
 int main(int argc, const char **argv) {
 
-    int p, bias;
+    int p, m, bias;
     double k, theta;
     char instance[1023];
-    char input_qaoa_type[16];
+    char input_qaoa_type[16], input_opt_type[16];
     char line[1023];
 
     const char *benchmark_instance = argv[1];
@@ -21,11 +21,12 @@ int main(int argc, const char **argv) {
         if (line[0] != '#') { // lines startin with '#' are ignored
             sscanf(
                 line,
-                "%s %s %d %d %lf %lf\n",
-                instance, input_qaoa_type, &p, &bias, &k,  &theta
+                "%s %s %d %s %d %d %lf %lf\n",
+                instance, input_qaoa_type, &p, input_opt_type, &m, &bias, &k,  &theta
             );
             printf("\n===== Input parameters =====\n");
             printf("p = %d\n", p);
+            printf("m = %d\n", m);
             printf("bias = %d\n", bias);
             printf("k = %.1f\n", k);
             printf("theta = %.1f\n", theta);
@@ -47,21 +48,27 @@ int main(int argc, const char **argv) {
                 return -1;
             }
 
-            /*printf("Optimization type = %s\n", input_opt_type);
+            printf("Optimization type = %s\n", input_opt_type);
             opt_t opt_type;
-            if (strcmp(input_opt_type, "nelder_mead") == 0) {
-                opt_type = NELDER_MEAD;
-            } else if (strcmp(input_opt_type, "powell") == 0) {
+            if (strcmp(input_opt_type, "powell") == 0) {
                 opt_type = POWELL;
+            } else if (strcmp(input_opt_type, "nelder-mead") == 0) {
+                opt_type = NELDER_MEAD;
             } else {
                 printf("Error: Input for optimization type does not match any of the permitted values.");
                 return -1;
-            }*/
+            }
 
             strcat(path_to_instance, input_qaoa_type);
             create_dir(path_to_instance);
+            char depth_string[16];
+            sprintf(depth_string, "%cp_%d%c", path_sep(), p, path_sep());
+            strcat(path_to_instance, depth_string);
+            create_dir(path_to_instance);
+            strcat(path_to_instance, input_opt_type);
+            create_dir(path_to_instance);
 
-            qaoa(instance, kp, qaoa_type, p, bias, k, theta);
+            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
         }
     }
     fclose(file);
