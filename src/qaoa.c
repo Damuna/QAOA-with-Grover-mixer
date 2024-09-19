@@ -669,12 +669,12 @@ qaoa(
     const num_t int_greedy_sol_val = int_greedy_sol->tot_profit;
     printf("Integer greedy solution = %ld\n", int_greedy_sol_val);
     remove_all_items(kp);
-    free_path(int_greedy_sol);
 
     switch (qaoa_type) {
         case QTG:
             printf("Generating states via QTG...\n");
             qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
+            free_path(int_greedy_sol);
             printf("Done! Number of states = %zu\n", num_states);
             break;
 
@@ -735,6 +735,7 @@ qaoa(
     // Free optimal-angles solution staten and global variables
     if (opt_angle_state != NULL) {
         free(opt_angle_state);
+        opt_angle_state = NULL;
     }
     free_global_variables();
 
