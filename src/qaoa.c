@@ -34,6 +34,7 @@ opt_t opt_type;
 int m;
 double k;
 double theta;
+int memory_size;
 
 // Variables that are initialized later
 size_t num_states;
@@ -95,7 +96,6 @@ prob_beating_greedy(const cbs_t* angle_state, const num_t int_greedy_sol_val) {
             if (qaoa_type == COPULA && !sol_feasibilities[idx]) {
                 continue;
             }
-            printf("Index %ld is feasible!\n", idx);
             prob += prob_for_amplitude(angle_state, idx);
         }
 
@@ -459,9 +459,13 @@ fine_grid_search(const int m, double* best_angles, double* best_value) {
 
 
 double*
-nlopt_optimizer(const opt_t optimization_type, const int m) {
+nlopt_optimizer(const opt_t optimization_type, const int m, int memory_size) {
     const nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
     const nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
+    double* angles = malloc(2 * depth * sizeof(double));
+    double best_value;
+    double lower_bounds[2 * depth];
+    double upper_bounds[2 * depth];
 
     // Set your optimization parameters
     nlopt_set_xtol_rel(opt, 1e-6);
@@ -469,10 +473,10 @@ nlopt_optimizer(const opt_t optimization_type, const int m) {
     // Set the objective function
     nlopt_set_min_objective(opt, angles_to_value_nlopt, NULL);
 
-    double* angles = malloc(2 * depth * sizeof(double));
-    double best_value;
-    double lower_bounds[2 * depth];
-    double upper_bounds[2 * depth];
+    // Adjust the memory (vector storage) for L-BFGS
+    if (optimization_type == BFGS) {
+        nlopt_set_vector_storage(opt, memory_size);  // Set the memory size (e.g., 10, 20, etc.)
+    }
 
     // Set constraints for the optimizer
     for (int i = 0; i < 2 * depth; ++i) {
@@ -651,7 +655,8 @@ qaoa(
     const int input_m,
     const size_t input_bias,
     const double copula_k,
-    const double copula_theta
+    const double copula_theta,
+    const int input_memory_size
 ) {
     kp = input_kp;
     qaoa_type = input_qaoa_type;
@@ -661,6 +666,7 @@ qaoa(
     bias = input_bias;
     k = copula_k;
     theta = copula_theta;
+    memory_size = input_memory_size;
 
     sort_knapsack(kp, RATIO);
 
@@ -712,7 +718,7 @@ qaoa(
     printf("\n===== Running QAOA =====\n");
 
     printf("Optimize angles...\n");
-    double* opt_angles = nlopt_optimizer(opt_type, m);
+    double* opt_angles = nlopt_optimizer(opt_type, m, memory_size);
 
     printf("Quasi-adiabatic evolution of optimal angles...\n");
     fflush(stdout);
