@@ -6,7 +6,7 @@
 
 int main(int argc, const char **argv) {
 
-    int p, m, bias;
+    int p, m, bias, memory_size;
     double k, theta;
     char instance[1023];
     char input_qaoa_type[16], input_opt_type[16];
@@ -30,6 +30,7 @@ int main(int argc, const char **argv) {
             printf("bias = %d\n", bias);
             printf("k = %.1f\n", k);
             printf("theta = %.1f\n", theta);
+            printf("memory size for bfgs = %d\n", memory_size);
 
             printf("Instance = %s\n", instance);
             char path_to_instance[1024];
@@ -70,7 +71,7 @@ int main(int argc, const char **argv) {
             strcat(path_to_instance, input_opt_type);
             create_dir(path_to_instance);
 
-            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta);
+            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta, memory_size);
         }
     }
     fclose(file);

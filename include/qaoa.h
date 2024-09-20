@@ -409,7 +409,8 @@ void qaoa(
     int input_m,
     size_t input_bias,
     double copula_k,
-    double copula_theta
+    double copula_theta,
+    int input_memory_size
 );
 
 
