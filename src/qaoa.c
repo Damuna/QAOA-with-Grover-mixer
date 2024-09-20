@@ -416,9 +416,11 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
             return NLOPT_LN_NELDERMEAD;
         case POWELL:
             return NLOPT_LN_BOBYQA; // or another suitable algorithm for POWELL
+        case BFGS:
+            return NLOPT_LD_LBFGS;  // Limited-memory BFGS
         default:
             // Cannot happen because main function is interrupted in case of a non-matching optimization type
-            printf("No matching classial optimizer.");
+            printf("No matching classical optimizer.");
             return 0;
     }
 }
