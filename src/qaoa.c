@@ -95,6 +95,7 @@ prob_beating_greedy(const cbs_t* angle_state, const num_t int_greedy_sol_val) {
             if (qaoa_type == COPULA && !sol_feasibilities[idx]) {
                 continue;
             }
+            printf("Index %ld is feasible!\n", idx);
             prob += prob_for_amplitude(angle_state, idx);
         }
 
@@ -421,7 +422,7 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
         default:
             // Cannot happen because main function is interrupted in case of a non-matching optimization type
             printf("No matching classical optimizer.");
-            return 0;
+            return -1;
     }
 }
 
@@ -560,7 +561,18 @@ path_for_instance(const char* instance) {
 char*
 path_to_storage(const char* instance) {
     char* path = path_for_instance(instance);
-    char* opt_type_str = opt_type == POWELL ? "powell" : "nelder-mead";
+    char* opt_type_str;
+    switch (opt_type) { // No default needed as main function assures one of them
+        case POWELL:
+            opt_type_str = "powell";
+            break;
+        case NELDER_MEAD:
+            opt_type_str = "nelder-mead";
+            break;
+        case BFGS:
+            opt_type_str = "bfgs";
+            break;
+    }
     char* path_to_storage = calloc(1024, sizeof(char));
     sprintf(path_to_storage, "%s%s%c", path, opt_type_str, path_sep());
     free(path);
