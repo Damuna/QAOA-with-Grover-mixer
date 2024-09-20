@@ -75,6 +75,7 @@ typedef enum qaoa_type {
 typedef enum opt {
     NELDER_MEAD,
     POWELL,
+    BFGS,
 } opt_t;
 
 

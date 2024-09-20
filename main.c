@@ -54,6 +54,8 @@ int main(int argc, const char **argv) {
                 opt_type = POWELL;
             } else if (strcmp(input_opt_type, "nelder-mead") == 0) {
                 opt_type = NELDER_MEAD;
+            } else if (strcmp(input_opt_type, "bfgs") == 0) {
+                opt_type = BFGS;
             } else {
                 printf("Error: Input for optimization type does not match any of the permitted values.");
                 return -1;
