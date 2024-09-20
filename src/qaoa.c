@@ -96,7 +96,6 @@ prob_beating_greedy(const cbs_t* angle_state, const num_t int_greedy_sol_val) {
             if (qaoa_type == COPULA && !sol_feasibilities[idx]) {
                 continue;
             }
-            printf("Index %ld is feasible!\n", idx);
             prob += prob_for_amplitude(angle_state, idx);
         }
 
