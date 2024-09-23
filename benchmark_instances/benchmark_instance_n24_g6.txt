@@ -2,3 +2,12 @@
 # instance qaoa_type depth optimization_type m bias(required:QTG-QAOA) k(required:Copula-QAOA) theta(required:Copula-QAOA) memory_size(required:BFGS-Optimizer)
 n_24_c_1023_g_6_f_0.3_eps_0_s_50 qtg 1 bfgs 50 6 10 -1 20
 n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 1 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 2 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 3 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 4 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 5 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 6 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 7 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 8 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 9 bfgs 50 6 10 -1 20
+n_24_c_1023_g_6_f_0.3_eps_0_s_50 copula 10 bfgs 50 6 10 -1 20
