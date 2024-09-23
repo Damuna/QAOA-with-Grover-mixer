@@ -17,18 +17,23 @@ df = pd.DataFrame({
 
 
 def extrect_data(df, n, i, p, implementation):
-    d = [x for x in os.listdir(f"{p}/{i}/{implementation}/") if x not in ['resources', 'backup']]
+    d = [x for x in os.listdir(f"{p}/{i}/{implementation}/") if x not in ['resources', 'backup', "results"]]
+    if not d: return df
+
     p_list = [int(x.split("_")[1]) for x in d]
     for ps in p_list:
-        f = open(f"{p}/{i}/{implementation}/p_{int(ps)}/bfgs/results.txt").read().split()
+        try:
+            f = open(f"{p}/{i}/{implementation}/p_{int(ps)}/bfgs/results.txt").read().split()
 
-        if float(f[-3]) == 1.:
-            triv = True
-        else:
-            triv = False
+            if float(f[-3]) == 1.:
+                triv = True
+            else:
+                triv = False
 
-        new = {"n": n, "impl": implementation, "p": ps, "approx": float(f[-2]), "succ": float(f[-1]), "triv": triv}
-        df = pd.concat([df, pd.DataFrame([new])], ignore_index=True)
+            new = {"n": n, "impl": implementation, "p": ps, "approx": float(f[-2]), "succ": float(f[-1]), "triv": triv}
+            df = pd.concat([df, pd.DataFrame([new])], ignore_index=True)
+        except:
+            df = df
     return df
 
 
@@ -39,15 +44,13 @@ p = "instances"
 for i in os.listdir(p):
     dirs = os.listdir(f"{p}/{i}")
     n = int(i.split("_")[1])
-    try:
-        if "qtg" in dirs:
-            df = extrect_data(df, n, i, p, "qtg")
-        if "copula" in dirs:
-            df = extrect_data(df, n, i, p, "copula")
-    except:
-        pass
+    if "qtg" in dirs:
+        df = extrect_data(df, n, i, p, "qtg")
+    if "copula" in dirs:
+        df = extrect_data(df, n, i, p, "copula")
 
-print(df)
+# print(df)
+# print(df[df["n"] == 15][["n", "p", "impl"]])
 
 
 sns.set_palette("tab20", 11)
