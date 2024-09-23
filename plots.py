@@ -54,15 +54,15 @@ for i in os.listdir(p):
 
 
 sns.set_palette("tab20", 11)
-def plot_approx(p, implementation):
+def plot_apprrox(p, implementation):
     sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="approx", label=f"{implementation} $p={p}$")
 
 def plot_succ(p, implementation):
-    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="succ", label=f"{implementation} $p={p}$")
+    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="succ", label=f"{implementation} $p={p}$")
 
-plot_approx(1, "qtg")
+plot_apprrox(1, "qtg")
 for i in range(1, 11):
-    plot_approx(i, "copula")
+    plot_apprrox(i, "copula")
 plt.legend()
 plt.ylabel("$\left< P_{QAOA}\\right> / P_{OPT}$")
 plt.xlabel("$n$")
@@ -70,10 +70,11 @@ plt.tight_layout()
 plt.savefig("approximation_ratio.pdf")
 plt.show()
 
-# plot_succ(1, "qtg")
-# for i in range(1, 11):
-#     plot_succ(i, "copula")
-# plt.yscale("log")
-# plt.legend()
-# plt.tight_layout()
-# plt.show()
+plot_succ(1, "qtg")
+for i in range(1, 11):
+    plot_succ(i, "copula")
+plt.yscale("log")
+plt.legend()
+plt.tight_layout()
+plt.savefig("better_than_greedy.pdf")
+plt.show()
