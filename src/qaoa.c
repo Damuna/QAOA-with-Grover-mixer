@@ -510,12 +510,17 @@ nlopt_optimizer(const opt_t optimization_type, const int m, int memory_size) {
             printf(", ");
         }
     }
-    printf(") --> ");
+    double value = angles_to_value(angles);
+    printf(") with objective function value %f\n", value);
 
     // Run the optimization
     double obj = 0;
     const nlopt_result result = nlopt_optimize(opt, angles, &obj); // opt_f must not be NULL
-    const double value = angles_to_value(angles);
+    value = angles_to_value(angles);
+    printf("\nafter optimization\n");
+//    for (int i = 0; i < depth; ++i) {
+//        printf("%g %g\n", angles[2 * i], angles[2 * i + 1]);
+//    }
 
     // Check the result and print the optimized values
     if (result < 0) {
@@ -535,7 +540,7 @@ nlopt_optimizer(const opt_t optimization_type, const int m, int memory_size) {
                 printf(", ");
             }
         }
-        printf(") with objective function value %g\n", value);
+        printf(") with objective function value %f\n", value);
     }
 
     // Clean up
@@ -685,6 +690,11 @@ qaoa(
             qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
             free_path(int_greedy_sol);
             printf("Done! Number of states = %zu\n", num_states);
+            double total = 0;
+            for (int i = 0; i < num_states; ++i) {
+                total += qtg_nodes[i].prob * qtg_nodes[i].path.tot_profit;
+            }
+            printf("initial approx = %f\n", total);
             break;
 
         case COPULA:
@@ -712,7 +722,7 @@ qaoa(
     }
 
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
-    printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
+    printf("Optimal solution value (COMBO) = %ldchmod +x ser    \n", optimal_sol_val);
 
 
     printf("\n===== Running QAOA =====\n");
@@ -731,10 +741,10 @@ qaoa(
     printf("Compute expectation value...\n");
 
     const double sol_val = expectation_value(opt_angle_state);
-    printf("Objective function value for optimized angles = %g\n", sol_val);
+    printf("Objective function value for optimized angles = %f\n", sol_val);
 
     const double tot_approx_ratio = sol_val / optimal_sol_val;
-    printf("Total approximation ratio for optimized angles = %g\n", tot_approx_ratio);
+    printf("Total approximation ratio for optimized angles = %f\n", tot_approx_ratio);
 
     const double prob_beat_greedy = prob_beating_greedy(opt_angle_state, int_greedy_sol_val);
     printf("Probability of beating Greedy = %f\n", prob_beat_greedy);

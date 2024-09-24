@@ -16,14 +16,14 @@ df = pd.DataFrame({
 })
 
 
-def extrect_data(df, n, i, p, implementation):
+def extrect_data(df, n, i, p, implementation, optimizer):
     d = [x for x in os.listdir(f"{p}/{i}/{implementation}/") if x not in ['resources', 'backup', "results"]]
     if not d: return df
 
     p_list = [int(x.split("_")[1]) for x in d]
     for ps in p_list:
         try:
-            f = open(f"{p}/{i}/{implementation}/p_{int(ps)}/bfgs/results.txt").read().split()
+            f = open(f"{p}/{i}/{implementation}/p_{int(ps)}/{optimizer}/results.txt").read().split()
 
             if float(f[-3]) == 1.:
                 triv = True
@@ -37,6 +37,7 @@ def extrect_data(df, n, i, p, implementation):
     return df
 
 
+optim = "powell"
 n_qtg = []
 n_copula = []
 rat = []
@@ -45,9 +46,9 @@ for i in os.listdir(p):
     dirs = os.listdir(f"{p}/{i}")
     n = int(i.split("_")[1])
     if "qtg" in dirs:
-        df = extrect_data(df, n, i, p, "qtg")
+        df = extrect_data(df, n, i, p, "qtg", optim)
     if "copula" in dirs:
-        df = extrect_data(df, n, i, p, "copula")
+        df = extrect_data(df, n, i, p, "copula", optim)
 
 # print(df)
 # print(df[df["n"] == 15][["n", "p", "impl"]])
@@ -67,14 +68,14 @@ plt.legend()
 plt.ylabel("$\left< P_{QAOA}\\right> / P_{OPT}$")
 plt.xlabel("$n$")
 plt.tight_layout()
-plt.savefig("approximation_ratio.pdf")
+plt.savefig(f"approximation_ratio_{optim}.pdf")
 plt.show()
 
 plot_succ(1, "qtg")
 for i in range(1, 11):
     plot_succ(i, "copula")
 plt.yscale("log")
-plt.legend()
+plt.legend(loc="lower left")
 plt.tight_layout()
-plt.savefig("better_than_greedy.pdf")
+plt.savefig(f"better_than_greedy_{optim}.pdf")
 plt.show()

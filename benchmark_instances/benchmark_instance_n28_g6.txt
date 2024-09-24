@@ -1,4 +1,4 @@
 # !! every line, that does not represent a benchmark instance has to start with '#' !!
 # instance qaoa_type depth optimization_type m bias(required:QTG-QAOA) k(required:Copula-QAOA) theta(required:Copula-QAOA) memory_size(required:BFGS-Optimizer)
-n_28_c_1023_g_6_f_0.3_eps_0_s_50 qtg 1 bfgs 50 7 10 -1 20
+n_28_c_1023_g_6_f_0.3_eps_0_s_50 qtg 1 powell 50 7 10 -1 20
 # n_28_c_1023_g_6_f_0.3_eps_0_s_50 copula 1 bfgs 50 7 10 -1 20
