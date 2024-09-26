@@ -406,6 +406,24 @@ angles_to_value(const double* angles) {
 double
 angles_to_value_nlopt(unsigned n, const double *angles, double *grad, void *my_func_data) {
     // grad is NULL bcs both Nelder Mead and Powell are derivative-free algorithms
+    const double epsilon = 1e-8; // Step size for numerical gradient calculation
+    if (grad != NULL) {
+        // Compute the gradient using central difference approximation
+        for (unsigned i = 0; i < n; ++i) {
+            double angles_plus[n], angles_minus[n];
+            memcpy(angles_plus, angles, n * sizeof(double));
+            memcpy(angles_minus, angles, n * sizeof(double));
+
+            angles_plus[i] += epsilon;
+            angles_minus[i] -= epsilon;
+
+            double f_plus = angles_to_value(angles_plus);
+            double f_minus = angles_to_value(angles_minus);
+
+            // Central difference formula for gradient approximation
+            grad[i] = (f_plus - f_minus) / (2.0 * epsilon);
+        }
+    }
     return -angles_to_value(angles);
 }
 
