@@ -38,17 +38,17 @@ add_executable(main main.c
         ${SRC}/qaoa.c
 )
 
-add_executable(landscape landscape.c
-        ${SRC}/knapsack.c
-        ${SRC}/stategen.c
-        ${SRC}/syslinks.c
-        ${SRC}/combowrp.c
-        ${SRC}/combo.c
-        ${SRC}/qtg_count.c
-        ${SRC}/general_count.c
-        ${SRC}/copula_count.c
-        ${SRC}/qaoa.c
-)
+#add_executable(landscape landscape.c
+#        ${SRC}/knapsack.c
+#        ${SRC}/stategen.c
+#        ${SRC}/syslinks.c
+#        ${SRC}/combowrp.c
+#        ${SRC}/combo.c
+#        ${SRC}/qtg_count.c
+#        ${SRC}/general_count.c
+#        ${SRC}/copula_count.c
+#        ${SRC}/qaoa.c
+#)
 
 add_executable(test unit_test.c
         ${SRC}/knapsack.c
@@ -65,9 +65,9 @@ add_executable(test unit_test.c
 add_executable(generate ${SRC}/generator.cpp)
 
 target_link_libraries(main PRIVATE nlopt m)
-target_link_libraries(landscape PRIVATE nlopt m)
+#target_link_libraries(landscape PRIVATE nlopt m)
 target_link_libraries(test PRIVATE nlopt m)
 target_include_directories(main PRIVATE ${INCLUDE} extern/nlopt)
-target_include_directories(landscape PRIVATE ${INCLUDE} extern/nlopt)
+#target_include_directories(landscape PRIVATE ${INCLUDE} extern/nlopt)
 target_include_directories(test PRIVATE ${INCLUDE} extern/nlopt)
 

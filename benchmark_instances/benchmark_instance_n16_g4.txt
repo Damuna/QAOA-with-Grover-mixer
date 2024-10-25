@@ -1,4 +1,13 @@
 # !! every line, that does not represent a benchmark instance has to start with '#' !!
-# instance qaoa_type depth optimization_type m bias(required:QTG-QAOA) k(required:Copula-QAOA) theta(required:Copula-QAOA) memory_size(required:BFGS-Optimizer)
-n_17_c_1023_g_4_f_0.3_eps_0_s_50 qtg 1 bfgs 50 4 10 -1 20
-n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 1 bfgs 50 4 10 -1 20
+# instance qaoa_type depth optimization_type m bias(required:QTG-QAOA) k(required:Copula-QAOA) theta(required:Copula-QAOA) memory_size(required:powell-Optimizer)
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 qtg 1 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 1 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 2 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 3 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 4 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 5 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 6 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 7 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 8 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 9 powell 50 4 10 -1 20
+n_17_c_1023_g_4_f_0.3_eps_0_s_50 copula 10 powell 50 4 10 -1 20
