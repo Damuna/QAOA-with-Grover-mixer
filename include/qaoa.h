@@ -103,6 +103,132 @@ extern bool_t* sol_feasibilities;
 
 /*
  * =============================================================================
+ *                                  Utils
+ * =============================================================================
+ */
+
+/*
+* Function:            random_value_on_windows_or_linux
+* --------------------
+* Description:         Generates a random value, respecting the underlying OS (Windows or Linux).
+* Returns:             The generated random value.
+*/
+
+double random_value_on_windows_or_linux();
+
+
+/*
+* Function:            free_global_variables
+* --------------------
+* Description:         Frees the global variables assigned for the QTG or the Copula QAOA.
+*/
+
+void free_global_variables();
+
+
+/*
+* Function:            prob_for_amplitude
+* --------------------
+* Description:         Turns the amplitude at a certain index in the angle state into a probability.
+* Parameters:
+*      angle_state:    Pointer to the current state.
+*      index:          Index at which the square shall be calculated.
+* Returns:             The corresponding probability.
+*/
+
+double prob_for_amplitude(const cbs_t*, size_t);
+
+
+/*
+* Function:                prob_beating_greedy
+* -------------------------
+* Description:             Computes the probability that the QAOA ultimately beats Greedy.
+* Parameters:
+*      angle_state:        Pointer to the current state.
+*      int_greedy_sol_val: Solution value of integer Greedy.
+* Returns:                 Probability of beating Greedy.
+*/
+
+double prob_beating_greedy(const cbs_t*, num_t);
+
+
+/*
+ * =============================================================================
+ *                              Gate application
+ * =============================================================================
+ */
+
+/*
+* Function:            apply_ry
+* --------------------
+* Description:         Applies a rotation gate around the y-axis on a specified qubit in a given state.
+* Parameters:
+*      angle_state:    Pointer to the current state before the application; will be updated.
+*      qubit:          Qubit onto which the rotation shall be applied.
+*      prob:           Probability value that serves as input parameter for the rotation.
+*/
+
+void apply_ry(cbs_t*, int, double);
+
+
+/*
+* Function:            apply_ry_inv
+* --------------------
+* Description:         Applies an inverse rotation gate around the y-axis on a specified qubit in a given state.
+* Parameters:
+*      angle_state:    Pointer to the current state before the application; will be updated.
+*      qubit:          Qubit onto which the inverse rotation shall be applied.
+*      prob:           Probability value that serves as input parameter for the inverse rotation.
+*/
+
+void apply_ry_inv(cbs_t*, int, double);
+
+
+/*
+* Function:            apply_cry
+* --------------------
+* Description:         Applies a rotation gate around the y-axis on a target qubit controlled on another qubit.
+* Parameters:
+*      angle_state:    Pointer to the current state before the application; will be updated.
+*      control:        Qubit onto which the rotation shall be controlled.
+*      target:         Qubit onto which the rotation shall be applied.
+*      condition:      Bool specifying whether the control shall be applied conditioned on state 1 or 0.
+*      prob:           Probability value that serves as input parameter for the rotation.
+*/
+
+void apply_cry(cbs_t*, int, int, bool_t, double);
+
+
+/*
+* Function:            apply_cry_inv
+* --------------------
+* Description:         Applies an inverse rotation gate around the y-axis on a target qubit controlled on another qubit.
+* Parameters:
+*      angle_state:    Pointer to the current state before the application; will be updated.
+*      control:        Qubit onto which the inverse rotation shall be controlled.
+*      target:         Qubit onto which the inverse rotation shall be applied.
+*      condition:      Bool specifying whether the control shall be applied conditioned on state 1 or 0.
+*      prob:           Probability value that serves as input parameter for the inverse rotation.
+*/
+
+void apply_cry_inv(cbs_t*, int, int, bool_t, double);
+
+
+/*
+* Function:            apply_rz
+* --------------------
+* Description:         Applies a rotation gate around the z-axis on a specified qubit in a given state.
+* Parameters:
+*      angle_state:    Pointer to the current state before the application; will be updated.
+*      qubit:          Qubit onto which the rotation shall be applied.
+*      angle:          Angle of the rotation.
+*/
+
+void apply_rz(cbs_t*, int, double);
+
+
+/*
+ * =============================================================================
  *                              QTG-specific
  * =============================================================================
  */
@@ -304,6 +430,45 @@ double angles_to_value_nlopt(unsigned n, const double* angles, double* grad, voi
 
 
 /*
+ * Function:            map_enum_to_nlopt_algorithm
+ * --------------------
+ * Description:         Wrapper function to map the optimization type as custom enum value to another enum value that
+ *                      specifies which NLOpt algorithm shall be run.
+ * Parameters:
+ *      opt_type:       Classical optimization type.
+ * Returns:             The corresponding NLOpt enum value.
+ */
+nlopt_algorithm map_enum_to_nlopt_algorithm(opt_t opt_type);
+
+
+/*
+* Function:            fine_grid_search
+* --------------------
+* Description:         Performs a layer-wise fine-grid search on the domain [0,2pi)x[0,2pi) for every pair of angles.
+*                      Each pair of angles gets optimized independently and one after the other.
+* Parameters:
+*      m:              Number of steps into which each [0,2pi) interval is partitioned.
+*      best_angles:    Pointer to the best angles found so far; will be updated.
+*      best_value:     Pointer to the best objective value; starts at -infinity and will be updated.
+*/
+void fine_grid_search(int m, double* best_angles, double* best_value);
+
+
+/*
+* Function:               nlopt_optimizer
+* -----------------------
+* Description:            Performs the full angle optimization routine. Every angle gets initialized to 0, the chosen
+*                         classical optimization type is mapped to an NLOpt algorithm with a constraint of [0,2pi)
+*                         domain for each angle. A layer-wise fine-grid search is applied as a warm start.
+* Parameters:
+*      optimization_type: Classical optimization type.
+*      m:                 Number of partitions in the fine-grid search.
+*      memory_size:       Memory size for the classical optimizer; only needed in case of BFGS.
+*/
+double* nlopt_optimizer(opt_t optimization_type, int m, int memory_size);
+
+
+/*
  * =============================================================================
  *                               Export data
  * =============================================================================
@@ -320,16 +485,25 @@ double angles_to_value_nlopt(unsigned n, const double* angles, double* grad, voi
 char* path_for_instance(const char* instance);
 
 
-char* path_to_global_results(const char* instance);
+/*
+ * Function:                        path_to_storage
+ * ----------------------
+ * Description:                     Combines the path to the instance with an addition for the classical optimizer .
+ * Parameters:
+ *      instance:                   Pointer to the name of the instance.
+ * Returns:                         Pointer to the path.
+ */
+char* path_to_storage(const char* instance);
 
 
 /*
  * Function:                        export_results
  * ----------------------
- * Description:                     This function is used to extract pairs of approximation ratio and associated
- *                                  probability from the final QAOA state and write them to an external file. The
- *                                  approximation ratios are calculated via the specified optimal solution value and the
- *                                  probabilities are obtained from the amplitudes of the feasible solutions.
+ * Description:                     Exports the results of the QAOA run to an external file, including the number of
+ *                                  states considered during simulation, the solution value of integer Greedy, the total
+ *                                  approximation ratio achieved and the probability of measuring a (feasible) state
+ *                                  whose profit is larger than the Greedy solution.
+ *
  * Parameters:
  *      instance:                   Pointer to the name of the instance.
  *      optimal_sol_val:            Optimal solution value of the knapsack instance at hand.
@@ -344,6 +518,21 @@ void export_results(
     double tot_approx_ratio,
     double prob_beating_greedy
 );
+
+
+/*
+ * Function:                        export_raw_data
+ * ----------------------
+ * Description:                     Exports the raw data of the QAOA run to an external file, consisting of as many
+ *                                  pairs of approximation ratio and probability as there are states in the simulation.
+ * Parameters:
+ *      instance:                   Pointer to the name of the instance.
+ *      optimal_sol_val:            Optimal solution value of the knapsack instance at hand.
+ *      int_greedy_sol_val:         Integer Greedy solution value.
+ *      tot_approx_ratio:           Total approximation ratio returned by QAOA.
+ *      prob_beating_greedy:        Probability of measuring a state with an objective value better than Greedy.
+ */
+void export_raw_data(const char* instance, const cbs_t* angke_state, num_t optimal_sol_val);
 
 
 /*

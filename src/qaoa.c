@@ -98,7 +98,6 @@ prob_beating_greedy(const cbs_t* angle_state, const num_t int_greedy_sol_val) {
             }
             prob += prob_for_amplitude(angle_state, idx);
         }
-
     }
 
     return prob;
@@ -427,7 +426,6 @@ map_enum_to_nlopt_algorithm(const opt_t opt_type) {
 }
 
 
-// Helper function to perform a fine grid search
 void
 fine_grid_search(const int m, double* best_angles, double* best_value) {
     const double step_size = 2 * M_PI / m;
@@ -459,7 +457,7 @@ fine_grid_search(const int m, double* best_angles, double* best_value) {
 
 
 double*
-nlopt_optimizer(const opt_t optimization_type, const int m, int memory_size) {
+nlopt_optimizer(const opt_t optimization_type, const int m, const int memory_size) {
     const nlopt_algorithm nlopt_optimization_algorithm = map_enum_to_nlopt_algorithm(optimization_type);
     const nlopt_opt opt = nlopt_create(nlopt_optimization_algorithm, 2 * depth);
     double* angles = malloc(2 * depth * sizeof(double));
