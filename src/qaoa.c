@@ -509,16 +509,12 @@ nlopt_optimizer(const opt_t optimization_type, const int m, const int memory_siz
         }
     }
     double value = angles_to_value(angles);
-    printf(") with objective function value %f\n", value);
+    printf(") with value %f to ", value);
 
     // Run the optimization
     double obj = 0;
     const nlopt_result result = nlopt_optimize(opt, angles, &obj); // opt_f must not be NULL
     value = angles_to_value(angles);
-    printf("\nafter optimization\n");
-//    for (int i = 0; i < depth; ++i) {
-//        printf("%g %g\n", angles[2 * i], angles[2 * i + 1]);
-//    }
 
     // Check the result and print the optimized values
     if (result < 0) {
@@ -538,7 +534,7 @@ nlopt_optimizer(const opt_t optimization_type, const int m, const int memory_siz
                 printf(", ");
             }
         }
-        printf(") with objective function value %f\n", value);
+        printf(") with value %f\n", value);
     }
 
     // Clean up
@@ -688,11 +684,11 @@ qaoa(
             qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
             free_path(int_greedy_sol);
             printf("Done! Number of states = %zu\n", num_states);
-            double total = 0;
-            for (int i = 0; i < num_states; ++i) {
-                total += qtg_nodes[i].prob * qtg_nodes[i].path.tot_profit;
+            double init_sol_val = 0;
+            for (size_t idx = 0; idx < num_states; ++idx) {
+                init_sol_val += qtg_nodes[idx].prob * qtg_nodes[idx].path.tot_profit;
             }
-            printf("initial approx = %f\n", total);
+            printf("Initial solution value = %f\n", init_sol_val);
             break;
 
         case COPULA:
@@ -720,7 +716,7 @@ qaoa(
     }
 
     const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
-    printf("Optimal solution value (COMBO) = %ldchmod +x ser    \n", optimal_sol_val);
+    printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
 
 
     printf("\n===== Running QAOA =====\n");
