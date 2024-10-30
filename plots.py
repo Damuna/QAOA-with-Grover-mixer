@@ -41,7 +41,7 @@ n_qtg = []
 n_copula = []
 rat = []
 p = "instances"
-for i in os.listdir(p):
+for i in [i for i in os.listdir(p) if i != ".DS_Store"]:
     dirs = os.listdir(f"{p}/{i}")
     n = int(i.split("_")[1])
     if "qtg" in dirs:
@@ -49,8 +49,7 @@ for i in os.listdir(p):
     if "copula" in dirs:
         df = extrect_data(df, n, i, p, "copula", optim)
 
-# print(df)
-# print(df[df["n"] == 15][["n", "p", "impl"]])
+df = df[(df["p"] <= 9) & ((df["n"] <= 20) & (df["impl"] == "copula") | (df["impl"] == "qtg"))]
 
 
 sns.set_palette("tab20", 11)
@@ -58,10 +57,10 @@ def plot_apprrox(p, implementation):
     sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="approx", label=f"{implementation} $p={p}$")
 
 def plot_succ(p, implementation):
-    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="succ", label=f"{implementation} $p={p}$")
+    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="succ", label=f"{implementation} $p={p}$")
 
 plot_apprrox(1, "qtg")
-for i in range(1, 11):
+for i in range(1, 10):
     plot_apprrox(i, "copula")
 plt.legend()
 plt.ylabel("$\left< P_{QAOA}\\right> / P_{OPT}$")
@@ -71,9 +70,9 @@ plt.savefig(f"approximation_ratio_{optim}.pdf")
 plt.show()
 
 plot_succ(1, "qtg")
-for i in range(1, 11):
+for i in range(1, 10):
     plot_succ(i, "copula")
-plt.yscale("log")
+# plt.yscale("log")
 plt.legend(loc="lower left")
 plt.tight_layout()
 plt.savefig(f"better_than_greedy_{optim}.pdf")
