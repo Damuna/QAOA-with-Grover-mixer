@@ -6,7 +6,7 @@ Paul Christiansen, Lennart Binkowski, Debora Ramacciotti, Sören Wilkening (2024
 
 The corresponding BibTex entry is:
 
-@misc{Christiansen2024QuantumTreeGeneratorImprovesQAOAStateOfTheArtForTheKnapsackProblem,
+@misc{Christiansen2024QuantumTreeGeneratorImprovesQAOAStateOfTheArtForTheKnapsackProblem,  
 &nbsp;&nbsp; author={Christiansen, Paul and Binkowski, Lennart and Ramacciotti, Debora and Wilkening, Sören},  
 &nbsp;&nbsp; year={2024},  
 &nbsp;&nbsp; title={{Quantum tree generator improves QAOA state-of-the-art for the knapsack problem}},  
