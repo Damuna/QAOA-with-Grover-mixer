@@ -1,7 +1,19 @@
 # QTG-based AAM-QAOA
 
-This repository contains the source code for the QTG-based Amplitude Amplification-Mixer QAOA (AAM-QAOA), available at 
-[#TODO].
+This repository contains the source code for the QTG-based Amplitude Amplification-Mixer QAOA (AAM-QAOA) as described in the paper "[Quantum tree generator improves QAOA state-of-the-art for the knapsack problem](https://arxiv.org/abs/2411.00518)". Please cite this paper as:
+
+Paul Christiansen, Lennart Binkowski, Debora Ramacciotti, Sören Wilkening (2024), arXiv:2411.00518 [quant-ph]
+
+The corresponding BibTex entry is:
+
+@misc{Christiansen2024QuantumTreeGeneratorImprovesQAOAStateOfTheArtForTheKnapsackProblem,
+&nbsp;&nbsp; author={Christiansen, Paul and Binkowski, Lennart and Ramacciotti, Debora and Wilkening, Sören},  
+&nbsp;&nbsp; year={2024},  
+&nbsp;&nbsp; title={{Quantum tree generator improves QAOA state-of-the-art for the knapsack problem}},  
+&nbsp;&nbsp; eprint={2411.00518},  
+&nbsp;&nbsp; archivePrefix={arXiv},  
+&nbsp;&nbsp; primaryClass={quant-ph}  
+}
 
 ## Background 
 The AAM-QAOA is a straight-forward extension of the Grover-mixer QAOA by 
