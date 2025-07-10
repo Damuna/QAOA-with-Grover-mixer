@@ -63,16 +63,22 @@ df = df[(df["impl"] == "copula") | (df["impl"] == "qtg")]
 
 sns.set_palette("tab20", 11)
 def plot_apprrox(p, implementation):
-    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="approx", label=f"{implementation} $p={p}$")
+    l = "QTG"
+    if implementation == "copula":
+        l = "Copula"
+    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="approx", label=f"{l} $q={p}$")
 
 def plot_succ(p, implementation):
-    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="succ", label=f"{implementation} $p={p}$")
+    l = "QTG"
+    if implementation == "copula":
+        l = "Copula"
+    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="succ", label=f"{l} $q={p}$")
 
 plot_apprrox(1, "qtg")
 for i in range(1, 11):
     plot_apprrox(i, "copula")
 plt.legend()
-plt.ylabel("$\left< f\\left(x\\right)\\right> / f_{OPT}$")
+plt.ylabel("$\left< f\\right> / f_{OPT}$")
 plt.xlabel("$n$")
 plt.tight_layout()
 plt.savefig(f"approximation_ratio_{optim}.pdf")
@@ -82,7 +88,9 @@ plot_succ(1, "qtg")
 for i in range(1, 11):
     plot_succ(i, "copula")
 plt.legend()
-plt.ylabel("$P\\left(f\\left(x\\right) > f_{VG}\\right)$")
+plt.ylabel("$P\\left(f > f_{VG}\\right)$")
+plt.xlabel("$n$")
+# plt.yscale("log")
 plt.tight_layout()
 plt.savefig(f"better_than_greedy_{optim}.pdf")
 plt.show()
