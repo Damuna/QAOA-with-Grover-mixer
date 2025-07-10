@@ -2,8 +2,17 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import seaborn as sns
+import matplotlib
 
 sns.set_theme()
+
+sns.set_theme()
+font = {'family': 'serif', 'size': 16}
+matplotlib.rc('font', **font)
+
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["font.serif"] = "Times New Roman"
+plt.rcParams['mathtext.fontset'] = 'stix'
 
 df = pd.DataFrame({
     "n": [],
@@ -49,7 +58,7 @@ for i in [i for i in os.listdir(p) if i != ".DS_Store"]:
     if "copula" in dirs:
         df = extrect_data(df, n, i, p, "copula", optim)
 
-df = df[(df["p"] <= 9) & ((df["n"] <= 20) & (df["impl"] == "copula") | (df["impl"] == "qtg"))]
+df = df[(df["impl"] == "copula") | (df["impl"] == "qtg")]
 
 
 sns.set_palette("tab20", 11)
@@ -60,20 +69,20 @@ def plot_succ(p, implementation):
     sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="succ", label=f"{implementation} $p={p}$")
 
 plot_apprrox(1, "qtg")
-for i in range(1, 10):
+for i in range(1, 11):
     plot_apprrox(i, "copula")
 plt.legend()
-plt.ylabel("$\left< P_{QAOA}\\right> / P_{OPT}$")
+plt.ylabel("$\left< f\\left(x\\right)\\right> / f_{OPT}$")
 plt.xlabel("$n$")
 plt.tight_layout()
 plt.savefig(f"approximation_ratio_{optim}.pdf")
 plt.show()
 
 plot_succ(1, "qtg")
-for i in range(1, 10):
+for i in range(1, 11):
     plot_succ(i, "copula")
-# plt.yscale("log")
-plt.legend(loc="lower left")
+plt.legend()
+plt.ylabel("$P\\left(f\\left(x\\right) > f_{VG}\\right)$")
 plt.tight_layout()
 plt.savefig(f"better_than_greedy_{optim}.pdf")
 plt.show()
