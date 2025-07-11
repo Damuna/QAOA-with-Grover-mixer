@@ -72,25 +72,67 @@ def plot_succ(p, implementation):
     l = "QTG"
     if implementation == "copula":
         l = "Copula"
+    else: print(len(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] == 0)]))
+    
     sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="succ", label=f"{l} $q={p}$")
 
-plot_apprrox(1, "qtg")
-for i in range(1, 11):
-    plot_apprrox(i, "copula")
-plt.legend()
-plt.ylabel("$\left< f\\right> / f_{OPT}$")
-plt.xlabel("$n$")
-plt.tight_layout()
-plt.savefig(f"approximation_ratio_{optim}.pdf")
-plt.show()
+# plot_apprrox(1, "qtg")
+# for i in range(1, 11):
+#     plot_apprrox(i, "copula")
+# plt.legend()
+# plt.ylabel("$\left< f\\right> / f_{OPT}$")
+# plt.xlabel("$n$")
+# plt.tight_layout()
+# plt.savefig(f"approximation_ratio_{optim}.pdf")
+# plt.show()
+#
+# plot_succ(1, "qtg")
+# for i in range(1, 11):
+#     plot_succ(i, "copula")
+# plt.legend()
+# plt.ylabel("$P\\left(f > f_{VG}\\right)$")
+# plt.xlabel("$n$")
+# # plt.yscale("log")
+# plt.tight_layout()
+# plt.savefig(f"better_than_greedy_{optim}.pdf")
+# plt.show()
 
-plot_succ(1, "qtg")
-for i in range(1, 11):
-    plot_succ(i, "copula")
-plt.legend()
-plt.ylabel("$P\\left(f > f_{VG}\\right)$")
+
+
+# plot of the resources
+for impl in ["qtg", "copula"]:
+    qtg_res = [[] for _ in range(11)]
+    # ns = [[] for _ in range(11)]
+    i_ = os.listdir("instances")
+    try:
+        i_.remove(".DS_Store")
+    except: pass
+    i_.sort()
+    for i in i_:
+        try:
+            d_ = [x for x in os.listdir(f"{p}/{i}/{impl}/") if x not in ['resources', 'backup', "results"]]
+            # print(d_)
+            if len(d_) > 0:
+                for d in d_:
+                    p_ = int(d.split("_")[1])
+                    if impl == "qtg" and p_ == 1 or impl == "copula" and int(i.split("_")[1]) <= 20:
+                        f = int(open(f"{p}/{i}/{impl}/{d}/resources").read().split()[1])
+                        # ns[p_].append(int(i.split("_")[1]))
+                        qtg_res[p_].append((int(i.split("_")[1]), f))
+        except: pass
+
+    lab = "QTG"
+    if impl == "copula": lab = "Copula"
+    for i in range(11):
+        qtg_res[i].sort(key = lambda x: x[0])
+        if len(qtg_res[i]) != 0:
+            a, b = [i for i, j in qtg_res[i]], [j for i, j in qtg_res[i]]
+            plt.plot(a, b, ".--", label=f"{lab} $q={i}$")
+
+plt.yscale("log")
 plt.xlabel("$n$")
-# plt.yscale("log")
+plt.ylabel("Cycle count")
+plt.legend()
 plt.tight_layout()
-plt.savefig(f"better_than_greedy_{optim}.pdf")
+plt.savefig("cycle_counts.pdf")
 plt.show()
