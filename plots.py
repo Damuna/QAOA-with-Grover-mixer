@@ -66,36 +66,39 @@ def plot_apprrox(p, implementation):
     l = "QTG"
     if implementation == "copula":
         l = "Copula"
-    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="approx", label=f"{l} $q={p}$")
+    # sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="approx", label=f"{l} $q={p}$")
+    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="approx", label=f"{l} $q={p}$")
 
 def plot_succ(p, implementation):
     l = "QTG"
     if implementation == "copula":
         l = "Copula"
-    else: print(len(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] == 0)]))
-    
-    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="succ", label=f"{l} $q={p}$")
 
-# plot_apprrox(1, "qtg")
-# for i in range(1, 11):
-#     plot_apprrox(i, "copula")
-# plt.legend()
-# plt.ylabel("$\left< f\\right> / f_{OPT}$")
-# plt.xlabel("$n$")
-# plt.tight_layout()
-# plt.savefig(f"approximation_ratio_{optim}.pdf")
-# plt.show()
-#
-# plot_succ(1, "qtg")
-# for i in range(1, 11):
-#     plot_succ(i, "copula")
-# plt.legend()
-# plt.ylabel("$P\\left(f > f_{VG}\\right)$")
-# plt.xlabel("$n$")
-# # plt.yscale("log")
-# plt.tight_layout()
-# plt.savefig(f"better_than_greedy_{optim}.pdf")
-# plt.show()
+    # sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation) & (df["succ"] != 0)], x="n", y="succ", label=f"{l} $q={p}$")
+    sns.lineplot(df[(df["p"] == p) & (df["impl"] == implementation)], x="n", y="succ", label=f"{l} $q={p}$")
+
+plt.figure(figsize=(6, 3))
+plot_apprrox(1, "qtg")
+for i in range(1, 11):
+    plot_apprrox(i, "copula")
+leg = plt.legend()  # initially add it
+leg.remove()         # remove it
+plt.ylabel("$\left< f\\right> / f_{OPT}$")
+plt.xlabel("$n$")
+plt.tight_layout(pad = 0)
+plt.savefig(f"approximation_ratio_{optim}.pdf")
+plt.show()
+
+plot_succ(1, "qtg")
+for i in range(1, 11):
+    plot_succ(i, "copula")
+plt.legend()
+plt.ylabel("$P\\left(f > f_{VG}\\right)$")
+plt.xlabel("$n$")
+# plt.yscale("log")
+plt.tight_layout()
+plt.savefig(f"better_than_greedy_{optim}.pdf")
+plt.show()
 
 
 
@@ -129,10 +132,10 @@ for impl in ["qtg", "copula"]:
             a, b = [i for i, j in qtg_res[i]], [j for i, j in qtg_res[i]]
             plt.plot(a, b, ".--", label=f"{lab} $q={i}$")
 
-plt.yscale("log")
-plt.xlabel("$n$")
-plt.ylabel("Cycle count")
-plt.legend()
-plt.tight_layout()
-plt.savefig("cycle_counts.pdf")
-plt.show()
+# plt.yscale("log")
+# plt.xlabel("$n$")
+# plt.ylabel("Cycle count")
+# plt.legend()
+# plt.tight_layout()
+# plt.savefig("cycle_counts.pdf")
+# plt.show()

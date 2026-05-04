@@ -4,3 +4,6 @@
 cmake-build-debug
 executables/server_pull
 executables/server_push
+
+generator
+generator.dSYM
