@@ -25,12 +25,29 @@ int main(int argc, const char **argv) {
                 instance, input_qaoa_type, &p, input_opt_type, &m, &bias, &k,  &theta, &memory_size
             );
             printf("\n===== Input parameters =====\n");
-
+            
+            knapsack_type_t kp_type;
+            kp_type = QUADRATIC;
+            
             printf("Instance = %s\n", instance);
             char path_to_instance[1024];
-            sprintf(path_to_instance, "..%cinstances%c%s%c", path_sep(), path_sep(), instance, path_sep());
-            strcat(path_to_instance, "test.in");
-            knapsack_t* kp = create_jooken_knapsack(path_to_instance);
+            char path_to_instance2[1024];
+            knapsack_t* kp;
+            switch (kp_type) {
+                case LINEAR:
+                    sprintf(path_to_instance, "..%cinstances%c%s%ctest.in", path_sep(), path_sep(), instance, path_sep());
+                    kp = create_jooken_knapsack(path_to_instance);
+                    print_knapsack(kp);
+                    break;
+                case QUADRATIC:
+                    sprintf(path_to_instance2, "..%cinstances%c%s%cquad_knap.txt", path_sep(), path_sep(), instance, path_sep());
+                    sprintf(path_to_instance, "..%cinstances%c%s%c", path_sep(), path_sep(), instance, path_sep());
+                    printf("%s", path_to_instance2);
+                    kp = create_quadratic_knapsack(path_to_instance2);
+//                    apply_quad_int_greedy(kp);
+                    print_quadratic_knapsack(kp);
+                    break;
+            }
 
             printf("QAOA type = %s\n", input_qaoa_type);
             qaoa_type_t qaoa_type;
@@ -81,7 +98,7 @@ int main(int argc, const char **argv) {
             strcat(path_to_instance, input_opt_type);
             create_dir(path_to_instance);
 
-            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta, memory_size);
+            qaoa(instance, kp, qaoa_type, p, opt_type, m, bias, k, theta, memory_size, kp_type);
         }
     }
     fclose(file);

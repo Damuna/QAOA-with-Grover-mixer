@@ -52,6 +52,11 @@ typedef struct cbs {
 } cbs_t;
 
 
+typedef enum knapsack_type {
+  LINEAR,
+  QUADRATIC
+} knapsack_type_t;
+
 /*
  * enum:            qaoa_type_t
  * ------------------------------------
@@ -599,7 +604,8 @@ void qaoa(
     size_t input_bias,
     double copula_k,
     double copula_theta,
-    int input_memory_size
+    int input_memory_size,
+    knapsack_type_t kp_type
 );
 
 

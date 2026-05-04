@@ -655,7 +655,8 @@ qaoa(
     const size_t input_bias,
     const double copula_k,
     const double copula_theta,
-    const int input_memory_size
+    const int input_memory_size,
+    knapsack_type_t kp_type // 0 if linear knapsack, 1 if quadratic knapsack
 ) {
     kp = input_kp;
     qaoa_type = input_qaoa_type;
@@ -666,13 +667,20 @@ qaoa(
     k = copula_k;
     theta = copula_theta;
     memory_size = input_memory_size;
-
-    sort_knapsack(kp, RATIO);
+    
+    switch (kp_type) {
+        case QUADRATIC:
+            apply_quad_int_greedy(kp);
+            break;
+        case LINEAR:
+            sort_knapsack(kp, RATIO);
+            apply_int_greedy(kp);
+            break;
+    }
 
 
     printf("\n===== Preparation ======\n");
-
-    apply_int_greedy(kp);
+    
     path_t* int_greedy_sol = path_rep(kp);
     const num_t int_greedy_sol_val = int_greedy_sol->tot_profit;
     printf("Integer greedy solution = %ld\n", int_greedy_sol_val);
@@ -705,7 +713,14 @@ qaoa(
 
             sol_profits = malloc(num_states * sizeof(num_t));
             for (size_t idx = 0; idx < num_states; ++idx) {
-                sol_profits[idx] = objective_func(kp, idx);
+                switch (kp_type) {
+                    case LINEAR:
+                        sol_profits[idx] = objective_func(kp, idx);
+                        break;
+                    case QUADRATIC:
+                        sol_profits[idx] = quad_objective_func(kp, idx);
+                        break;
+                }
             }
 
             sol_feasibilities = malloc(num_states * sizeof(bool_t));

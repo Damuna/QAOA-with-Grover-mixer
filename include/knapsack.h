@@ -85,6 +85,7 @@ typedef struct knapsack {
 	num_t capacity;
 	num_t remain_cost;
 	num_t tot_profit;
+    num_t *quad_profit;
 	item_t* items;
     char* name;
 } knapsack_t;
@@ -227,6 +228,7 @@ void free_path(path_t*);
  *        pointers should also eventually be freed.
  */
 knapsack_t* create_empty_knapsack(bit_t, num_t);
+knapsack_t* create_empty_quadratic_knapsack(bit_t, num_t);
 
 /*
  * Function:        pisinger_filename
@@ -292,6 +294,7 @@ knapsack_t* create_pisinger_knapsack(char*);
  *        pointers should also eventually be freed.
  */
 knapsack_t* create_jooken_knapsack(char*);
+knapsack_t *create_quadratic_knapsack(char *filename);
 
 /*
  * Function:    copy_knapsack
@@ -443,6 +446,8 @@ void sort_knapsack(knapsack_t*, sort_t);
  */
 void apply_int_greedy(knapsack_t*);
 
+void apply_quad_int_greedy(knapsack_t*);
+
 
 /*
  * =============================================================================
@@ -461,6 +466,8 @@ void apply_int_greedy(knapsack_t*);
  */
 
 num_t objective_func(const knapsack_t* k, num_t solution);
+
+num_t quad_objective_func(const knapsack_t* k, num_t solution);
 
 
 /*
@@ -586,6 +593,8 @@ ratio_t min_ratio(const knapsack_t*);
  */
 num_t profit_sum(const knapsack_t*);
 
+num_t quad_profit_sum(const knapsack_t*);
+
 /*
  * Function:    cost_sum
  * ---------------------
@@ -695,6 +704,7 @@ num_t get_ub(const knapsack_t*, ub_t);
  * Parameter:   Pointer to knapsack whose state should be printed.
  */
 void print_knapsack(const knapsack_t*);
+void print_quadratic_knapsack(const knapsack_t*);
 
 #ifdef __cplusplus
 }
