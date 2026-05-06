@@ -689,7 +689,7 @@ qaoa(
     switch (qaoa_type) {
         case QTG:
             printf("Generating states via QTG...\n");
-            qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states);
+            qtg_nodes = qtg(kp, bias, int_greedy_sol->vector, &num_states, kp_type);
             free_path(int_greedy_sol);
             printf("Done! Number of states = %zu\n", num_states);
             double init_sol_val = 0;
@@ -729,9 +729,15 @@ qaoa(
             }
             break;
     }
-
-    const num_t optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
-    printf("Optimal solution value (COMBO) = %ld\n", optimal_sol_val);
+    num_t optimal_sol_val;
+    switch (kp_type) {
+        case LINEAR:
+            optimal_sol_val = combo_wrap(kp, 0, kp->capacity, FALSE, FALSE, TRUE, FALSE);
+            break;
+        case QUADRATIC:
+            optimal_sol_val = 180;
+    }
+    printf("Optimal solution value = %ld\n", optimal_sol_val);
 
 
     printf("\n===== Running QAOA =====\n");

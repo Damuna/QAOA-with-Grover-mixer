@@ -51,12 +51,6 @@ typedef struct cbs {
     cmplx amplitude;
 } cbs_t;
 
-
-typedef enum knapsack_type {
-  LINEAR,
-  QUADRATIC
-} knapsack_type_t;
-
 /*
  * enum:            qaoa_type_t
  * ------------------------------------

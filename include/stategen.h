@@ -108,7 +108,7 @@ double branch_prob(const knapsack_t*, bit_t, size_t, bool_t, array_t);
  *                  whose total profit lie above the specified threshold.  
  * Side Effect:     Allocates dynamically; pointer should eventually be freed. 
  */
-node_t* qtg(const knapsack_t*, size_t, array_t, size_t*);
+node_t* qtg(const knapsack_t*, size_t, array_t, size_t*, knapsack_type_t);
 
 #ifdef __cplusplus
 }

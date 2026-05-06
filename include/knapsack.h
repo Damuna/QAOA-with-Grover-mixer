@@ -90,6 +90,11 @@ typedef struct knapsack {
     char* name;
 } knapsack_t;
 
+typedef enum knapsack_type {
+  LINEAR,
+  QUADRATIC
+} knapsack_type_t;
+
 /*
  * Struct:              path_t
  * ---------------------------

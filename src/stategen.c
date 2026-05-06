@@ -42,17 +42,17 @@ free_nodes(node_t nodes[], size_t num_nodes) {
 
 double
 //remove single and default
-branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
+branch_prob(const knapsack_t *k, bit_t i, size_t bias, bool_t left, \
             array_t cur_sol) {
-
+    
     if (left) {
         return (1. + (1 - sw_tstbit(cur_sol, i)) * bias) \
-                        / (bias + 2);
+ / (bias + 2);
     } else {
         return (1. + sw_tstbit(cur_sol, i) * bias) \
-                        / (bias + 2);
-        }
-
+ / (bias + 2);
+    }
+    
 }
 
 /* 
@@ -61,14 +61,14 @@ branch_prob(const knapsack_t* k, bit_t i, size_t bias, bool_t left, \
  * =============================================================================
  */
 
-node_t*
-qtg(const knapsack_t* k, size_t bias, \
-    array_t cur_sol, size_t* num_states) {
+node_t *
+qtg(const knapsack_t *k, size_t bias, \
+    array_t cur_sol, size_t *num_states, knapsack_type_t kp_type) {
     
-	*num_states = 1; /* start from the root */
+    *num_states = 1; /* start from the root */
     size_t a = 0; /* start from leftmost node */
     /* initialize root node as single-element node_t array */
-    node_t* parent = malloc(sizeof(node_t));
+    node_t *parent = malloc(sizeof(node_t));
     parent->path.remain_cost = k->capacity;
     parent->path.tot_profit = 0;
     sw_init(parent->path.vector, k->size);
@@ -82,7 +82,7 @@ qtg(const knapsack_t* k, size_t bias, \
         //a is counting the states in the child (current) layer (we have to figure out a)
         //j is counting the states in the parent layer
         //KEEP
-        node_t* child = malloc(2 * (*num_states) * sizeof(node_t));
+        node_t *child = malloc(2 * (*num_states) * sizeof(node_t));
         for (size_t j = 0; j < (*num_states); ++j) {
             if (parent[j].path.remain_cost < k->items[i].cost) {
                 /* item cannot be included, thus no branching */
@@ -120,14 +120,26 @@ qtg(const knapsack_t* k, size_t bias, \
             // printf("Probability: %.16f\n", child[a].prob);
             // printf("----------------\n");
             ++a;
-
+            
             //RIGHT BRANCH
             /* update remaining cost */
-            child[a].path.remain_cost = parent[j].path.remain_cost \
-                                        - k->items[i].cost;
+            child[a].path.remain_cost = parent[j].path.remain_cost - k->items[i].cost;
             /* update total profit */
-            child[a].path.tot_profit = k->items[i].profit \
-                                       + parent[j].path.tot_profit;
+            switch (kp_type) {
+                case LINEAR:
+                    child[a].path.tot_profit = k->items[i].profit + parent[j].path.tot_profit;
+                    break;
+                case QUADRATIC:
+                    child[a].path.tot_profit = parent[j].path.tot_profit;
+                    for (int l = 0; l < i; ++l) {
+                        if (sw_tstbit(parent[j].path.vector, l)) {
+                            child[a].path.tot_profit += k->quad_profit[i * k->size + l];
+                        }
+                    }
+                    child[a].path.tot_profit += k->quad_profit[i * k->size + i];
+//                    printf("%ld\n", child[a].path.tot_profit);
+                    break;
+            }
             /* include item: set the corresponding bit to 1 */
             sw_init(child[a].path.vector, k->size);
             sw_set(child[a].path.vector, parent[j].path.vector);
@@ -144,7 +156,7 @@ qtg(const knapsack_t* k, size_t bias, \
             // printf("Probability: %.16f\n", child[a].prob);
             // printf("----------------\n");
             ++a;
-
+            
         }
         /* swap pointer to parent and child layer */
         SWAP(&parent, &child, node_t*);
